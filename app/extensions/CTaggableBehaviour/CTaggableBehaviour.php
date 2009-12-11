@@ -8,7 +8,7 @@
  * @author Alexander Makarov
  * @link http://yiiframework.ru/forum/viewtopic.php?f=9&t=389
  */
-class TaggableBehaviour extends CActiveRecordBehavior {
+class CTaggableBehaviour extends CActiveRecordBehavior {
     /**
      * Tags table name
      */
@@ -312,7 +312,7 @@ class TaggableBehaviour extends CActiveRecordBehavior {
     function findAllByTags($tags, CDbCriteria $criteria = null){
         $tags = $this->getTagsArrayFromString($tags);
         if(empty($tags)) return array();
-        return $this->owner->find($this->getFindByTagsCriteria($tags, $criteria));
+        return $this->owner->findAll($this->getFindByTagsCriteria($tags, $criteria));
     }
 
     /**
