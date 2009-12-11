@@ -13,7 +13,7 @@ TaggableBehaviour
 function behaviors() {
     return array(
         'taggable' => array(
-            'class' => 'ext.Taggable.TaggableBehaviour',
+            'class' => 'ext.СTaggableBehaviour.СTaggableBehaviour',
             // Имя таблицы для хранения тегов 
             'tagTable' => 'Tag',
             // Имя кросс-таблицы, связывающей тег с моделью.

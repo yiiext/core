@@ -13,7 +13,7 @@ In your ActiveRecord model define `behaviors()` method:
 function behaviors() {
     return array(
         'taggable' => array(
-            'class' => 'ext.Taggable.TaggableBehaviour',
+            'class' => 'ext.СTaggableBehaviour.СTaggableBehaviour',
             // Table where tags are stored
             'tagTable' => 'Tag',
             // Cross-table that stores tag-model connections.
