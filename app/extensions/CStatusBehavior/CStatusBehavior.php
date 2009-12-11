@@ -11,12 +11,15 @@
 /**
  * @author Veaceslav Medvedev <slavcopost@gmail.com>
  * @package yii-slavco-dev
- * @version 0.1
+ * @version 0.2
  *
  * @todo findByStatus, findAllByStatus
  */
 
  /**
+  * 0.2
+  * [*] Small code corrections.
+  *
   * 0.1
   * Initial version
   */
@@ -58,7 +61,7 @@ class CStatusBehavior extends CActiveRecordBehavior {
 
     public function attach($owner) {
         // Check required var statusField
-        if (is_string($this->statusField) === FALSE || empty($this->statusField) === TRUE) {
+        if (!is_string($this->statusField) || empty($this->statusField)) {
             throw new CException(self::t('yii', 'Property "{class}.{property}" is not defined.',
                 array('{class}' => get_class($this), '{property}' => 'statusField')));
         }
@@ -71,7 +74,7 @@ class CStatusBehavior extends CActiveRecordBehavior {
      * @param array
      */
     public function setStatuses($statuses) {
-        $this->statuses = is_array($statuses) === TRUE && count($statuses) > 0
+        $this->statuses = is_array($statuses) && !empty($statuses)
             ? $statuses : array('draft', 'published', 'archived');
     }
 
@@ -81,7 +84,7 @@ class CStatusBehavior extends CActiveRecordBehavior {
      * @return string
      */
     public function getStatusGroup() {
-        return is_string($this->statusGroup) === TRUE && empty($this->statusGroup) === FALSE
+        return is_string($this->statusGroup) && !empty($this->statusGroup)
             ? $this->statusGroup
             : 'default';
     }
@@ -132,7 +135,7 @@ class CStatusBehavior extends CActiveRecordBehavior {
      */
     private function parseStatus() {
         $this->statusText = self::t($this->getStatusGroup(),
-            isset($this->statuses[$this->getStatus()]) === TRUE
+            isset($this->statuses[$this->getStatus()])
                 ? $this->statuses[$this->getStatus()]
                 : 'unknown');
     }
