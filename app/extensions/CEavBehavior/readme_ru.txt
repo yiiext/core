@@ -1,4 +1,4 @@
-#summary Добавляет модели работать с eav-моделью данных
+#summary Добавляет модели возможность работать с eav-моделью данных
 
 == Установка и настройка ==
 ----------------
@@ -80,7 +80,7 @@ $user = User::model()->findByPk(1);
 echo $user->checkEavAttribute('attribute1') ? 'Yes' : 'No';
 }}}
 
-==== findByEavAttributes($attributes, $condition = '', $params = array()) ====
+==== findByEavAttribute($attributes, $condition = '', $params = array()) ====
 Ищет первую модель с заданными атрибутами
 
 {{{
