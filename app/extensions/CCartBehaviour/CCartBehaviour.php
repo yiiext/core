@@ -2,6 +2,8 @@
 /**
  * CCart
  *
+ * @version 0.1
+ *
  * Allows to store information into the cart
  *
  * @TODO: can we use CModelBehaviour?
