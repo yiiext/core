@@ -1,0 +1,5 @@
+1.2
+[*] Small code corrections.
+
+1.1
+[+] Initial public release.

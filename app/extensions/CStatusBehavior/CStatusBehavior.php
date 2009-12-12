@@ -2,28 +2,15 @@
 /**
  * CStatusBehavior class file.
  *
- * Status behavior for models
+ * Status behavior for models.
  *
  * @author Veaceslav Medvedev <slavcopost@gmail.com>
  * @link http://code.google.com/p/yii-slavco-dev/wiki/CStatusBehavior
- */
-
-/**
- * @author Veaceslav Medvedev <slavcopost@gmail.com>
- * @package yii-slavco-dev
- * @version 0.2
+ *
+ * @version 1.2
  *
  * @todo findByStatus, findAllByStatus
  */
-
- /**
-  * 0.2
-  * [*] Small code corrections.
-  *
-  * 0.1
-  * Initial version
-  */
-
 class CStatusBehavior extends CActiveRecordBehavior {
     /**
      * @var string The name of the table where data stored.

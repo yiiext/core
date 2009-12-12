@@ -1,0 +1,5 @@
+1.2
+[*] Transform module into widget extension.
+
+1.1
+[+] Initial public release.

@@ -2,28 +2,14 @@
 /**
  * CUplodifyWidget class file.
  *
- * Uploadify jQuery plugin widget
+ * Uploadify jQuery plugin widget.
  *
  * @author Veaceslav Medvedev <slavcopost@gmail.com>
  * @link http://code.google.com/p/yii-slavco-dev/wiki/CUplodifyWidget
  * @uses http://www.uploadify.com/
- */
-
-/**
- * @author Veaceslav Medvedev <slavcopost@gmail.com>
- * @package yii-slavco-dev
+ *
  * @version 1.2
  */
-
- /**
-  * Changelog
-  * 1.2
-  * [*] Transform module into widget extension
-  *
-  * 1.1
-  * [+] First version
-  */
-
 class CUplodifyWidget  extends CWidget  {
     /**
      * Defaults options. For more info read {@link http://www.uploadify.com/documentation/ documents}

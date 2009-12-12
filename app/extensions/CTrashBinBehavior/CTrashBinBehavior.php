@@ -2,25 +2,13 @@
 /**
  * CTrashBinBehavior class file.
  *
- * Trash bin behavior for models
+ * Trash bin behavior for models.
  *
  * @author Veaceslav Medvedev <slavcopost@gmail.com>
  * @link http://code.google.com/p/yii-slavco-dev/wiki/CTrashBinBehavior
- */
-
-/**
- * @author Veaceslav Medvedev <slavcopost@gmail.com>
- * @package yii-slavco-dev
- * @version 1.1
  *
- * @todo
+ * @version 1.1
  */
-
- /**
-  * 1.1
-  * [+] First version
-  */
-
 class CTrashBinBehavior extends CActiveRecordBehavior {
     /**
      * @var string The name of the table where data stored.
