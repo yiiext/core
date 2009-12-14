@@ -1,5 +1,9 @@
-1.2
+0.3
+[+] Add getStatuses method.
+[+] Add getStatusName method for return original status without translated.
+
+0.2
 [*] Small code corrections.
 
-1.1
+0.1
 [+] Initial public release.

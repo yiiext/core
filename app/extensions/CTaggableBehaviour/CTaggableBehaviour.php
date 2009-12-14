@@ -150,7 +150,7 @@ class CTaggableBehaviour extends CActiveRecordBehavior {
      * @param string $tagsString
      * @return array
      */
-    private function getTagsArrayFromString($tagsString){
+    protected function getTagsArrayFromString($tagsString){
         $tags = explode(',', $tagsString);
         array_walk($tags, array($this, 'trim'));
         return $tags;
@@ -334,7 +334,7 @@ class CTaggableBehaviour extends CActiveRecordBehavior {
      * @param $tags
      * @return CDbCriteria
      */
-    private function getFindByTagsCriteria($tags, CDbCriteria $criteria = null){        
+    protected function getFindByTagsCriteria($tags, CDbCriteria $criteria = null){
         if($criteria===null) $criteria = new CDbCriteria();
 
         $pk = $this->owner->tableSchema->primaryKey;

@@ -7,7 +7,7 @@
  * @author Veaceslav Medvedev <slavcopost@gmail.com>
  * @link http://code.google.com/p/yii-slavco-dev/wiki/CStatusBehavior
  *
- * @version 1.2
+ * @version 0.3
  *
  * @todo findByStatus, findAllByStatus
  */
@@ -30,6 +30,7 @@ class CStatusBehavior extends CActiveRecordBehavior {
      */
     public $statusGroup = 'default';
 
+    private $statusName = 'unknown';
     private $statusText = 'unknown';
     private $status = NULL;
 
@@ -53,6 +54,13 @@ class CStatusBehavior extends CActiveRecordBehavior {
                 array('{class}' => get_class($this), '{property}' => 'statusField')));
         }
         parent::attach($owner);
+    }
+
+    /**
+     * Get valid statuses values.
+     */
+    public function getStatuses() {
+        return $this->statuses;
     }
 
     /**
@@ -95,6 +103,15 @@ class CStatusBehavior extends CActiveRecordBehavior {
     }
 
     /**
+     * Get model status name without translate.
+     *
+     * @return string
+     */
+    public function getStatusName() {
+        return $this->statusName;
+    }
+
+    /**
      * Set status for model.
      *
      * @return CActiveRecord
@@ -121,10 +138,10 @@ class CStatusBehavior extends CActiveRecordBehavior {
      * Transfrom status value to text.
      */
     private function parseStatus() {
-        $this->statusText = self::t($this->getStatusGroup(),
-            isset($this->statuses[$this->getStatus()])
-                ? $this->statuses[$this->getStatus()]
-                : 'unknown');
+        $this->statusName = isset($this->statuses[$this->getStatus()])
+            ? $this->statuses[$this->getStatus()]
+            : 'unknown';
+        $this->statusText = self::t($this->getStatusGroup(), $this->statusName);
     }
 
     /**
