@@ -1,13 +1,13 @@
 <?php
 /**
- * Ïðåäëîæåíèÿ ïî äîïîëíåíèþ ê ïîâåäåíèþ TaggableBehaviour.
+ * ÐŸÑ€ÐµÐ´Ð»Ð¾Ð¶ÐµÐ½Ð¸Ñ Ð¿Ð¾ Ð´Ð¾Ð¿Ð¾Ð»Ð½ÐµÐ½Ð¸ÑŽ Ðº Ð¿Ð¾Ð²ÐµÐ´ÐµÐ½Ð¸ÑŽ TaggableBehaviour.
  */
 include_once dirname(__FILE__) . '/CTaggableBehaviour.php';
 
 class CTaggableBehaviourA extends CTaggableBehaviour {
 
     /**
-     * Ïåðåãðóçèë ìåòîä, äîáàâèâ òðåòèé ïàðàìåòð $with.
+     * ÐŸÐµÑ€ÐµÐ³Ñ€ÑƒÐ·Ð¸Ð» Ð¼ÐµÑ‚Ð¾Ð´, Ð´Ð¾Ð±Ð°Ð²Ð¸Ð² Ñ‚Ñ€ÐµÑ‚Ð¸Ð¹ Ð¿Ð°Ñ€Ð°Ð¼ÐµÑ‚Ñ€ $with.
      */
     function findAllByTags($tags, CDbCriteria $criteria = null, $with = ''){
         $tags = self::getTagsArrayFromString($tags);
@@ -18,7 +18,7 @@ class CTaggableBehaviourA extends CTaggableBehaviour {
     }
 
     /**
-     * Âîçâðàùàåò ìàññèâ òåãîâ è êîëè÷åñòâî îáúåêòîâ ñ äàííûì òåãîì.
+     * Ð’Ð¾Ð·Ð²Ñ€Ð°Ñ‰Ð°ÐµÑ‚ Ð¼Ð°ÑÑÐ¸Ð² Ñ‚ÐµÐ³Ð¾Ð² Ð¸ ÐºÐ¾Ð»Ð¸Ñ‡ÐµÑÑ‚Ð²Ð¾ Ð¾Ð±ÑŠÐµÐºÑ‚Ð¾Ð² Ñ Ð´Ð°Ð½Ð½Ñ‹Ð¼ Ñ‚ÐµÐ³Ð¾Ð¼.
      *
      * @return array
      */
@@ -44,7 +44,7 @@ class CTaggableBehaviourA extends CTaggableBehaviour {
     }
 
     /**
-     * Âîçâðàùàåò ñòðîêó òåãîâ. Êàæäûé òåã â âèäå ññûëêè.
+     * Ð’Ð¾Ð·Ð²Ñ€Ð°Ñ‰Ð°ÐµÑ‚ ÑÑ‚Ñ€Ð¾ÐºÑƒ Ñ‚ÐµÐ³Ð¾Ð². ÐšÐ°Ð¶Ð´Ñ‹Ð¹ Ñ‚ÐµÐ³ Ð² Ð²Ð¸Ð´Ðµ ÑÑÑ‹Ð»ÐºÐ¸.
      *
      * @param string
      * @return string
