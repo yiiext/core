@@ -70,7 +70,8 @@ class CStatusBehavior extends CActiveRecordBehavior {
      */
     public function setStatuses($statuses) {
         $this->statuses = is_array($statuses) && !empty($statuses)
-            ? $statuses : array('draft', 'published', 'archived');
+            ? $statuses
+            : array('draft', 'published', 'archived');
     }
 
     /**
