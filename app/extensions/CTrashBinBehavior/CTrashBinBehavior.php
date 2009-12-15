@@ -28,7 +28,7 @@ class CTrashBinBehavior extends CActiveRecordBehavior {
 
     public function attach($owner) {
         // Check required var trashFlagField
-        if (is_string($this->trashFlagField) === FALSE || empty($this->trashFlagField) === TRUE) {
+        if (!is_string($this->trashFlagField) || empty($this->trashFlagField)) {
             throw new CException(Yii::t('CEAV', 'Required var "{class}.{property}" not set.',
                 array('{class}' => get_class($this), '{property}' => 'trashFlagField')));
         }
@@ -41,8 +41,7 @@ class CTrashBinBehavior extends CActiveRecordBehavior {
      * @return CActiveRecord
      */
     public function remove() {
-        $trashFlagField = $this->trashFlagField;
-        $this->getOwner()->$trashFlagField = $this->removedFlag;
+        $this->getOwner()->{$this->trashFlagField} = $this->removedFlag;
         return $this->getOwner();
     }
     
@@ -52,8 +51,7 @@ class CTrashBinBehavior extends CActiveRecordBehavior {
      * @return CActiveRecord
      */
     public function restore() {
-        $trashFlagField = $this->trashFlagField;
-        $this->getOwner()->$trashFlagField = $this->restoredFlag;
+        $this->getOwner()->{$this->trashFlagField} = $this->restoredFlag;
         return $this->getOwner();
     }
 
@@ -63,8 +61,7 @@ class CTrashBinBehavior extends CActiveRecordBehavior {
      * @return bool
      */
     public function isRemoved() {
-        $trashFlagField = $this->trashFlagField;
-        return $this->getOwner()->$trashFlagField == $this->removedFlag ? TRUE : FALSE;
+        return $this->getOwner()->{$this->trashFlagField} == $this->removedFlag;
     }
 
     /**
@@ -73,9 +70,10 @@ class CTrashBinBehavior extends CActiveRecordBehavior {
      * @param CEvent
      */
     public function beforeFind($event) {
-        if ($this->getEnabled() === TRUE) {
-            $criteria = $this->getOwner()->getDbCriteria();
-            $criteria->addCondition($this->trashFlagField . ' != "' . $this->removedFlag . '"');
+        if ($this->getEnabled()) {
+            $this->getOwner()
+                ->getDbCriteria()
+                ->addCondition($this->trashFlagField . ' != "' . $this->removedFlag . '"');
         }
         parent::beforeFind($event);
     }
