@@ -5,9 +5,9 @@
  * Trash bin behavior for models.
  *
  * @author Veaceslav Medvedev <slavcopost@gmail.com>
- * @link http://code.google.com/p/yii-slavco-dev/wiki/CTrashBinBehavior
+ * @link http://code.google.com/p/yiiext/source/browse/#svn/trunk/app/extensions/CTrashBinBehavior
  *
- * @version 1.1
+ * @version 0.1
  */
 class CTrashBinBehavior extends CActiveRecordBehavior {
     /**

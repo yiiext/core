@@ -24,6 +24,9 @@ function behaviors() {
 }
 }}}
 
+== Минимальные требования ==
+[Yii Framework 1.0.12](http://www.yiiframework.com/)
+
 == Методы ==
 -------
 ==== remove() ====
