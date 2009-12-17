@@ -1,3 +1,7 @@
+0.4
+[-] Remove getStatusName method.
+[*] Add param to prevent translating in getStatuses and getStatusText methods.
+
 0.3
 [+] Add getStatuses method.
 [+] Add getStatusName method for return original status without translated.

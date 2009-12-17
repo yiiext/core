@@ -7,7 +7,7 @@
  * @author Veaceslav Medvedev <slavcopost@gmail.com>
  * @link http://code.google.com/p/yii-slavco-dev/wiki/CStatusBehavior
  *
- * @version 0.3
+ * @version 0.4
  *
  * @todo findByStatus, findAllByStatus
  */
@@ -30,8 +30,8 @@ class CStatusBehavior extends CActiveRecordBehavior {
      */
     public $statusGroup = 'default';
 
-    private $statusName = 'unknown';
     private $statusText = 'unknown';
+    private $statusTextTranslated = 'unknown';
     private $status = NULL;
 
     private static function t($category, $message, $params = array(), $source = null, $language = null) {
@@ -57,13 +57,6 @@ class CStatusBehavior extends CActiveRecordBehavior {
     }
 
     /**
-     * Get valid statuses values.
-     */
-    public function getStatuses() {
-        return $this->statuses;
-    }
-
-    /**
      * Set valid statuses values.
      *
      * @param array
@@ -72,6 +65,17 @@ class CStatusBehavior extends CActiveRecordBehavior {
         $this->statuses = is_array($statuses) && !empty($statuses)
             ? $statuses
             : array('draft', 'published', 'archived');
+    }
+
+    /**
+     * Get valid status values.
+     *
+     * @param bool prevent translate status.
+     */
+    public function getStatuses($translate = TRUE) {
+        return $translate === FALSE
+            ? $this->statuses
+            : array_map(array($this, 'translateStatus'), $this->statuses);
     }
 
     /**
@@ -97,19 +101,13 @@ class CStatusBehavior extends CActiveRecordBehavior {
     /**
      * Get model status text.
      *
+     * @param bool prevent translate status.
      * @return string
      */
-    public function getStatusText() {
-        return $this->statusText;
-    }
-
-    /**
-     * Get model status name without translate.
-     *
-     * @return string
-     */
-    public function getStatusName() {
-        return $this->statusName;
+    public function getStatusText($translate = TRUE) {
+        return $translate === FALSE
+            ? $this->statusText
+            : $this->statusTextTranslated;
     }
 
     /**
@@ -121,6 +119,7 @@ class CStatusBehavior extends CActiveRecordBehavior {
         if (($this->status = array_search($status, $this->statuses)) === FALSE)
             throw new CException(self::t('yii', 'Status "{status}" is not allowed.',
                 array('{status}' => $status)));
+
         $this->getOwner()->{$this->statusField} = $this->status;
         $this->parseStatus();
         return $this->getOwner();
@@ -137,12 +136,19 @@ class CStatusBehavior extends CActiveRecordBehavior {
 
     /**
      * Transfrom status value to text.
+     *
+     * @return CStatusBehavior
      */
     private function parseStatus() {
-        $this->statusName = isset($this->statuses[$this->getStatus()])
+        $this->statusText = isset($this->statuses[$this->getStatus()])
             ? $this->statuses[$this->getStatus()]
             : 'unknown';
-        $this->statusText = self::t($this->getStatusGroup(), $this->statusName);
+        $this->statusTextTranslated = $this->translateStatus($this->statusText);
+        return $this;
+    }
+
+    private function translateStatus($statusName) {
+        return self::t($this->getStatusGroup(), $statusName);
     }
 
     /**
