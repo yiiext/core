@@ -16,11 +16,36 @@ class CStatusBehaviourTest extends CDbTestCase {
     }
 
     function testGetStatusText(){
+        $this->setUp();
         
+        $post = Post::model()->findByPk(1);
+        $post->setStatus('draft');
+        $this->assertEquals('draft', $post->getStatusText());        
     }
 
-    function testSetStatus(){
+    function testGetTranslatedStatusText(){
+        $this->setUp();
 
+        $post = Post::model()->findByPk(1);
+        $post->setStatus('draft');
+        $this->assertEquals('черновик', $post->getStatusText(true));
+    }
+
+    
+    function testSetStatus(){
+        $post = Post::model()->findByPk(1);
+        $post->setStatus('draft');
+        $this->assertEquals('draft', $post->getStatusText());
+    }
+
+    /**
+     * @expectedException Exception
+     */
+    function testSetStatusException(){
+        $this->setUp();
+
+        $post = Post::model()->findByPk(1);        
+        $post->setStatus('wrong status');
     }
 
     function testSaveStatus(){
@@ -30,7 +55,7 @@ class CStatusBehaviourTest extends CDbTestCase {
         $post->setStatus('draft')->saveStatus();
 
         $post = Post::model()->findByPk(1);
-        $this->assertEquals('draft', $post->getStatus());
+        $this->assertEquals('draft', $post->getStatusText());
     }
 
     function testAfterFind(){
@@ -45,7 +70,7 @@ class CStatusBehaviourTest extends CDbTestCase {
         $post->save();
 
         $post = Post::model()->findByPk(1);
-        $this->assertEquals('draft', $post->getStatus());
+        $this->assertEquals('draft', $post->getStatusText());
     }
 }
 
