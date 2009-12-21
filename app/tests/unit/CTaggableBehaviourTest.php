@@ -2,7 +2,6 @@
 /**
  * СTaggableBehaviourTest.php
  */
-
 class CTaggableBehaviourTest extends CDbTestCase {
     public $fixtures=array(
         'posts'=>'Post',
@@ -101,5 +100,13 @@ class CTaggableBehaviourTest extends CDbTestCase {
 
         $posts = Post::model()->findAllByTags(" php   ,   yii ");        
         $this->assertEquals(1, count($posts));
+    }
+
+    function testGetAllTags(){
+        $tags = Post::model()->getAllTags();
+
+        $this->assertTrue(in_array('php', $tags));
+        $this->assertTrue(in_array('yii', $tags));
+        $this->assertTrue(in_array('mysql', $tags));
     }
 }

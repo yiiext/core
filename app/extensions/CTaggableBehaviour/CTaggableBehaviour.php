@@ -363,25 +363,10 @@ class CTaggableBehaviour extends CActiveRecordBehavior {
     public function getAllTags($criteria = null){
         if(!$this->cache || !($tags = $this->cache->get('Taggable'.$this->owner->tableName().'All'))){
             // getting associated tags
-
-            //todo: implement
             $builder = $this->owner->getCommandBuilder();
-            $criteria = $this->applyCountModelsCriteria($criteria);
-            $tags = $builder->createFindCommand($this->tableName, $criteria)->queryAll();
-
-            // ---
-
-            $conn = $this->owner->dbConnection;
-            $tags = $conn->createCommand(
-                sprintf(
-                    "SELECT t.name as name, count(*) as `count`
-                    FROM `%s` t
-                    JOIN `%s` et ON t.id = et.tagId
-                    GROUP BY t.id",
-                    $this->tagTable,
-                    $this->getTagBindingTableName()
-                )
-            )->queryAll();
+            $criteria = new CDbCriteria();
+            $criteria->select = 'name';
+            $tags = $builder->createFindCommand($this->tagTable, $criteria)->queryColumn();
 
             if($this->cache) $this->cache->set('Taggable'.$this->owner->tableName().'All', $tags);
         }
