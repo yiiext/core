@@ -13,7 +13,7 @@
  */
 class CStatusBehavior extends CActiveRecordBehavior {
     /**
-     * @var string The name of the table where data stored.
+     * @var string The name of the table field where data is stored.
      * Required to set on init behavior. No default.
      */
     public $statusField = NULL;
