@@ -1,7 +1,8 @@
 next
 [*] Some methods are now protected.
 [*] Added $with to findAllByTags().
-[]
+[+] getAllTags().
+[+] Unit tests.
 
 0.6
 [+] Initial public release.

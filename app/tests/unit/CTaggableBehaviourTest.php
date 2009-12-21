@@ -7,6 +7,12 @@ class CTaggableBehaviourTest extends CDbTestCase {
         'posts'=>'Post',
     );
 
+    function setUp(){
+        parent::setUp();
+        Yii::app()->db->createCommand("truncate Tag")->query();
+        Yii::app()->db->createCommand("truncate PostTag")->query();
+    }
+
     function testGetTagsArray(){
         $post = new Post();
         $post->setTags("php, yii");
@@ -67,7 +73,13 @@ class CTaggableBehaviourTest extends CDbTestCase {
         $this->assertTrue(in_array('yii', $tagsArray));
     }
 
+    /**
+     * @depends testSetTags
+     * @depends testAfterSaveAndAfterFind
+     */
     function testGetAllTagsWithModelsCount(){
+        $this->prepareTags();       
+
         $tagsWithModelsCount = Post::model()->getAllTagsWithModelsCount();
 
         $this->assertTrue(in_array(array(
@@ -86,15 +98,30 @@ class CTaggableBehaviourTest extends CDbTestCase {
         ), $tagsWithModelsCount));
     }
 
+    /**
+     * @return testSetTags
+     * @depends testAfterSaveAndAfterFind
+     */
     function testGetCountByTags(){
+        $this->prepareTags();
+
         $count = Post::model()->getCountByTags("yii");
         $this->assertEquals(2, $count);
 
         $count = Post::model()->getCountByTags(" php   ,   yii ");
-        $this->assertEquals(1, $count);        
+        $this->assertEquals(1, $count);
+
+        $count = Post::model()->getCountByTags("don't have such a tag");
+        $this->assertEquals(0, $count);
     }
 
+    /**
+     * @return testSetTags
+     * @depends testAfterSaveAndAfterFind
+     */
     function testFindAllByTags(){
+        $this->prepareTags();
+
         $posts = Post::model()->findAllByTags("yii");
         $this->assertEquals(2, count($posts));
 
@@ -102,11 +129,29 @@ class CTaggableBehaviourTest extends CDbTestCase {
         $this->assertEquals(1, count($posts));
     }
 
+    /**
+     * @return testSetTags
+     * @depends testAfterSaveAndAfterFind
+     */
     function testGetAllTags(){
+        $this->prepareTags();
+
         $tags = Post::model()->getAllTags();
 
         $this->assertTrue(in_array('php', $tags));
         $this->assertTrue(in_array('yii', $tags));
         $this->assertTrue(in_array('mysql', $tags));
+    }
+
+    private function prepareTags(){
+        $this->setUp();
+
+        $post = Post::model()->findByPk(1);
+        $post->setTags("yii, mysql, php");
+        $post->save();
+
+        $post = Post::model()->findByPk(2);
+        $post->setTags("yii");
+        $post->save();        
     }
 }
