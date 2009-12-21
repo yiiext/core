@@ -13,7 +13,11 @@ class Post extends CActiveRecord {
         return array(
             'taggable' => array(
                 'class' => 'ext.CTaggableBehaviour.CTaggableBehaviour',    
-            )
+            ),
+            'statuses' => array(
+                'class' => 'ext.CStatusBehavior.CStatusBehavior',
+                'statusField' => 'status',
+            ),
         );
     }
 }
