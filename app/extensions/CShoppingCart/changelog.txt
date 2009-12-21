@@ -1,0 +1,4 @@
+[*] PHP native interface checks.
+
+0.2
+[+] Initial relase.

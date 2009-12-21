@@ -1,2 +1,7 @@
+next
+[*] Some methods are now protected.
+[*] Added $with to findAllByTags().
+[]
+
 0.6
 [+] Initial public release.

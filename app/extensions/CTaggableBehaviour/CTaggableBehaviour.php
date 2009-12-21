@@ -306,13 +306,21 @@ class CTaggableBehaviour extends CActiveRecordBehavior {
     /**
      * Find models that include all of the tags specified
      *
-     * @param  $tags
+     * @param string $tags                                  
+     * @param CDbCriteria $criteria
+     * @param string|array $with
      * @return array
+     *
+     * @todo: allow to pass criteria as string condition
      */
-    function findAllByTags($tags, CDbCriteria $criteria = null){
+    function findAllByTags($tags, $criteria = null, $with = ''){
         $tags = $this->getTagsArrayFromString($tags);
         if(empty($tags)) return array();
-        return $this->owner->findAll($this->getFindByTagsCriteria($tags, $criteria));
+
+        $find = $this->owner;
+        if (!empty($with)) $find = $find->with($with);
+
+        return $find->findAll($this->getFindByTagsCriteria($tags, $criteria));
     }
 
     /**
@@ -350,5 +358,66 @@ class CTaggableBehaviour extends CActiveRecordBehavior {
         }
 
         return $criteria;
+    }
+
+    public function getAllTags($criteria = null){
+        if(!$this->cache || !($tags = $this->cache->get('Taggable'.$this->owner->tableName().'All'))){
+            // getting associated tags
+
+            //todo: implement
+            $builder = $this->owner->getCommandBuilder();
+            $criteria = $this->applyCountModelsCriteria($criteria);
+            $tags = $builder->createFindCommand($this->tableName, $criteria)->queryAll();
+
+            // ---
+
+            $conn = $this->owner->dbConnection;
+            $tags = $conn->createCommand(
+                sprintf(
+                    "SELECT t.name as name, count(*) as `count`
+                    FROM `%s` t
+                    JOIN `%s` et ON t.id = et.tagId
+                    GROUP BY t.id",
+                    $this->tagTable,
+                    $this->getTagBindingTableName()
+                )
+            )->queryAll();
+
+            if($this->cache) $this->cache->set('Taggable'.$this->owner->tableName().'All', $tags);
+        }
+
+        return $tags;
+    }
+
+    /**
+     * @param  $limit
+     * @return array
+     */
+    public function getAllTagsWithModelsCount($criteria = null){
+        if(!$this->cache || !($tags = $this->cache->get('Taggable'.$this->owner->tableName().'AllWithCount'))){
+            // getting associated tags
+            $conn = $this->owner->dbConnection;
+            $tags = $conn->createCommand(
+                sprintf(
+                    "SELECT t.name as name, count(*) as `count`
+                    FROM `%s` t
+                    JOIN `%s` et ON t.id = et.tagId
+                    GROUP BY t.id",
+                    $this->tagTable,
+                    $this->getTagBindingTableName()
+                )
+            )->queryAll();
+
+            if($this->cache) $this->cache->set('Taggable'.$this->owner->tableName().'AllWithCount', $tags);
+        }
+
+        return $tags;
+    }
+
+    protected function applyCountModelsCriteria(CDbCriteria $criteria = null){
+        if($criteria===null) $criteria = new CDbCriteria();
+
+        $criteria->select = "t.name as name, count(*) as `count`";
+
     }
 }

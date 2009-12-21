@@ -8,6 +8,7 @@
  * @package ShoppingCart
  */
 
+// We can use it for not AR models!
 class CartPositionBehaviour extends CActiveRecordBehavior {
 
     /**

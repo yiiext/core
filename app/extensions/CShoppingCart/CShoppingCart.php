@@ -22,12 +22,9 @@ class ShoppingCart extends CMap {
 
     /**
      * Добавляет в коллекцию объект товара
-     * @param Object $product
+     * @param ICartPosition $product
      */
-    public function put($product, $quantity = 1) {
-        if(!($product instanceof ICartPosition))
-            throw new CException('модель продукта должна реализовать интерфейс ICartPosition');
-              
+    public function put(ICartPosition $product, $quantity = 1) {
         $product->attachBehavior("CartPosition", new CartPositionBehaviour());
         $product->setRefresh($this->refresh);
         $product->setQuantity($quantity);
