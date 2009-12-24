@@ -4,7 +4,7 @@
  *
  * Provides tagging ability for a model.
  *
- * @version 0.6
+ * @version 0.7
  * @author Alexander Makarov
  * @link http://yiiframework.ru/forum/viewtopic.php?f=9&t=389
  */
@@ -27,6 +27,11 @@ class CTaggableBehaviour extends CActiveRecordBehavior {
     public $modelTableFk = null;
 
     /**
+     * Create tags automatically or throw exception if tag does not exist
+     */
+    public $createTagsAutomatically = true;
+
+    /**
      * Caching component Id
      */
     public $cacheID = false;
@@ -37,6 +42,13 @@ class CTaggableBehaviour extends CActiveRecordBehavior {
      * @var CCache
      */
     private $cache = null;
+
+    /**
+     * @return CDbConnection
+     */
+    protected function getConnection(){
+        return $this->owner->dbConnection;
+    }
 
     function init(){
         if($this->cacheID!==false){
@@ -172,75 +184,86 @@ class CTaggableBehaviour extends CActiveRecordBehavior {
 	 * Saves model tags on model save.
      * 
 	 * @param CModelEvent $event
+     * @throw Exception
 	 */
     function afterSave($event){
-        $conn = $this->owner->dbConnection;
-        //$transaction = $conn->beginTransaction();
+        $conn = $this->getConnection();
 
-        //try {
-            // delete all present tag bindings
-            $conn->createCommand(
-                sprintf(
-                    "DELETE
-                     FROM `%s`
-                     WHERE %s = %d",
-                     $this->getTagBindingTableName(),
-                     $this->getModelTableFkName(),
-                     $this->owner->primaryKey
-                )
-            )->execute();
+        if(!$this->createTagsAutomatically){
+            // checking if all of the tags are existing ones
+            foreach($this->tags as $tag){
+                $tagId = $conn->createCommand(
+                    sprintf(
+                        "SELECT id
+                         FROM `%s`
+                         WHERE name = %s",
+                         $this->tagTable,
+                         $conn->quoteValue($tag)
+                    )
+                )->queryScalar();
 
-            // add new tag bindings and tags if there are any
-            if(!empty($this->tags)){
-                foreach($this->tags as $tag){
-                    // try to get existing tag
-                    $tagId = $conn->createCommand(
-                        sprintf(
-                            "SELECT id
-                             FROM `%s`
-                             WHERE name = %s",
-                             $this->tagTable,
-                             $conn->quoteValue($tag)
-                        )
-                    )->queryScalar();
+                if(!$tagId){
+                    throw new Exception("$tag does not exist. Please add it before assigning or enable createTagsAutomatically.");
+                }
+            }
+        }
 
-                    // if there is no existing tag, create one
-                    if(!$tagId){
-                        $conn->createCommand(
-                            sprintf(
-                                "INSERT
-                                 INTO `%s`(name)
-                                 VALUES (%s)",
-                                 $this->tagTable,
-                                 $conn->quoteValue($tag)
-                            )
-                        )->execute();
+        // delete all present tag bindings
+        $conn->createCommand(
+            sprintf(
+                "DELETE
+                 FROM `%s`
+                 WHERE %s = %d",
+                 $this->getTagBindingTableName(),
+                 $this->getModelTableFkName(),
+                 $this->owner->primaryKey
+            )
+        )->execute();
 
-                        $tagId = $conn->getLastInsertID();
-                    }
+        // add new tag bindings and tags if there are any
+        if(!empty($this->tags)){
+            foreach($this->tags as $tag){
+                // try to get existing tag
+                $tagId = $conn->createCommand(
+                    sprintf(
+                        "SELECT id
+                         FROM `%s`
+                         WHERE name = %s",
+                         $this->tagTable,
+                         $conn->quoteValue($tag)
+                    )
+                )->queryScalar();
 
-                    // bind tag to it's model
+                // if there is no existing tag, create one
+                if(!$tagId){
                     $conn->createCommand(
                         sprintf(
                             "INSERT
-                             INTO `%s`(%s, tagId)
-                             VALUES (%d, %d)",
-                             $this->getTagBindingTableName(),
-                             $this->getModelTableFkName(),
-                             $this->owner->primaryKey,
-                             $tagId
+                             INTO `%s`(name)
+                             VALUES (%s)",
+                             $this->tagTable,
+                             $conn->quoteValue($tag)
                         )
                     )->execute();
+
+                    $tagId = $conn->getLastInsertID();
                 }
+
+                // bind tag to it's model
+                $conn->createCommand(
+                    sprintf(
+                        "INSERT
+                         INTO `%s`(%s, tagId)
+                         VALUES (%d, %d)",
+                         $this->getTagBindingTableName(),
+                         $this->getModelTableFkName(),
+                         $this->owner->primaryKey,
+                         $tagId
+                    )
+                )->execute();
             }
-        //}
-        /*catch(Exception $e){
-            $transaction->rollBack();
-            Yii::log("Error saving tags, transaction aborted. Exception: ".$e->getMessage(), "error", "ext.Taggable");
         }
-
-        $transaction->commit();*/
-
+        
         if($this->cache) $this->cache->set($this->getCacheKey(), $this->tags);
     }
 
@@ -251,6 +274,7 @@ class CTaggableBehaviour extends CActiveRecordBehavior {
      */
     function afterDelete($event){
         // delete all present tag bindings
+        $conn = $this->getConnection();
         $conn->createCommand(
             sprintf(
                 "DELETE
@@ -273,7 +297,7 @@ class CTaggableBehaviour extends CActiveRecordBehavior {
     function afterFind($event){
         if(!$this->cache || !($tags = $this->cache->get($this->getCacheKey()))){
             // getting associated tags
-            $conn = $this->owner->dbConnection;
+            $conn = $this->getConnection();
             $tags = $conn->createCommand(
                 sprintf(
                     "SELECT t.name as name
@@ -348,7 +372,7 @@ class CTaggableBehaviour extends CActiveRecordBehavior {
         $pk = $this->owner->tableSchema->primaryKey;
 
         if(!empty($tags)){
-            $conn = $this->owner->dbConnection;
+            $conn = $this->getConnection();
             for($i=0, $count=count($tags); $i<$count; $i++){
                 $tag = $conn->quoteValue($tags[$i]);
                 $criteria->join.=
@@ -381,7 +405,7 @@ class CTaggableBehaviour extends CActiveRecordBehavior {
     public function getAllTagsWithModelsCount($criteria = null){
         if(!$this->cache || !($tags = $this->cache->get('Taggable'.$this->owner->tableName().'AllWithCount'))){
             // getting associated tags
-            $conn = $this->owner->dbConnection;
+            $conn = $this->getConnection();
             $tags = $conn->createCommand(
                 sprintf(
                     "SELECT t.name as name, count(*) as `count`

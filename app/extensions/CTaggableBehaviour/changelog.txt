@@ -3,6 +3,7 @@ next
 [*] Added $with to findAllByTags().
 [+] getAllTags().
 [+] Unit tests.
+[+] createTagsAutomatically option allows to throw exception when adding nonexisting tag. 
 
 0.6
 [+] Initial public release.

@@ -25,6 +25,10 @@ function behaviors() {
             // Caching component ID.
             // false by default.
             'CacheID' => 'cache',
+            
+            // Save nonexisting tags.
+            // When false, throws exception when saving nonexisting tag.
+            'createTagsAutomatically' => true,
         )
     );
 }

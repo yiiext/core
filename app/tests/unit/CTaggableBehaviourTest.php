@@ -154,4 +154,13 @@ class CTaggableBehaviourTest extends CDbTestCase {
         $post->setTags("yii");
         $post->save();        
     }
+
+    /**
+     * @todo: verbose checks
+     */
+    function testAfterDelete(){
+        $this->prepareTags();
+        $post = Post::model()->findByPk(1);
+        $post->delete();       
+    }
 }
