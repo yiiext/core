@@ -1,4 +1,6 @@
 [*] PHP native interface checks.
+[*] Renamed cart class to CShoppingCart.
+[+] Unit tests.
 
 0.2
 [+] Initial relase.
