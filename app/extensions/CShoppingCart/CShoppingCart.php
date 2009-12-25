@@ -27,9 +27,10 @@ class CShoppingCart extends CMap {
     public function put(ICartPosition $product, $quantity = 1) {
         $product->attachBehavior("CartPosition", new CartPositionBehaviour());
         $product->setRefresh($this->refresh);
+
         $product->setQuantity($quantity);
         $key = $product->getId();
-
+        
         if($product->getQuantity() < 1)
             $this->remove($key);
         else
@@ -83,6 +84,4 @@ class CShoppingCart extends CMap {
     public function saveAsOrder() {
 
     }
-
-
 }

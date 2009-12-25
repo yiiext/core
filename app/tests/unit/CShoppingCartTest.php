@@ -15,6 +15,11 @@ class CShoppingCartTest extends CDbTestCase {
         $this->assertEquals(1, $cart->getTotal());
     }
 
+    function testGet(){
+        $cart = new CShoppingCart();
+        $book = $cart["Book1"];
+    }
+
     /**
      * Remove item by object instead of id
      * @todo: is this what should be done?
@@ -26,10 +31,6 @@ class CShoppingCartTest extends CDbTestCase {
 
         $book = Book::model()->findByPk(1);
         $cart->put($book, 0);        
-    }
-    
-    function testGet(){
-        $cart = new CShoppingCart();
     }
 
     function testRemove(){
@@ -69,5 +70,47 @@ class CShoppingCartTest extends CDbTestCase {
         $cart->put($book, 2);
         
         $this->assertEquals(199.9, $cart->getCost());
+    }
+
+    function testGetAll(){
+        $this->setUp();
+        $cart = new CShoppingCart();
+
+        $book = Book::model()->findByPk(1);
+        $cart->put($book);
+
+        $book = Book::model()->findByPk(2);
+        $cart->put($book, 2);        
+        
+        foreach($cart as $book){
+            $this->assertTrue(in_array($book->id, array(1, 2)));
+        }
+    }
+
+    function testArrayPut(){
+        $this->setUp();
+        $cart = new CShoppingCart();
+
+        $cart[] = Book::model()->findByPk(1);
+    }
+
+    /**
+     * @expectedException PHPUnit_Framework_Error
+     */
+    function testWrongTypePut(){
+        $this->setUp();
+        $cart = new CShoppingCart();
+
+        $cart->put(Post::model()->findByPk(1));
+    }
+
+    /**
+     * @expectedException PHPUnit_Framework_Error
+     */
+    function testWrongTypeArrayPut(){
+        $this->setUp();
+        $cart = new CShoppingCart();
+
+        $cart[] = Post::model()->findByPk(1);
     }
 }

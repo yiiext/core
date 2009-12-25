@@ -15,7 +15,7 @@ class CartPositionBehaviour extends CActiveRecordBehavior {
      * кол-во единиц позиции
      * @var int
      */
-    private $quantity;
+    private $quantity = 1;
     /**
      * Обновлять модель при востановлении из сессии?
      * @var boolean

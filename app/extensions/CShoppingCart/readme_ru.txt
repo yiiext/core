@@ -12,8 +12,8 @@
 ),
 ~~~
 
-Использование
--------------
+Подготавливаем модель
+---------------------
 Модели, которым необходимо дать возможность добавления в корзину,
 должны реализовать интерфейс ICartPosition:
 
@@ -31,5 +31,19 @@ class Book extends CActiveRecord implements ICartPosition {
     function getPrice(){
         return $this->price;
     }
+}
+~~~
+
+Так как CShoppingCart реализует интерфейс CMap, с ним можно работать как с массивом:
+
+~~~
+[php]
+$cart = new CShoppingCart();
+
+$cart[] = Book::model()->findByPk(1);
+$cart[] = Book::model()->findByPk(2);
+
+foreach($cart as $book){
+  // …
 }
 ~~~

@@ -1,6 +1,7 @@
 [*] PHP native interface checks.
 [*] Renamed cart class to CShoppingCart.
 [+] Unit tests.
+[+] Single model can be put in array style.
 
 0.2
 [+] Initial relase.
