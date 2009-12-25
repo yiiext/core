@@ -2,7 +2,11 @@
 /**
  * CStatusBehaviourTest
  */
-class CStatusBehaviourTest extends CDbTestCase {   
+class CStatusBehaviourTest extends CDbTestCase {
+    public $fixtures=array(
+        'posts'=>'Post',
+    );
+
     function testSetStatuses(){
         
     }

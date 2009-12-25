@@ -2,6 +2,7 @@
 class CShoppingCartTest extends CDbTestCase {
     public $fixtures=array(
         'books'=>'Book',
+        'posts'=>'Post',
     );
 
     function testPut(){
