@@ -8,7 +8,7 @@
  */
 
 
-class ShoppingCart extends CMap {
+class CShoppingCart extends CMap {
 
     /**
      * Обновлять модели при востановлении из сессии?
