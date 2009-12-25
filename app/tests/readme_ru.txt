@@ -17,6 +17,10 @@
    pear channel-discover pear.phpunit.de
    pear install phpunit/PHPUnit
 
+Подготовка БД
+-------------
+Для подготовки БД необходимо выполнить SQL из app/tests/sql.
+
 Как запустить тесты
 -------------------
 В консоли запускаем app/tests/rununit.bat или phpunit --verbose unit.

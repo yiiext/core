@@ -1,0 +1,6 @@
+CREATE TABLE `Fruit` (
+  `id` INT(10) UNSIGNED NOT NULL AUTO_INCREMENT,
+  `title` VARCHAR(255) NOT NULL,
+  `deleted` BOOL NOT NULL DEFAULT 0,
+  PRIMARY KEY  (`id`)
+);              

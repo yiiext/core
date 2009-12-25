@@ -19,12 +19,12 @@ class CTrashBinBehavior extends CActiveRecordBehavior {
      * @var mixed The value to set for removed model.
      * Default is 1.
      */
-    public $removedFlag = '1';
+    public $removedFlag = 1;
     /**
      * @var mixed The value to set for restored model.
      * Default is 0.
      */
-    public $restoredFlag = '0';
+    public $restoredFlag = 0;
 
     public function attach($owner) {
         // Check required var trashFlagField
@@ -46,7 +46,7 @@ class CTrashBinBehavior extends CActiveRecordBehavior {
     }
     
     /**
-     * Restore model from trach bin.
+     * Restore model from trash bin.
      *
      * @return CActiveRecord
      */
