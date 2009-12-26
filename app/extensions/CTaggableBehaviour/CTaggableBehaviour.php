@@ -36,17 +36,12 @@ class CTaggableBehaviour extends CActiveRecordBehavior {
      */
     public $cacheID = false;
 
-    private $tags = array();
+    private $tags = null;
 
     /**
      * @var CCache
      */
     private $cache = null;
-
-    /**
-     * @var array
-     */
-    private $taggedWith = array();
 
     /**
      * @return CDbConnection
@@ -62,6 +57,7 @@ class CTaggableBehaviour extends CActiveRecordBehavior {
     }
 
     function __toString(){
+        $this->loadTags();
         return implode(', ', $this->tags);
     }
 
@@ -113,6 +109,8 @@ class CTaggableBehaviour extends CActiveRecordBehavior {
      * @return void
      */
     function addTags($tags){
+        $this->loadTags();
+
         $tags = $this->toTagsArray($tags);
         $this->tags = array_unique(array_merge($this->tags, $tags));
 
@@ -136,6 +134,8 @@ class CTaggableBehaviour extends CActiveRecordBehavior {
      * @return void
      */
     function removeTags($tags){
+        $this->loadTags();
+
         $tags = $this->toTagsArray($tags);
         $this->tags = array_diff($this->tags, $tags);
 
@@ -169,6 +169,7 @@ class CTaggableBehaviour extends CActiveRecordBehavior {
      * @return array
      */
     function getTags(){
+        $this->loadTags();
         return $this->tags;
     }
 
@@ -220,23 +221,25 @@ class CTaggableBehaviour extends CActiveRecordBehavior {
                 )->queryScalar();
 
                 if(!$tagId){
-                    throw new Exception("$tag does not exist. Please add it before assigning or enable createTagsAutomatically.");
+                    throw new Exception("Tag \"$tag\" does not exist. Please add it before assigning or enable createTagsAutomatically.");
                 }
             }
         }
 
-        // delete all present tag bindings
-        $conn->createCommand(
-            sprintf(
-                "DELETE
-                 FROM `%s`
-                 WHERE %s = %d",
-                 $this->getTagBindingTableName(),
-                 $this->getModelTableFkName(),
-                 $this->owner->primaryKey
-            )
-        )->execute();
-
+        if(!$this->owner->getIsNewRecord()){
+            // delete all present tag bindings if record is existing one
+            $conn->createCommand(
+                sprintf(
+                    "DELETE
+                     FROM `%s`
+                     WHERE %s = %d",
+                     $this->getTagBindingTableName(),
+                     $this->getModelTableFkName(),
+                     $this->owner->primaryKey
+                )
+            )->execute();
+        }
+        
         // add new tag bindings and tags if there are any
         if(!empty($this->tags)){
             foreach($this->tags as $tag){
@@ -311,11 +314,19 @@ class CTaggableBehaviour extends CActiveRecordBehavior {
     }
 
     /**
-     * Fills model tags after finding model
-     *
-     * @param CModelEvent $event
+     * Load tags into model
+     * 
+     * @access protected
+     * @return void
      */
-    function afterFind($event){
+    protected function loadTags(){
+        if($this->tags!=null) return;
+
+        if($this->owner->getIsNewRecord()){
+            $this->tags = array();
+            return;
+        }
+
         if(!$this->cache || !($tags = $this->cache->get($this->getCacheKey()))){
             // getting associated tags
             $conn = $this->getConnection();
@@ -335,9 +346,7 @@ class CTaggableBehaviour extends CActiveRecordBehavior {
             if($this->cache) $this->cache->set($this->getCacheKey(), $tags);
         }
 
-        $this->tags = $tags;
-
-        parent::afterFind($event);
+        $this->tags = $tags;        
     }
 
     /**
@@ -351,14 +360,14 @@ class CTaggableBehaviour extends CActiveRecordBehavior {
     }
 
     /**
-     * Get criteria to find by tags
+     * Get criteria to limit query by tags
      *
      * @access private
      * @param $tags
      * @return CDbCriteria
      */
-    protected function getFindByTagsCriteria($tags, CDbCriteria $criteria = null){
-        if($criteria===null) $criteria = new CDbCriteria();
+    protected function getFindByTagsCriteria($tags){
+        $criteria = new CDbCriteria();
 
         $pk = $this->owner->tableSchema->primaryKey;
 
@@ -375,6 +384,12 @@ class CTaggableBehaviour extends CActiveRecordBehavior {
         return $criteria;
     }
 
+    /**
+     * Get all possible tags for current model class
+     *
+     * @param  $criteria
+     * @return array
+     */
     public function getAllTags($criteria = null){
         if(!$this->cache || !($tags = $this->cache->get('Taggable'.$this->owner->tableName().'All'))){
             // getting associated tags
@@ -421,6 +436,8 @@ class CTaggableBehaviour extends CActiveRecordBehavior {
      * @return boolean
      */    
     function hasTags($tags){
+        $this->loadTags();
+
         $tags = $this->toTagsArray($tags);
         foreach($tags as $tag){
             if(!in_array($tag, $this->tags)) return false;
@@ -438,19 +455,30 @@ class CTaggableBehaviour extends CActiveRecordBehavior {
         return $this->hasTags($tags);
     }
 
+    /**
+     * Limit current AR query to have all tags specified
+     *
+     * @param string|array $tags
+     * @return CActiveRecord
+     */
     function taggedWith($tags){
-        $this->taggedWith = $this->toTagsArray($tags);
+        $tags = $this->toTagsArray($tags);
+        
+        if(!empty($tags)){
+            $criteria = $this->getFindByTagsCriteria($tags);
+            $this->owner->getDbCriteria()->mergeWith($criteria);
+        }
 
         return $this->owner;
     }
 
-    function beforeFind(CEvent $event){
-        if(!empty($this->taggedWith)){
-            $criteria = $this->getFindByTagsCriteria($this->taggedWith);
-            $this->owner->getDbCriteria()->mergeWith($criteria);
-            $this->taggedWith = array();
-        }
-        
-        parent::beforeFind($event);
+    /**
+     * taggedWith() alias
+     *
+     * @param string|array $tags
+     * @return CActiveRecord
+     */
+    function withTags($tags){
+        return $this->taggedWith($tags);
     }
 }

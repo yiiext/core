@@ -12,7 +12,7 @@ In your ActiveRecord model define `behaviors()` method:
 [php]
 function behaviors() {
     return array(
-        'taggable' => array(
+        'tags' => array(
             'class' => 'ext.СTaggableBehaviour.СTaggableBehaviour',
             // Table where tags are stored
             'tagTable' => 'Tag',
@@ -42,28 +42,25 @@ Replace model tags with new tags set.
 ~~~
 [php]
 $post = new Post();
-$post->setTags('tag1, tag2, tag3');
-$post->save();
+$post->setTags('tag1, tag2, tag3')->save();
 ~~~
 
 
-### addTags($tags)
+### addTags($tags) or addTag($tags)
 Add one or more tags to existing set.
 
 ~~~
 [php]
-$post->addTags('new1, new2');
-$post->save();
+$post->addTags('new1, new2')->save();
 ~~~
 
 
-### removeTags($tags)
+### removeTags($tags) or removeTag($tags)
 Remove tags specified (if they do exist).
 
 ~~~
 [php]
-$post->removeTags('new1');
-$post->save();
+$post->removeTags('new1')->save();
 ~~~
 
 ### removeAllTags()
@@ -71,8 +68,7 @@ Remove all tags from the model.
 
 ~~~
 [php]
-$post->removeAllTags();
-$post->save();
+$post->removeAllTags()->save();
 ~~~
 
 ### getTags()
@@ -86,18 +82,52 @@ foreach($tags as $tag){
 }
 ~~~
 
-### findAllByTags($tags, CDbCriteria $criteria = null)
-Get all models having all tags specified and (optionally) criteria specified.
+### hasTag($tags) или hasTags($tags)
+Returns true if all tags specified are assigned to current model and false otherwise.
 
 ~~~
 [php]
-$posts = Post::model()->findAllByTags("mysql, yii");
+$post = Post::model()->findByPk(1);
+if($post->hasTags("yii, php")){
+    //…
+}
 ~~~
 
-### getCountByTags($tags, CDbCriteria $criteria = null)
-Get count of models having all tags specified and (optionally) criteria specified.
+### getAllTags()
+Get all possible tags for this model class.
 
 ~~~
 [php]
-$postsCount = Post::model()->getCountByTags("mysql, yii");
+$tags = Post::model()->getAllTags();
+foreach($tags as $tag){
+  echo $tag;
+}
+~~~
+
+### getAllTagsWithModelsCount()
+Get all possible tags with models count for each for this model class.
+~~~
+[php]
+$tags = Post::model()->getAllTagsWithModelsCount();
+foreach($tags as $tag){
+  echo $tag['name']." (".$tag['count'].")";
+}
+~~~
+
+### taggedWith($tags) или withTags($tags)
+Limits AR query to records with all tags specified.
+
+~~~
+[php]
+$posts = Post::model()->taggedWith('php, yii')->findAll();
+$postCount = Post::model()->taggedWith('php, yii')->count();
+~~~
+
+Bonus features
+--------------
+You can print comma separated tags following way:
+~~~
+[php]
+$post->addTags('new1, new2')->save();
+echo $post->tags;
 ~~~

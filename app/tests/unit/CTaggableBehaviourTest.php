@@ -13,75 +13,82 @@ class CTaggableBehaviourTest extends CDbTestCase {
         Yii::app()->db->createCommand("truncate PostTag")->query();
     }
 
+    private function assertTagsAreEqual($tags1, $tags2){
+        foreach($tags1 as $tag){
+            $this->assertContains($tag, $tags2);
+        }
+    }
+
+    private function prepareTags(){
+        $this->setUp();
+
+        $post = Post::model()->findByPk(1);
+        $post->setTags("yii, mysql, php")->save();
+
+        $post = Post::model()->findByPk(2);
+        $post->setTags("yii, php")->save();
+    }
+
     function testGetTags(){
-        $post = new Post();
-        $post->setTags("php, yii");
-        $this->assertEquals(array('php', 'yii'), $post->getTags());
+        $this->prepareTags();
+
+        $post = Post::model()->findByPk(1);
+
+        $this->assertTagsAreEqual($post->getTags(), array('yii', 'php', 'mysql'));
     }
 
-    /**
-     * @depends testGetTags
-     */
     function testSetTags(){
-        $post = new Post();
-        $post->setTags("php,yii , cool tag  ");
-        $this->assertEquals(array("php", "yii", "cool tag"), $post->getTags());
+        $this->setUp();
 
+        $post = Post::model()->findByPk(1);
+        $post->setTags("php,yii , cool tag  ")->save();
+        
+        $post = Post::model()->findByPk(1);
+        $this->assertTagsAreEqual(array("php", "yii", "cool tag"), $post->getTags());
+
+        $post = Post::model()->findByPk(1);
         $post->setTags("php");
-        $this->assertEquals(array("php"), $post->getTags());
 
+        $post = Post::model()->findByPk(1);
+        $this->assertTagsAreEqual(array("php"), $post->getTags());
+
+        $post = Post::model()->findByPk(1);
         $post->setTags(array("php", "yii"));
-        $this->assertEquals(array("php", "yii"), $post->getTags());
+        
+        $post = Post::model()->findByPk(1);
+        $this->assertTagsAreEqual(array("php", "yii"), $post->getTags());
     }
 
-    /**
-     * @depends testGetTags
-     */
     function testAddTags(){
-        $post = new Post();
-        $post->setTags("php");
-        $post->addTags("  yii, cool tag");
-        $this->assertEquals(array("php", "yii", "cool tag"), $post->getTags());
+        $this->prepareTags();
+
+        $post = Post::model()->findByPk(1);        
+        $post->addTags("  yii, cool tag")->save();
+
+        $post = Post::model()->findByPk(1);
+        $this->assertTagsAreEqual(array("php", "yii", "cool tag"), $post->getTags());
     }
 
-    /**
-     * @depends testGetTags
-     */
     function testRemoveTags(){
-        $post = new Post();
-        $post->setTags("php, yii");
-        $post->removeTags("yii");
-        $this->assertEquals(array("php"), $post->getTags());
+        $this->prepareTags();
+        
+        $post = Post::model()->findByPk(1);
+        $post->removeTags("yii")->save();
+
+        $post = Post::model()->findByPk(1);
+        $this->assertTagsAreEqual(array("php"), $post->getTags());
     }
 
     function testRemoveAllTags(){
-        $post = new Post();
-        $post->setTags("php, yii");
-        $post->removeAllTags();
+        $this->prepareTags();
 
-        $this->assertEquals(array(), $post->getTags());        
+        $post = Post::model()->findByPk(1);
+        $post->removeAllTags()->save();
+
+        $post = Post::model()->findByPk(1);
+        $this->assertEquals(array(), $post->getTags());
     }
 
-    /**
-     * @depends testGetTags
-     * @depends testSetTags
-     */
-    function testAfterSaveAndAfterFind(){
-        $post = new Post();
-        $post->setTags("php, yii");
-        $post->save();
-        $id = $post->id;
-
-        $post = Post::model()->findByPk($id);
-        $tagsArray = $post->getTags();
-        $this->assertTrue(in_array('php', $tagsArray));
-        $this->assertTrue(in_array('yii', $tagsArray));
-    }
-
-    /**
-     * @depends testSetTags
-     * @depends testAfterSaveAndAfterFind
-     */
     function testGetAllTagsWithModelsCount(){
         $this->prepareTags();       
 
@@ -103,54 +110,34 @@ class CTaggableBehaviourTest extends CDbTestCase {
         ), $tagsWithModelsCount));
     }    
 
-    /**
-     * @return testSetTags
-     * @depends testAfterSaveAndAfterFind
-     */
     function testGetAllTags(){
         $this->prepareTags();
 
         $tags = Post::model()->getAllTags();
-
-        $this->assertTrue(in_array('php', $tags));
-        $this->assertTrue(in_array('yii', $tags));
-        $this->assertTrue(in_array('mysql', $tags));
+        $this->assertTagsAreEqual($tags, array('php', 'yii', 'mysql'));
     }
 
-    private function prepareTags(){
-        $this->setUp();
-
-        $post = Post::model()->findByPk(1);
-        $post->setTags("yii, mysql, php")->save();
-
-        $post = Post::model()->findByPk(2);
-        $post->setTags("yii, php")->save();
-    }
-
-    /**
-     * @todo: verbose checks
-     */
     function testAfterDelete(){
         $this->prepareTags();
         $post = Post::model()->findByPk(1);
-        $post->delete();       
+        $post->delete();
+
+        $count = Yii::app()->db->createCommand("select count(*) from PostTag where postId = 1")->queryScalar();
+        $this->assertEquals(0, $count);
     }
 
     function testToString(){
-        $this->setUp();
+        $this->prepareTags();
 
         $post = Post::model()->findByPk(1);
-        $post->setTags("yii, mysql, php");
         $this->assertEquals("yii, mysql, php", (string)$post->tags);
     }
 
     function testHasTag(){
-        $this->setUp();
+        $this->prepareTags();
 
         $post = Post::model()->findByPk(1);
-        $post->setTags("yii, mysql, php");
-
-
+        
         $this->assertTrue($post->hasTag("yii"));
         $this->assertFalse($post->hasTags("yii, cakephp"));
     }
@@ -164,10 +151,25 @@ class CTaggableBehaviourTest extends CDbTestCase {
         $posts = Post::model()->taggedWith('php, yii')->findAll();
         $this->assertEquals(2, count($posts));
 
-        /*$posts = Post::model()->taggedWith(array('php', 'yii'))->findAll();
+        $posts = Post::model()->taggedWith(array('php', 'yii'))->findAll();
         $this->assertEquals(2, count($posts));
+    }    
 
-        $postCount = Post::model()->taggedWith('mysql')->count();
-        $this->assertEquals(1, $postCount);*/
+    function testTaggedWithCount(){
+        $this->prepareTags();
+
+        $postCount = Post::model()->taggedWith('php, yii')->count();
+        $this->assertEquals(2, $postCount);
+    }
+
+    /**
+     * @expectedException Exception
+     */
+    function testCreateTagsAutomaticallyOff(){        
+        $this->prepareTags();
+
+        $post = Post::model()->findByPk(1);
+        $post->createTagsAutomatically = false;
+        $post->addTags("non existing tag")->save();
     }
 }

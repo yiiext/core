@@ -1,8 +1,10 @@
 next
 Warning: this version is not backwards compatible to 0.6.
 
+[*] Do not try to delete tag bindings when inserting new record.
+[+] Added taggedWith() alias withTags().
 [-] Removed getCountByTags(), findAllByTags(). Use taggedWith(). 
-[+] Method chaining.
+[+] Method chaining: $post->addTags("yii, php")->save();
 [+] New syntax: $posts = Post::model()->taggedWith(array('php', 'yii'))->findAll(); 
 [*] Added parent:: calls in event handlers.
 [+] Added hasTags() and it's alias hasTag() to check if all tags specified are attached to current model.

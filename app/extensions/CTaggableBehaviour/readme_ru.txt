@@ -12,7 +12,7 @@ TaggableBehaviour
 [php]
 function behaviors() {
     return array(
-        'taggable' => array(
+        'tags' => array(
             'class' => 'ext.СTaggableBehaviour.СTaggableBehaviour',
             // Имя таблицы для хранения тегов 
             'tagTable' => 'Tag',
@@ -42,28 +42,25 @@ function behaviors() {
 ~~~
 [php]
 $post = new Post();
-$post->setTags('tag1, tag2, tag3');
-$post->save();
+$post->setTags('tag1, tag2, tag3')->save();
 ~~~
 
 
-### addTags($tags)
+### addTags($tags) или addTag($tags)
 Добавляет один или несколько тегов к уже существующим.
 
 ~~~
 [php]
-$post->addTags('new1, new2');
-$post->save();
+$post->addTags('new1, new2')->save();
 ~~~
 
 
-### removeTags($tags)
+### removeTags($tags) или removeTag($tags)
 Удаляет указанные теги (если есть).
 
 ~~~
 [php]
-$post->removeTags('new1');
-$post->save();
+$post->removeTags('new1')->save();
 ~~~
 
 ### removeAllTags()
@@ -71,8 +68,7 @@ $post->save();
 
 ~~~
 [php]
-$post->removeAllTags();
-$post->save();
+$post->removeAllTags()->save();
 ~~~
 
 ### getTags()
@@ -86,18 +82,54 @@ foreach($tags as $tag){
 }
 ~~~
 
-### findAllByTags($tags, CDbCriteria $criteria = null)
-Отдаёт все модели с такими тегами и (опционально) критерием.
+### hasTag($tags) или hasTags($tags)
+Назаначены ли модели указанные теги.
 
 ~~~
 [php]
-$posts = Post::model()->findAllByTags("mysql, yii");
+$post = Post::model()->findByPk(1);
+if($post->hasTags("yii, php")){
+    //…
+}
 ~~~
 
-### getCountByTags($tags, CDbCriteria $criteria = null)
-Отдаёт количество моделей с такими тегами и (опционально) критерием.
+### getAllTags()
+Отдаёт все имеющиеся для этого класса моделей теги.
 
 ~~~
 [php]
-$postsCount = Post::model()->getCountByTags("mysql, yii");
+$tags = Post::model()->getAllTags();
+foreach($tags as $tag){
+  echo $tag;
+}
+~~~
+
+### getAllTagsWithModelsCount()
+Отдаёт все имеющиеся для этого класса модели теги с количеством моделей для каждого.
+~~~
+[php]
+$tags = Post::model()->getAllTagsWithModelsCount();
+foreach($tags as $tag){
+  echo $tag['name']." (".$tag['count'].")";
+}
+~~~
+
+### taggedWith($tags) или withTags($tags)
+Позволяет ограничить запрос AR записями с указанными тегами.
+
+~~~
+[php]
+$posts = Post::model()->taggedWith('php, yii')->findAll();
+$postCount = Post::model()->taggedWith('php, yii')->count();
+~~~
+
+
+
+Приятные бонусы
+---------------
+Теги, разделённые запятой можно распечатать следующим образом:
+~~~
+[php]
+$post->addTags('new1, new2')->save();
+echo $post->tags;
 ~~~
