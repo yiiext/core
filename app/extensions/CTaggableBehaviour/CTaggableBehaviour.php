@@ -351,38 +351,6 @@ class CTaggableBehaviour extends CActiveRecordBehavior {
     }
 
     /**
-     * Find models that include all of the tags specified
-     *
-     * @param string $tags                                  
-     * @param CDbCriteria $criteria
-     * @param string|array $with
-     * @return array
-     *
-     * @todo: allow to pass criteria as string condition
-     */
-    function findAllByTags($tags, $criteria = null, $with = ''){
-        $tags = $this->toTagsArray($tags);
-        if(empty($tags)) return array();
-
-        $find = $this->owner;
-        if (!empty($with)) $find = $find->with($with);
-
-        return $find->findAll($this->getFindByTagsCriteria($tags, $criteria));
-    }
-
-    /**
-     * Get count of models that include all of the tags specified
-     *
-     * @param  $tags
-     * @param CDbCriteria $criteria
-     * @return int
-     */
-    function getCountByTags($tags, CDbCriteria $criteria = null){
-        $tags = $this->toTagsArray($tags);
-        return $this->owner->count($this->getFindByTagsCriteria($tags, $criteria));
-    }
-
-    /**
      * Get criteria to find by tags
      *
      * @access private
@@ -444,13 +412,6 @@ class CTaggableBehaviour extends CActiveRecordBehavior {
         }
 
         return $tags;
-    }
-
-    protected function applyCountModelsCriteria(CDbCriteria $criteria = null){
-        if($criteria===null) $criteria = new CDbCriteria();
-
-        $criteria->select = "t.name as name, count(*) as `count`";
-
     }
 
     /**

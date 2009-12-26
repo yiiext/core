@@ -1,6 +1,7 @@
 next
 Warning: this version is not backwards compatible to 0.6.
 
+[-] Removed getCountByTags(), findAllByTags(). Use taggedWith(). 
 [+] Method chaining.
 [+] New syntax: $posts = Post::model()->taggedWith(array('php', 'yii'))->findAll(); 
 [*] Added parent:: calls in event handlers.
@@ -8,7 +9,7 @@ Warning: this version is not backwards compatible to 0.6.
 [+] New syntax: echo $post->tags (or by what name behaviour is attached) will print comma separated tags.
 [*] getTags now returns array since implode is really easy to do yourself.
 [-] Removed getTagsArray().
-[*] addTags(), removeTags(), setTags(), findAllByTags(), getCountByTags() are now accept both string and array. 
+[*] addTags(), removeTags(), setTags() are now accept both string and array.
 [+] Added addTag() as alias of addTags(), removeTag() as alias of removeTags().
 [*] Some methods are now protected.
 [*] Added $with to findAllByTags().

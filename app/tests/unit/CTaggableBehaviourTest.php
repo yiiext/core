@@ -101,47 +101,7 @@ class CTaggableBehaviourTest extends CDbTestCase {
             'name' => 'php',
             'count' => 2
         ), $tagsWithModelsCount));
-    }
-
-    /**
-     * @return testSetTags
-     * @depends testAfterSaveAndAfterFind
-     */
-    function testGetCountByTags(){
-        $this->prepareTags();
-
-        $count = Post::model()->getCountByTags("yii");
-        $this->assertEquals(2, $count);
-
-        $count = Post::model()->getCountByTags(" php   ,   yii ");
-        $this->assertEquals(2, $count);
-
-        $count = Post::model()->getCountByTags("mysql");
-        $this->assertEquals(1, $count);
-
-        $count = Post::model()->getCountByTags("don't have such a tag");
-        $this->assertEquals(0, $count);
-    }
-
-    /**
-     * @return testSetTags
-     * @depends testAfterSaveAndAfterFind
-     */
-    function testFindAllByTags(){
-        $this->prepareTags();
-
-        $posts = Post::model()->findAllByTags("yii");
-        $this->assertEquals(2, count($posts));
-
-        $posts = Post::model()->findAllByTags(" php   ,   yii ");        
-        $this->assertEquals(2, count($posts));
-
-        $posts = Post::model()->findAllByTags("mysql");
-        $this->assertEquals(1, count($posts));
-
-        $posts = Post::model()->findAllByTags("non existing tag");
-        $this->assertTrue(empty($posts));
-    }
+    }    
 
     /**
      * @return testSetTags
