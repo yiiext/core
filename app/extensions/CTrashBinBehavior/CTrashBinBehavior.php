@@ -19,12 +19,14 @@ class CTrashBinBehavior extends CActiveRecordBehavior {
      * @var mixed The value to set for removed model.
      * Default is 1.
      */
-    public $removedFlag = 1;
+    public $removedFlag = '1';
     /**
      * @var mixed The value to set for restored model.
      * Default is 0.
      */
-    public $restoredFlag = 0;
+    public $restoredFlag = '0';
+
+    private $findRemoved = FALSE;
 
     public function attach($owner) {
         // Check required var trashFlagField
@@ -46,7 +48,7 @@ class CTrashBinBehavior extends CActiveRecordBehavior {
     }
     
     /**
-     * Restore model from trash bin.
+     * Restore model from trach bin.
      *
      * @return CActiveRecord
      */
@@ -56,7 +58,7 @@ class CTrashBinBehavior extends CActiveRecordBehavior {
     }
 
     /**
-     * Check if model is removd in trash bin.
+     * Check if model is removed in trash bin.
      *
      * @return bool
      */
@@ -65,15 +67,28 @@ class CTrashBinBehavior extends CActiveRecordBehavior {
     }
 
     /**
+     * Disable excepting trashed models for next search.
+     *
+     * @return CActiveRecord
+     */
+    public function withRemoved() {
+        $this->findRemoved = TRUE;
+        return $this->getOwner();
+    }
+
+    /**
      * Add condition before find, for except models from trash bin.
      *
      * @param CEvent
      */
-    public function beforeFind($event) {
-        if ($this->getEnabled()) {
+    public function beforeFind(CEvent $event) {
+        if ($this->getEnabled() && !$this->findRemoved) {
             $this->getOwner()
                 ->getDbCriteria()
                 ->addCondition($this->trashFlagField . ' != "' . $this->removedFlag . '"');
+        }
+        if ($this->findRemoved) {
+            $this->findRemoved = FALSE;
         }
         parent::beforeFind($event);
     }

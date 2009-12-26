@@ -1,5 +1,4 @@
-[*] Changed defaults from string to int.
-[+] Unit tests.
+[+] Add method withRemoved() for find removed models
 
 0.1
 [+] Initial public release.
