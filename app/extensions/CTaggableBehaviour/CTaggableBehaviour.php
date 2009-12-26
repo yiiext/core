@@ -433,4 +433,29 @@ class CTaggableBehaviour extends CActiveRecordBehavior {
         $criteria->select = "t.name as name, count(*) as `count`";
 
     }
+
+    /**
+     * Finds out if model has all tags specified.
+     *
+     * @param string|array $tags
+     * @return boolean
+     */    
+    function hasTags($tags){
+        $tags = $this->toTagsArray($tags);
+        foreach($tags as $tag){
+            if(!in_array($tag, $this->tags)) return false;
+        }
+        return true;
+    }
+
+    /**
+     * Alias of hasTags() 
+     *
+     * @param string|array $tags
+     * @return boolean     
+     */
+    function hasTag($tags){
+        return $this->hasTags($tags);
+    }
+
 }

@@ -177,6 +177,17 @@ class CTaggableBehaviourTest extends CDbTestCase {
         $this->assertEquals("yii, mysql, php", (string)$post->tags);
     }
 
+    function testHasTag(){
+        $this->setUp();
+
+        $post = Post::model()->findByPk(1);
+        $post->setTags("yii, mysql, php");
+
+
+        $this->assertTrue($post->hasTag("yii"));
+        $this->assertFalse($post->hasTags("yii, cakephp"));
+    }
+
     //---new syntax---
     function testNewTaggedWith(){
         $posts = Post::model()->taggedWith('php, yii')->findAll();
