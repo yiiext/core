@@ -99,7 +99,7 @@ class CTaggableBehaviourTest extends CDbTestCase {
 
         $this->assertTrue(in_array(array(
             'name' => 'php',
-            'count' => 1
+            'count' => 2
         ), $tagsWithModelsCount));
     }
 
@@ -114,6 +114,9 @@ class CTaggableBehaviourTest extends CDbTestCase {
         $this->assertEquals(2, $count);
 
         $count = Post::model()->getCountByTags(" php   ,   yii ");
+        $this->assertEquals(2, $count);
+
+        $count = Post::model()->getCountByTags("mysql");
         $this->assertEquals(1, $count);
 
         $count = Post::model()->getCountByTags("don't have such a tag");
@@ -131,7 +134,13 @@ class CTaggableBehaviourTest extends CDbTestCase {
         $this->assertEquals(2, count($posts));
 
         $posts = Post::model()->findAllByTags(" php   ,   yii ");        
+        $this->assertEquals(2, count($posts));
+
+        $posts = Post::model()->findAllByTags("mysql");
         $this->assertEquals(1, count($posts));
+
+        $posts = Post::model()->findAllByTags("non existing tag");
+        $this->assertTrue(empty($posts));
     }
 
     /**
@@ -152,12 +161,10 @@ class CTaggableBehaviourTest extends CDbTestCase {
         $this->setUp();
 
         $post = Post::model()->findByPk(1);
-        $post->setTags("yii, mysql, php");
-        $post->save();
+        $post->setTags("yii, mysql, php")->save();
 
         $post = Post::model()->findByPk(2);
-        $post->setTags("yii");
-        $post->save();        
+        $post->setTags("yii, php")->save();
     }
 
     /**
@@ -188,12 +195,19 @@ class CTaggableBehaviourTest extends CDbTestCase {
         $this->assertFalse($post->hasTags("yii, cakephp"));
     }
 
-    //---new syntax---
-    function testNewTaggedWith(){
+    function testTaggedWith(){
+        $this->prepareTags();
+
+        $postCount = Post::model()->count();
+        $this->assertEquals(3, $postCount);
+
         $posts = Post::model()->taggedWith('php, yii')->findAll();
+        $this->assertEquals(2, count($posts));
 
-        $posts = Post::model()->taggedWith(array('php', 'yii'))->findAll();
+        /*$posts = Post::model()->taggedWith(array('php', 'yii'))->findAll();
+        $this->assertEquals(2, count($posts));
 
-        $postCount = Post::model()->taggedWith('php')->count();
+        $postCount = Post::model()->taggedWith('mysql')->count();
+        $this->assertEquals(1, $postCount);*/
     }
 }

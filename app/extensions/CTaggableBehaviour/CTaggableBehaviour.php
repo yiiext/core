@@ -44,6 +44,11 @@ class CTaggableBehaviour extends CActiveRecordBehavior {
     private $cache = null;
 
     /**
+     * @var array
+     */
+    private $taggedWith = array();
+
+    /**
      * @return CDbConnection
      */
     protected function getConnection(){
@@ -97,6 +102,8 @@ class CTaggableBehaviour extends CActiveRecordBehavior {
     function setTags($tags){
         $tags = $this->toTagsArray($tags);
         $this->tags = array_unique($tags);
+
+        return $this->owner;
     }
 
     /**
@@ -108,6 +115,8 @@ class CTaggableBehaviour extends CActiveRecordBehavior {
     function addTags($tags){
         $tags = $this->toTagsArray($tags);
         $this->tags = array_unique(array_merge($this->tags, $tags));
+
+        return $this->owner;
     }
 
     /**
@@ -117,7 +126,7 @@ class CTaggableBehaviour extends CActiveRecordBehavior {
      * @return void
      */
     function addTag($tags){
-        $this->addTags($tags);        
+        return $this->addTags($tags);        
     }
 
     /**
@@ -129,6 +138,8 @@ class CTaggableBehaviour extends CActiveRecordBehavior {
     function removeTags($tags){
         $tags = $this->toTagsArray($tags);
         $this->tags = array_diff($this->tags, $tags);
+
+        return $this->owner;
     }
 
     /**
@@ -138,7 +149,7 @@ class CTaggableBehaviour extends CActiveRecordBehavior {
      * @return void
      */
     function removeTag($tags){
-        $this->removeTags($tags);
+        return $this->removeTags($tags);
     }
 
     /**
@@ -148,6 +159,8 @@ class CTaggableBehaviour extends CActiveRecordBehavior {
      */
     function removeAllTags(){
         $this->tags = array();
+
+        return $this->owner;
     }
 
     /**
@@ -269,6 +282,8 @@ class CTaggableBehaviour extends CActiveRecordBehavior {
         }
         
         if($this->cache) $this->cache->set($this->getCacheKey(), $this->tags);
+
+        parent::afterSave($event);
     }
 
     /**
@@ -291,6 +306,8 @@ class CTaggableBehaviour extends CActiveRecordBehavior {
         )->execute();
 
         if($this->cache) $this->cache->delete($this->getCacheKey());
+
+        parent::afterDelete($event);
     }
 
     /**
@@ -319,6 +336,8 @@ class CTaggableBehaviour extends CActiveRecordBehavior {
         }
 
         $this->tags = $tags;
+
+        parent::afterFind($event);
     }
 
     /**
@@ -458,4 +477,19 @@ class CTaggableBehaviour extends CActiveRecordBehavior {
         return $this->hasTags($tags);
     }
 
+    function taggedWith($tags){
+        $this->taggedWith = $this->toTagsArray($tags);
+
+        return $this->owner;
+    }
+
+    function beforeFind(CEvent $event){
+        if(!empty($this->taggedWith)){
+            $criteria = $this->getFindByTagsCriteria($this->taggedWith);
+            $this->owner->getDbCriteria()->mergeWith($criteria);
+            $this->taggedWith = array();
+        }
+        
+        parent::beforeFind($event);
+    }
 }
