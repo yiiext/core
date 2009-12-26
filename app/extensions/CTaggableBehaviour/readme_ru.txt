@@ -75,16 +75,7 @@ $post->removeAllTags();
 $post->save();
 ~~~
 
-
 ### getTags()
-Отдаёт строку тегов, разделённых запятыми.
-
-~~~
-[php]
-echo $post->getTags();
-~~~
-
-### getTagsArray()
 Отдаёт массив тегов.
 
 ~~~

@@ -11,7 +11,7 @@ class Post extends CActiveRecord {
 
     public function behaviors() {
         return array(
-            'taggable' => array(
+            'tags' => array(
                 'class' => 'ext.CTaggableBehaviour.CTaggableBehaviour',    
             ),
             'statuses' => array(

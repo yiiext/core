@@ -56,6 +56,10 @@ class CTaggableBehaviour extends CActiveRecordBehavior {
         }
     }
 
+    function __toString(){
+        return implode(', ', $this->tags);
+    }
+
     /**
      * Get tag binding table name
      *
@@ -85,35 +89,56 @@ class CTaggableBehaviour extends CActiveRecordBehavior {
     }
 
     /**
-     * Set one or more comma separated tags
+     * Set one or more tags
      *
-     * @param string $tags
+     * @param string|array $tags
      * @return void
      */
     function setTags($tags){
-        $this->tags = $this->getUniqueTagsArrayFromString($tags);
+        $tags = $this->toTagsArray($tags);
+        $this->tags = array_unique($tags);
     }
 
     /**
-     * Add one or more comma separated tags             
+     * Add one or more tags
      *
-     * @param string $tags
+     * @param string|array $tags
      * @return void
      */
     function addTags($tags){
-        $tags = $this->getTagsArrayFromString($tags);
+        $tags = $this->toTagsArray($tags);
         $this->tags = array_unique(array_merge($this->tags, $tags));
     }
 
     /**
-     * Remove one or more comma separated tags
+     * Alias of addTags()
+     *
+     * @param string|array $tags
+     * @return void
+     */
+    function addTag($tags){
+        $this->addTags($tags);        
+    }
+
+    /**
+     * Remove one or more tags
      * 
-     * @param string $tags
+     * @param string|array $tags
      * @return void
      */
     function removeTags($tags){
-        $tagsToRemove = $this->getTagsArrayFromString($tags);
-        $this->tags = array_diff($this->tags, $tagsToRemove);
+        $tags = $this->toTagsArray($tags);
+        $this->tags = array_diff($this->tags, $tags);
+    }
+
+    /**
+     * Alias of removeTags
+     *
+     * @param  $tags
+     * @return void
+     */
+    function removeTag($tags){
+        $this->removeTags($tags);
     }
 
     /**
@@ -126,44 +151,23 @@ class CTaggableBehaviour extends CActiveRecordBehavior {
     }
 
     /**
-     * Get comma separated tags
+     * Get tags
      *
-     * @return string
+     * @return array
      */
     function getTags(){
-        return implode(', ', $this->tags);
-    }
-
-    /**
-     * Get tags as array
-     *
-     * @return array
-     */
-    function getTagsArray(){
-        return $this->tags;        
-    }
-
-    /**
-     * Get unique tags array from comma separated tags string
-     *
-     * @access private
-     * @param string $tagsString
-     * @return array
-     */
-    private function getUniqueTagsArrayFromString($tagsString){
-        $tags = $this->getTagsArrayFromString($tagsString);
-        return array_unique($tags);   
+        return $this->tags;
     }
 
     /**
      * Get tags array from comma separated tags string 
      *
      * @access private
-     * @param string $tagsString
+     * @param string|array $tags
      * @return array
      */
-    protected function getTagsArrayFromString($tagsString){
-        $tags = explode(',', $tagsString);
+    protected function toTagsArray($tags){
+        if(is_string($tags)) $tags = explode(',', $tags);
         array_walk($tags, array($this, 'trim'));
         return $tags;
     }
@@ -338,7 +342,7 @@ class CTaggableBehaviour extends CActiveRecordBehavior {
      * @todo: allow to pass criteria as string condition
      */
     function findAllByTags($tags, $criteria = null, $with = ''){
-        $tags = $this->getTagsArrayFromString($tags);
+        $tags = $this->toTagsArray($tags);
         if(empty($tags)) return array();
 
         $find = $this->owner;
@@ -355,7 +359,7 @@ class CTaggableBehaviour extends CActiveRecordBehavior {
      * @return int
      */
     function getCountByTags($tags, CDbCriteria $criteria = null){
-        $tags = $this->getTagsArrayFromString($tags);
+        $tags = $this->toTagsArray($tags);
         return $this->owner->count($this->getFindByTagsCriteria($tags, $criteria));
     }
 

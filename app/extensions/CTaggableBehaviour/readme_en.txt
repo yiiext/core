@@ -75,16 +75,7 @@ $post->removeAllTags();
 $post->save();
 ~~~
 
-
 ### getTags()
-Get comma separated model's tags string.
-
-~~~
-[php]
-echo $post->getTags();
-~~~
-
-### getTagsArray()
 Get array of model's tags.
 
 ~~~
