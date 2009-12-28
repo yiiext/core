@@ -1,3 +1,7 @@
+next
+
+[*] Fixed caching.
+
 0.8
 Warning: this version is not backwards compatible to 0.6.
 
