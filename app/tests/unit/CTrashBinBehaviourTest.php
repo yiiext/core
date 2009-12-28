@@ -41,6 +41,11 @@ class CTrashBinBehaviourTest extends CDbTestCase {
         $this->assertEquals(3, count($fruits));    
     }
 
+    /**
+     * Will fail until
+     * http://code.google.com/p/yii/issues/detail?id=764
+     * is fixed
+     */
     function testWithRemoved(){
         $this->setUp();
 
@@ -55,5 +60,11 @@ class CTrashBinBehaviourTest extends CDbTestCase {
 
         $fruits = Fruit::model()->findAll();
         $this->assertEquals(2, count($fruits));
+
+        $fruitsCount = Fruit::model()->count();
+        $this->assertEquals(2, $fruitsCount);
+
+        $fruitsCount = Fruit::model()->withRemoved()->count();
+        $this->assertEquals(3, $fruitsCount);
     }
 }
