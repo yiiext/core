@@ -55,13 +55,24 @@ class CTaggableBehaviour extends CActiveRecordBehavior {
         return $this->owner->dbConnection;
     }
 
-    private function getCacheComponent(){
+    /**
+     * Get cache component
+     *
+     * @access private
+     * @return CCache
+     */
+    protected function getCacheComponent(){
         if($this->cacheID!==false){
             $this->cache = Yii::app()->getComponent($this->cacheID);
         }
         return $this->cache;
     }
 
+    /**
+     * Allows to print object.
+     *
+     * @return string
+     */
     function __toString(){
         $this->loadTags();
         return implode(', ', $this->tags);

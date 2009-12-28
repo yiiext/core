@@ -24,10 +24,8 @@ class CTrashBinBehaviourTest extends CDbTestCase {
         $fruit = Fruit::model()->findByPk(1);
         $fruit->remove()->save();
 
-        Fruit::model()->disableBehavior('trash');
-        $fruit = Fruit::model()->findByPk(1);
+        $fruit = Fruit::model()->withRemoved()->findByPk(1);
         $this->assertTrue($fruit->isRemoved());
-        Fruit::model()->enableBehavior('trash');
     }
 
     function testRestore(){
@@ -36,15 +34,26 @@ class CTrashBinBehaviourTest extends CDbTestCase {
         $fruit = Fruit::model()->findByPk(1);
         $fruit->remove()->save();
 
-        Fruit::model()->disableBehavior('trash');
-
-        $fruit = Fruit::model()->findByPk(1);
+        $fruit = Fruit::model()->withRemoved()->findByPk(1);
         $fruit->restore()->save();
-
-        // Включаем снова поведение.
-        Fruit::model()->enableBehavior('trash');
 
         $fruits = Fruit::model()->findAll();
         $this->assertEquals(3, count($fruits));    
+    }
+
+    function testWithRemoved(){
+        $this->setUp();
+
+        $fruit = Fruit::model()->findByPk(1);
+        $fruit->remove()->save();
+        
+        $fruits = Fruit::model()->findAll();
+        $this->assertEquals(2, count($fruits));
+
+        $fruits = Fruit::model()->withRemoved()->findAll();
+        $this->assertEquals(3, count($fruits));
+
+        $fruits = Fruit::model()->findAll();
+        $this->assertEquals(2, count($fruits));
     }
 }
