@@ -22,6 +22,8 @@ function behaviors() {
             // Имя внешнего ключа модели в кроcc-таблице.
             // По умолчанию равно имя_таблицы_моделиId 
             'modelTableFk' => 'postId',
+            // ID тега в таблице-связке
+            'tagBindingTableTagId' => 'tagId',
             // ID компонента, реализующего кеширование.
             // По умолчанию ID равен false. 
             'CacheID' => 'cache',
@@ -132,4 +134,77 @@ $postCount = Post::model()->taggedWith('php, yii')->count();
 [php]
 $post->addTags('new1, new2')->save();
 echo $post->tags;
+~~~
+
+Использование нескольких групп тегов
+------------------------------------
+Модели можно присвоить теги из нескольких групп. Например, для модели Software можно
+задать теги групп OS и Category.
+
+Для этого необходимо создать по две таблицы на каждую группу тегов:
+
+~~~
+[sql]
+/* Tag table */
+CREATE TABLE `Os` (
+  `id` INT(10) UNSIGNED NOT NULL AUTO_INCREMENT,
+  `name` VARCHAR(255) NOT NULL,
+  PRIMARY KEY  (`id`),
+  UNIQUE KEY `Os_name` (`name`)
+);
+
+/* Tag binding table */
+CREATE TABLE `PostOs` (
+  `postId` INT(10) UNSIGNED NOT NULL,
+  `osId` INT(10) UNSIGNED NOT NULL,
+  PRIMARY KEY  (`postId`,`osId`)
+);
+
+/* Tag table */
+CREATE TABLE `Category` (
+  `id` INT(10) UNSIGNED NOT NULL AUTO_INCREMENT,
+  `name` VARCHAR(255) NOT NULL,
+  PRIMARY KEY  (`id`),
+  UNIQUE KEY `Category_name` (`name`)
+);
+
+/* Tag binding table */
+CREATE TABLE `PostCategory` (
+  `postId` INT(10) UNSIGNED NOT NULL,
+  `categoryId` INT(10) UNSIGNED NOT NULL,
+  PRIMARY KEY  (`postId`,`categoryId`)
+);
+~~~
+
+Затем прописать для модели поведения:
+
+~~~
+[php]
+return array(
+    'categories' => array(
+        'class' => 'ext.CTaggableBehaviour.CTaggableBehaviour',
+        'tagTable' => 'Category',
+        'tagBindingTable' => 'PostCategory',
+        'tagBindingTableTagId' => 'categoryId',
+    ),
+    'os' => array(
+        'class' => 'ext.CTaggableBehaviour.CTaggableBehaviour',
+        'tagTable' => 'Os',
+        'tagBindingTable' => 'PostOs',
+        'tagBindingTableTagId' => 'osId',
+    ),
+);
+~~~
+
+Далее можно писать такой код:
+
+~~~
+[php]
+$soft = Software::model()->findByPk(1);
+// по умолчанию идут методы подключенного выше поведения,
+// поэтому можно не писать $soft->categories->addTag("Antivirus"),
+// а использовать краткую форму:
+$soft->addTag("Antivirus");
+$soft->os->addTag("Windows");
+$soft->save();
 ~~~

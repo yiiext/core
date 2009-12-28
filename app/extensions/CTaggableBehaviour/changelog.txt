@@ -1,6 +1,7 @@
-next
+0.8
 Warning: this version is not backwards compatible to 0.6.
 
+[+] Now you can set tagId field name for binding table.
 [*] Do not try to delete tag bindings when inserting new record.
 [+] Added taggedWith() alias withTags().
 [-] Removed getCountByTags(), findAllByTags(). Use taggedWith(). 

@@ -172,4 +172,13 @@ class CTaggableBehaviourTest extends CDbTestCase {
         $post->createTagsAutomatically = false;
         $post->addTags("non existing tag")->save();
     }
+
+    function testTwoTagDimensions(){
+        $this->setUp();
+
+        $post = Post::model()->findByPk(1);
+        $post->colors->addTags("blue");
+        $post->addTags("test");        
+        $post->save();
+    }
 }

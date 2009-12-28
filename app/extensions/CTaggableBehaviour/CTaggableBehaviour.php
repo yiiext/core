@@ -4,7 +4,7 @@
  *
  * Provides tagging ability for a model.
  *
- * @version 0.7
+ * @version 0.8
  * @author Alexander Makarov
  * @link http://yiiframework.ru/forum/viewtopic.php?f=9&t=389
  */
@@ -19,6 +19,11 @@ class CTaggableBehaviour extends CActiveRecordBehavior {
      * Defaults to `{model table name}Tag`.
      */
     public $tagBindingTable = null;
+
+    /**
+     * Binding table tagId name.
+     */
+    public $tagBindingTableTagId = 'tagId';
 
     /**
      * Binding table model FK name.
@@ -273,11 +278,12 @@ class CTaggableBehaviour extends CActiveRecordBehavior {
                 $conn->createCommand(
                     sprintf(
                         "INSERT
-                         INTO `%s`(%s, tagId)
+                         INTO `%s`(%s, %s)
                          VALUES (%d, %d)",
                          $this->getTagBindingTableName(),
                          $this->getModelTableFkName(),
-                         $this->owner->primaryKey,
+                         $this->tagBindingTableTagId,
+                         $this->owner->primaryKey,                         
                          $tagId
                     )
                 )->execute();
@@ -334,10 +340,11 @@ class CTaggableBehaviour extends CActiveRecordBehavior {
                 sprintf(
                     "SELECT t.name as name
                     FROM `%s` t
-                    JOIN `%s` et ON t.id = et.tagId
+                    JOIN `%s` et ON t.id = et.%s
                     WHERE et.%s = %d",
                     $this->tagTable,
                     $this->getTagBindingTableName(),
+                    $this->tagBindingTableTagId,
                     $this->getModelTableFkName(),
                     $this->owner->primaryKey
                 )
@@ -377,7 +384,7 @@ class CTaggableBehaviour extends CActiveRecordBehavior {
                 $tag = $conn->quoteValue($tags[$i]);
                 $criteria->join.=
                     "JOIN {$this->getTagBindingTableName()} bt$i ON {$this->owner->tableName()}.{$pk} = bt$i.{$this->getModelTableFkName()}
-                     JOIN {$this->tagTable} tag$i ON tag$i.id = bt$i.tagId AND tag$i.`name` = $tag";
+                     JOIN {$this->tagTable} tag$i ON tag$i.id = bt$i.{$this->tagBindingTableTagId} AND tag$i.`name` = $tag";
             }
         }
 
@@ -416,10 +423,11 @@ class CTaggableBehaviour extends CActiveRecordBehavior {
                 sprintf(
                     "SELECT t.name as name, count(*) as `count`
                     FROM `%s` t
-                    JOIN `%s` et ON t.id = et.tagId
+                    JOIN `%s` et ON t.id = et.%s
                     GROUP BY t.id",
                     $this->tagTable,
-                    $this->getTagBindingTableName()
+                    $this->getTagBindingTableName(),
+                    $this->tagBindingTableTagId
                 )
             )->queryAll();
 

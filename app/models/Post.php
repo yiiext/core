@@ -14,6 +14,12 @@ class Post extends CActiveRecord {
             'tags' => array(
                 'class' => 'ext.CTaggableBehaviour.CTaggableBehaviour',    
             ),
+            'colors' => array(
+                'class' => 'ext.CTaggableBehaviour.CTaggableBehaviour',
+                'tagTable' => 'Color',
+                'tagBindingTable' => 'PostColor',
+                'tagBindingTableTagId' => 'colorId',
+            ),
             'statuses' => array(
                 'class' => 'ext.CStatusBehavior.CStatusBehavior',
                 'statusField' => 'status',

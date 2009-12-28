@@ -22,6 +22,8 @@ function behaviors() {
             // Foreign key in cross-table.
             // By default it's your_model_tableId
             'modelTableFk' => 'postId',
+            // Tag binding table tag ID
+            'tagBindingTableTagId' => 'tagId',
             // Caching component ID.
             // false by default.
             'CacheID' => 'cache',
@@ -130,4 +132,76 @@ You can print comma separated tags following way:
 [php]
 $post->addTags('new1, new2')->save();
 echo $post->tags;
+~~~
+
+Using multiple tag groups
+-------------------------
+You can use multiple tag groups for a single model. For example, we will create
+OS and Category tag groups for Software model.
+
+First we need to create DB tables. Two for each group:
+
+~~~
+[sql]
+/* Tag table */
+CREATE TABLE `Os` (
+  `id` INT(10) UNSIGNED NOT NULL AUTO_INCREMENT,
+  `name` VARCHAR(255) NOT NULL,
+  PRIMARY KEY  (`id`),
+  UNIQUE KEY `Os_name` (`name`)
+);
+
+/* Tag binding table */
+CREATE TABLE `PostOs` (
+  `postId` INT(10) UNSIGNED NOT NULL,
+  `osId` INT(10) UNSIGNED NOT NULL,
+  PRIMARY KEY  (`postId`,`osId`)
+);
+
+/* Tag table */
+CREATE TABLE `Category` (
+  `id` INT(10) UNSIGNED NOT NULL AUTO_INCREMENT,
+  `name` VARCHAR(255) NOT NULL,
+  PRIMARY KEY  (`id`),
+  UNIQUE KEY `Category_name` (`name`)
+);
+
+/* Tag binding table */
+CREATE TABLE `PostCategory` (
+  `postId` INT(10) UNSIGNED NOT NULL,
+  `categoryId` INT(10) UNSIGNED NOT NULL,
+  PRIMARY KEY  (`postId`,`categoryId`)
+);
+~~~
+
+Then we are attaching behaviours:
+
+~~~
+[php]
+return array(
+    'categories' => array(
+        'class' => 'ext.CTaggableBehaviour.CTaggableBehaviour',
+        'tagTable' => 'Category',
+        'tagBindingTable' => 'PostCategory',
+        'tagBindingTableTagId' => 'categoryId',
+    ),
+    'os' => array(
+        'class' => 'ext.CTaggableBehaviour.CTaggableBehaviour',
+        'tagTable' => 'Os',
+        'tagBindingTable' => 'PostOs',
+        'tagBindingTableTagId' => 'osId',
+    ),
+);
+~~~
+
+That's it. Now we can use it:
+
+~~~
+[php]
+$soft = Software::model()->findByPk(1);
+// fist attached taggable behaviour is used by default
+// so we can use short syntax instead of $soft->categories->addTag("Antivirus"):
+$soft->addTag("Antivirus");
+$soft->os->addTag("Windows");
+$soft->save();
 ~~~
