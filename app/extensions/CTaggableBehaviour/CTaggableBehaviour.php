@@ -55,10 +55,11 @@ class CTaggableBehaviour extends CActiveRecordBehavior {
         return $this->owner->dbConnection;
     }
 
-    function init(){
+    private function getCacheComponent(){
         if($this->cacheID!==false){
             $this->cache = Yii::app()->getComponent($this->cacheID);
         }
+        return $this->cache;
     }
 
     function __toString(){
@@ -289,8 +290,9 @@ class CTaggableBehaviour extends CActiveRecordBehavior {
                 )->execute();
             }
         }
-        
-        if($this->cache) $this->cache->set($this->getCacheKey(), $this->tags);
+
+        $cache = $this->getCacheComponent();
+        if($cache) $cache->set($this->getCacheKey(), $this->tags);
 
         parent::afterSave($event);
     }
@@ -314,7 +316,8 @@ class CTaggableBehaviour extends CActiveRecordBehavior {
             )
         )->execute();
 
-        if($this->cache) $this->cache->delete($this->getCacheKey());
+        $cache = $this->getCacheComponent();
+        if($cache) $cache->delete($this->getCacheKey());
 
         parent::afterDelete($event);
     }
@@ -333,7 +336,8 @@ class CTaggableBehaviour extends CActiveRecordBehavior {
             return;
         }
 
-        if(!$this->cache || !($tags = $this->cache->get($this->getCacheKey()))){
+        $cache = $cache = $this->getCacheComponent();
+        if(!$cache || !($tags = $cache->get($this->getCacheKey()))){
             // getting associated tags
             $conn = $this->getConnection();
             $tags = $conn->createCommand(
@@ -350,7 +354,7 @@ class CTaggableBehaviour extends CActiveRecordBehavior {
                 )
             )->queryColumn();
 
-            if($this->cache) $this->cache->set($this->getCacheKey(), $tags);
+            if($cache) $cache->set($this->getCacheKey(), $tags);
         }
 
         $this->tags = $tags;        
@@ -398,14 +402,15 @@ class CTaggableBehaviour extends CActiveRecordBehavior {
      * @return array
      */
     public function getAllTags($criteria = null){
-        if(!$this->cache || !($tags = $this->cache->get('Taggable'.$this->owner->tableName().'All'))){
+        $cache = $this->getCacheComponent();
+        if(!$cache || !($tags = $cache->get('Taggable'.$this->owner->tableName().'All'))){
             // getting associated tags
             $builder = $this->owner->getCommandBuilder();
             $criteria = new CDbCriteria();
             $criteria->select = 'name';
             $tags = $builder->createFindCommand($this->tagTable, $criteria)->queryColumn();
 
-            if($this->cache) $this->cache->set('Taggable'.$this->owner->tableName().'All', $tags);
+            if($cache) $cache->set('Taggable'.$this->owner->tableName().'All', $tags);
         }
 
         return $tags;
@@ -416,7 +421,8 @@ class CTaggableBehaviour extends CActiveRecordBehavior {
      * @return array
      */
     public function getAllTagsWithModelsCount($criteria = null){
-        if(!$this->cache || !($tags = $this->cache->get('Taggable'.$this->owner->tableName().'AllWithCount'))){
+        $cache = $this->getCacheComponent();
+        if(!$cache || !($tags = $cache->get('Taggable'.$this->owner->tableName().'AllWithCount'))){
             // getting associated tags
             $conn = $this->getConnection();
             $tags = $conn->createCommand(
@@ -431,7 +437,7 @@ class CTaggableBehaviour extends CActiveRecordBehavior {
                 )
             )->queryAll();
 
-            if($this->cache) $this->cache->set('Taggable'.$this->owner->tableName().'AllWithCount', $tags);
+            if($cache) $cache->set('Taggable'.$this->owner->tableName().'AllWithCount', $tags);
         }
 
         return $tags;
