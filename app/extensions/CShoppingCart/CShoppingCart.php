@@ -16,6 +16,9 @@ class CShoppingCart extends CMap {
      */
     public $refresh = true;
 
+    /**
+     * При иницализации копируем из сессии корзину
+     */
     public function init() {
         $this->copyFrom(Yii::app()->user->getState(__CLASS__));
     }
@@ -23,6 +26,7 @@ class CShoppingCart extends CMap {
     /**
      * Добавляет в коллекцию объект товара
      * @param ICartPosition $product
+     * @param int кол-во элементов позиции
      */
     public function put(ICartPosition $product, $quantity = 1) {
         $product->attachBehavior("CartPosition", new CartPositionBehaviour());
@@ -38,15 +42,14 @@ class CShoppingCart extends CMap {
 
         $this->saveState();
     }
-	
-	/**
-	* @param mixed $key
-	* @param ICartPosition $value
-	*/
-	public function add($key, ICartPosition $value)
-	{		
-		$this->put($value, 1);
-	}
+
+    /**
+     * @param mixed $key
+     * @param ICartPosition $value
+     */
+    public function add($key, ICartPosition $value) {
+        $this->put($value, 1);
+    }
 
     /**
      * Удаляет из коллекции элемент по ключу
@@ -76,16 +79,15 @@ class CShoppingCart extends CMap {
 
         return $count;
     }
-	
-	/**
-	* @return int кол-во позиций
-	*/
-	public function getCount()
-	{
-		return $this->count();
-	}
 
-     /**
+    /**
+     * @return int кол-во позиций
+     */
+    public function getCount() {
+        return $this->count();
+    }
+
+    /**
      * Возращает суммарную стоимость всех позиций в корзине
      * @return float
      */
