@@ -12,7 +12,7 @@ class CShoppingCartTest extends CDbTestCase {
 
         $book = Book::model()->findByPk(1);
         $cart->put($book);		
-        $this->assertEquals(1, $cart->getTotal());
+        $this->assertEquals(1, $cart->getItemsCount());
     }
 
     function testGet(){
@@ -37,7 +37,7 @@ class CShoppingCartTest extends CDbTestCase {
 
         $book = Book::model()->findByPk(1);
         $cart->put($book, 0);
-		$this->assertEquals(0, $cart->getTotal());
+		$this->assertEquals(0, $cart->getItemsCount());
     }
 
     function testRemove(){
@@ -47,13 +47,13 @@ class CShoppingCartTest extends CDbTestCase {
 
         $book = Book::model()->findByPk(1);
         $cart->put($book);
-        $this->assertEquals(1, $cart->getTotal());
+        $this->assertEquals(1, $cart->getItemsCount());
 
         $cart->remove("Book1");
-        $this->assertEquals(0, $cart->getTotal());
+        $this->assertEquals(0, $cart->getItemsCount());
     }
     
-    function testGetTotal(){
+    function testgetItemsCount(){
         $this->setUp();
         $cart = new CShoppingCart();
 
@@ -63,7 +63,7 @@ class CShoppingCartTest extends CDbTestCase {
         $book = Book::model()->findByPk(2);
         $cart->put($book);
 
-        $this->assertEquals(4, $cart->getTotal());
+        $this->assertEquals(4, $cart->getItemsCount());
     }
 	
 	function testGetCount()
@@ -113,7 +113,7 @@ class CShoppingCartTest extends CDbTestCase {
         $cart = new CShoppingCart();
 
         $cart[] = Book::model()->findByPk(1);
-		$this->assertEquals(1, $cart->getTotal());
+		$this->assertEquals(1, $cart->getItemsCount());
 		$this->assertEquals(1, $cart["Book1"]->id);
     }
 
