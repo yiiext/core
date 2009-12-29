@@ -3,7 +3,7 @@
  * Корзина товаров
  *
  * @author pirrat <mrakobesov@gmail.com>
- * @version 0.2 beta
+ * @version 0.5 rc
  * @package ShoppingCart
  */
 
@@ -80,12 +80,6 @@ class CShoppingCart extends CMap {
         return $count;
     }
 
-    /**
-     * @return int кол-во позиций
-     */
-    public function getCount() {
-        return $this->count();
-    }
 
     /**
      * Возращает суммарную стоимость всех позиций в корзине
