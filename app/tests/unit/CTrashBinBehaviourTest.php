@@ -61,7 +61,7 @@ class CTrashBinBehaviourTest extends CDbTestCase {
         $fruits = Fruit::model()->findAll();
         $this->assertEquals(2, count($fruits));
 
-        $fruitsCount = Fruit::model()->count();
+        $fruitsCount = Fruit::model()->filterRemoved()->count();
         $this->assertEquals(2, $fruitsCount);
 
         $fruitsCount = Fruit::model()->withRemoved()->count();

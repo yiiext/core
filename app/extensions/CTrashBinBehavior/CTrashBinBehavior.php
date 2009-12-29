@@ -19,14 +19,19 @@ class CTrashBinBehavior extends CActiveRecordBehavior {
      * @var mixed The value to set for removed model.
      * Default is 1.
      */
-    public $removedFlag = '1';
+    public $removedFlag = 1;
     /**
      * @var mixed The value to set for restored model.
      * Default is 0.
      */
-    public $restoredFlag = '0';
+    public $restoredFlag = 0;
+    /**
+     * @var bool If except removed model in find results.
+     * Default is FALSE
+     */
+    public $findRemoved = FALSE;
 
-    private $findRemoved = FALSE;
+    protected $withRemoved = FALSE;
 
     public function attach($owner) {
         // Check required var trashFlagField
@@ -67,29 +72,37 @@ class CTrashBinBehavior extends CActiveRecordBehavior {
     }
 
     /**
-     * Disable excepting trashed models for next search.
+     * Disable excepting removed models for next search.
      *
      * @return CActiveRecord
      */
     public function withRemoved() {
-        $this->findRemoved = TRUE;
+        $this->withRemoved = TRUE;
         return $this->getOwner();
     }
 
     /**
-     * Add condition before find, for except models from trash bin.
+     * Add condition to query for filter removed models.
+     *
+     * @return CActiveRecord
+     */
+    public function filterRemoved() {
+        $this->getOwner()
+            ->getDbCriteria()
+            ->addCondition($this->trashFlagField . ' != "' . $this->removedFlag . '"');
+        return $this->getOwner();
+    }
+
+    /**
+     * Add condition before find, for except removed models.
      *
      * @param CEvent
      */
     public function beforeFind(CEvent $event) {
-        if ($this->getEnabled() && !$this->findRemoved) {
-            $this->getOwner()
-                ->getDbCriteria()
-                ->addCondition($this->trashFlagField . ' != "' . $this->removedFlag . '"');
+        if ($this->getEnabled() && !$this->findRemoved && !$this->withRemoved) {
+            $this->filterRemoved();
         }
-        if ($this->findRemoved) {
-            $this->findRemoved = FALSE;
-        }
+        !$this->withRemoved || $this->withRemoved = FALSE;
         parent::beforeFind($event);
     }
     
