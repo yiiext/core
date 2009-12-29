@@ -112,7 +112,7 @@ class CShoppingCartTest extends CDbTestCase {
         $this->setUp();
         $cart = new CShoppingCart();
 
-        $cart["Book1"] = Book::model()->findByPk(1);
+        $cart[] = Book::model()->findByPk(1);
 		$this->assertEquals(1, $cart->getTotal());
 		$this->assertEquals(1, $cart["Book1"]->id);
     }
@@ -134,6 +134,6 @@ class CShoppingCartTest extends CDbTestCase {
         $this->setUp();
         $cart = new CShoppingCart();
 
-        $cart[1] = Post::model()->findByPk(1);
+        $cart[] = Post::model()->findByPk(1);
     }
 }
