@@ -34,10 +34,15 @@ class CShoppingCart extends CMap {
         if($product->getQuantity() < 1)
             $this->remove($key);
         else
-            $this->add($key, $product);
+            parent::add($key, $product);
 
         $this->saveState();
     }
+	
+	public function add($key, ICartPosition $value)
+	{		
+		$this->put($value, 1);
+	}
 
     /**
      * Удаляет из коллекции элемент по ключу
@@ -73,7 +78,7 @@ class CShoppingCart extends CMap {
      * @return float
      */
     public function getCost() {
-        $price = 0;
+        $price = 0.0;
         foreach($this as $product) {
             $price += $product->getSummPrice();
         }
