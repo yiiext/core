@@ -39,6 +39,10 @@ class CShoppingCart extends CMap {
         $this->saveState();
     }
 	
+	/**
+	* @param mixed $key
+	* @param ICartPosition $value
+	*/
 	public function add($key, ICartPosition $value)
 	{		
 		$this->put($value, 1);
@@ -64,7 +68,7 @@ class CShoppingCart extends CMap {
      * Возращает кол-во товаров в корзине
      * @return int
      */
-    public function getTotal() {
+    public function getItemsCount() {
         $count = 0;
         foreach($this as $product) {
             $count += $product->getQuantity();
@@ -72,6 +76,14 @@ class CShoppingCart extends CMap {
 
         return $count;
     }
+	
+	/**
+	* @return int кол-во позиций
+	*/
+	public function getCount()
+	{
+		return $this->count();
+	}
 
      /**
      * Возращает суммарную стоимость всех позиций в корзине
@@ -86,7 +98,5 @@ class CShoppingCart extends CMap {
         return $price;
     }
 
-    public function saveAsOrder() {
 
-    }
 }
