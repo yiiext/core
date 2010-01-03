@@ -53,7 +53,7 @@ class CTrashBinBehavior extends CActiveRecordBehavior {
     }
     
     /**
-     * Restore model from trach bin.
+     * Restore removed model from trash bin.
      *
      * @return CActiveRecord
      */

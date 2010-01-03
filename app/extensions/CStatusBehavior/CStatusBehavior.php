@@ -56,6 +56,10 @@ class CStatusBehavior extends CActiveRecordBehavior {
         parent::attach($owner);
     }
 
+    public function __toString() {
+        return $this->getStatus();
+    }
+
     /**
      * Set valid statuses values.
      *
@@ -70,7 +74,7 @@ class CStatusBehavior extends CActiveRecordBehavior {
     /**
      * Get valid status values.
      *
-     * @param bool prevent translate status.
+     * @param boolean prevent translate status.
      */
     public function getStatuses($translate = TRUE) {
         return $translate === FALSE
@@ -101,7 +105,7 @@ class CStatusBehavior extends CActiveRecordBehavior {
     /**
      * Get model status text.
      *
-     * @param bool prevent translate status.
+     * @param boolean prevent translate status.
      * @return string
      */
     public function getStatusText($translate = TRUE) {
@@ -128,14 +132,14 @@ class CStatusBehavior extends CActiveRecordBehavior {
     /**
      * Save status. Will be save only status attribute for model.
      *
-     * @return bool
+     * @return boolean
      */
     public function saveStatus() {
         return $this->getOwner()->save(TRUE, array($this->statusField));
     }
 
     /**
-     * Transfrom status value to text.
+     * Transform status value to text.
      *
      * @return CStatusBehavior
      */
