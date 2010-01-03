@@ -260,6 +260,7 @@ class CTaggableBehaviour extends CActiveRecordBehavior {
         // add new tag bindings and tags if there are any
         if(!empty($this->tags)){
             foreach($this->tags as $tag){
+                if (empty($tag)) return;
                 // try to get existing tag
                 $tagId = $conn->createCommand(
                     sprintf(
