@@ -311,7 +311,7 @@ class CEavBehavior extends CActiveRecordBehavior {
         $criteria = new CDbCriteria;
         $criteria->condition = $this->entityField . ' = :entity';
         $criteria->params = array(':entity' => $this->getModelTableFk());
-        if (is_array($attributes)) {
+        if (is_array($attributes) && count($attributes) > 0) {
             $criteria->addInCondition($this->attributeField, $attributes);
         }
 
@@ -362,7 +362,7 @@ class CEavBehavior extends CActiveRecordBehavior {
         // delete all attributes from db
         $this->getOwner()
             ->getCommandBuilder()
-            ->createDeleteCommand($this->tableName, $this->getDeleteAllEavAttributesCriteria())
+            ->createDeleteCommand($this->tableName, $this->getDeleteEavAttributesCriteria())
             ->execute();
 
         $this->attributes = array();
