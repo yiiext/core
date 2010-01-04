@@ -10,6 +10,8 @@
  *
  * @version 1.4
  *
+ * @todo Ошибка в сохранении массива createSaveEavAttributeCommand
+ * @todo Сохраняется только последние изменение
  * @todo Lazy loading
  * @todo Add caching
  */
@@ -149,7 +151,7 @@ class CEavBehavior extends CActiveRecordBehavior {
         if ($this->checkEavAttribute($attribute)) {
             return isset($this->attributes[$attribute]) ? $this->attributes[$attribute] : NULL;
         }
-        return null;
+        return NULL;
     }
 
     /**
@@ -157,15 +159,18 @@ class CEavBehavior extends CActiveRecordBehavior {
      *
      * @param string attribute name
      * @param mixed attribute value
+     * @return CActiveRecord
      */
     public function setEavAttribute($attribute, $value) {
         if ($this->checkEavAttribute($attribute)) {
             $this->attributes[$attribute] = $value;
             // remember changed attribute
-            if (array_key_exists($this->attributesPrefix . $attribute, $this->attributesForSave) === FALSE) {
+            if (!array_key_exists($this->attributesPrefix . $attribute, $this->attributesForSave)
+                || $this->attributesForSave[$this->attributesPrefix . $attribute] !== $value) {
                 $this->attributesForSave[$this->attributesPrefix . $attribute] = $value;
             }
         }
+        return $this->getOwner();
     }
 
     /**
@@ -227,22 +232,14 @@ class CEavBehavior extends CActiveRecordBehavior {
     /**
      * Save attribute
      *
-     * @return bool
+     * @return boolean
      */
-    protected function createSaveEavAttributeCommand($attribute, $values) {
-        // if null, delete attribute from db
-        if (is_null($values)) return FALSE;
-        // create array of values for convenience
-        if (!is_array($values)) $values = array($values);
-        // save values
-        foreach ($values as $value) {
-            $data = array(
-                $this->entityField => $this->getModelTableFk(),
-                $this->attributeField => $attribute,
-                $this->valueField => $value,
-            );
-        }
-
+    protected function createSaveEavAttributeCommand($attribute, $value) {
+        $data = array(
+            $this->entityField => $this->getModelTableFk(),
+            $this->attributeField => $attribute,
+            $this->valueField => $value,
+        );
         return $this->getOwner()
             ->getCommandBuilder()
             ->createInsertCommand($this->tableName, $data);
@@ -262,7 +259,6 @@ class CEavBehavior extends CActiveRecordBehavior {
         if (is_array($attributes) && !empty($attributes)) {
             $criteria->addInCondition($this->attributeField, $attributes);
         }
-
         return $criteria;
     }
 
@@ -345,7 +341,13 @@ class CEavBehavior extends CActiveRecordBehavior {
                 ->execute();
 
             foreach ($this->attributesForSave as $attribute => $values) {
-                $this->createSaveEavAttributeCommand($attribute, $values)->execute();
+                // if null, delete attribute from db
+                if (is_null($values)) return FALSE;
+                // create array of values for convenience
+                if (!is_array($values)) $values = array($values);
+                foreach ($values as $value) {
+                    $this->createSaveEavAttributeCommand($attribute, $value)->execute();
+                }
             }
             $this->attributesForSave = array();
         }

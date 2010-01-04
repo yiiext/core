@@ -1,6 +1,8 @@
 next
 [*] Add translation for messages.
 [*] Fix deleting eav-attributes after delete models.
+[*] Fix save array of attribute values.
+[*] Fix save secondary change for attribute value.
 
 1.4
 [+] English readme.
