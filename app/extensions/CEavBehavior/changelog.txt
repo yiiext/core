@@ -1,3 +1,6 @@
+next
+[*] Add translation for messages. 
+
 1.4
 [+] English readme.
 [*] Corrected english descriptions.

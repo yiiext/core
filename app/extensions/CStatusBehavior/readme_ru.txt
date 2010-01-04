@@ -56,6 +56,9 @@ class Book extends CActiveRecord {
                   'reserved' => 'reserved',
                   'sale' => 'sale',
                 ),
+                // Используем группу статусов чтоб отделить переводы от других
+                // переводы статусов хранятся в \\папкаСРасширением\messages\язык\имяГруппы.php
+                'statusGroup' => 'books',
             ),
         );
     }

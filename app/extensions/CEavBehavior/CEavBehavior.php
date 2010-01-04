@@ -11,7 +11,6 @@
  * @version 1.4
  *
  * @todo Lazy loading
- * @todo Add translate for messages
  * @todo Add caching
  */
 class CEavBehavior extends CActiveRecordBehavior {
@@ -61,9 +60,18 @@ class CEavBehavior extends CActiveRecordBehavior {
     private $attributesForSave = array();
 
     public function attach($owner) {
+        // Prepare translate component for behavior messages.
+        if (!Yii::app()->hasComponent(__CLASS__)) {
+            Yii::app()->setComponents(array(
+                __CLASS__ => array(
+                    'class' => 'CPhpMessageSource',
+                    'basePath' => dirname(__FILE__) . DIRECTORY_SEPARATOR . 'messages',
+                )
+            ));
+        }
         // tableName is required
         if (!is_string($this->tableName) || empty($this->tableName)) {
-            throw new CException(Yii::t('CEAV', 'Required property "{class}.{property}" is not set.',
+            throw new CException(self::t('yii', 'Property "{class}.{property}" is not defined.',
                 array('{class}' => get_class($this), '{property}' => 'tableName')));
         }
         parent::attach($owner);
@@ -77,7 +85,7 @@ class CEavBehavior extends CActiveRecordBehavior {
         if (is_string($modelTableFk)) {
             return $modelTableFk;
         }
-        throw new CException(Yii::t('CEAV', 'Cannot get model table foreign key.', array()));
+        throw new CException(Yii::t(__CLASS__, 'Cannot get model table foreign key.', array(), __CLASS__));
     }
     private function getModelTableFk() {
         $modelTableFk = $this->getModelTableFkField();
@@ -268,7 +276,7 @@ class CEavBehavior extends CActiveRecordBehavior {
      */
     protected function getFindEavAttributeCriteria($attributes, $condition = '', $params = array()) {
         if (!is_array($attributes)) {
-            throw new CException(Yii::t('CEAV', 'Attributes are required to build find criteria.'));
+            throw new CException(Yii::t(__CLASS__, 'Attributes are required to build find criteria.', array(), __CLASS__));
         }
 
         $criteria = new CDbCriteria;

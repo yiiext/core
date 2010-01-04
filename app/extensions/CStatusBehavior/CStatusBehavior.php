@@ -8,8 +8,6 @@
  * @link http://code.google.com/p/yii-slavco-dev/wiki/CStatusBehavior
  *
  * @version 0.4
- *
- * @todo findByStatus, findAllByStatus
  */
 class CStatusBehavior extends CActiveRecordBehavior {
     /**
@@ -30,25 +28,21 @@ class CStatusBehavior extends CActiveRecordBehavior {
      */
     public $statusGroup = 'default';
 
-    private $statusText = 'unknown';
-    private $statusTextTranslated = 'unknown';
-    private $status = NULL;
+    protected $statusText = 'unknown';
+    protected $statusTextTranslated = 'unknown';
+    protected $status = NULL;
 
-    private static function t($category, $message, $params = array(), $source = null, $language = null) {
-        if ($source === NULL && $category != 'yii') {
+    public function attach($owner) {
+        // Prepare translate component for behavior messages.
+        if (!Yii::app()->hasComponent(__CLASS__)) {
             Yii::app()->setComponents(array(
-                'CStatusBehaviorMessages' => array(
+                __CLASS__ => array(
                     'class' => 'CPhpMessageSource',
                     'basePath' => dirname(__FILE__) . DIRECTORY_SEPARATOR . 'messages',
                 )
             ));
-            $source = 'CStatusBehaviorMessages';
         }
-        return Yii::t($category, $message, $params, $source, $language);
-    }
-
-    public function attach($owner) {
-        // Check required var statusField
+        // Check required var statusField.
         if (!is_string($this->statusField) || empty($this->statusField)) {
             throw new CException(self::t('yii', 'Property "{class}.{property}" is not defined.',
                 array('{class}' => get_class($this), '{property}' => 'statusField')));
@@ -121,8 +115,8 @@ class CStatusBehavior extends CActiveRecordBehavior {
      */
     public function setStatus($status) {
         if (($this->status = array_search($status, $this->statuses)) === FALSE)
-            throw new CException(self::t('yii', 'Status "{status}" is not allowed.',
-                array('{status}' => $status)));
+            throw new CException(Yii::t(__CLASS__, 'Status "{status}" is not allowed.',
+                array('{status}' => $status), __CLASS__));
 
         $this->getOwner()->{$this->statusField} = $this->status;
         $this->parseStatus();
@@ -143,7 +137,7 @@ class CStatusBehavior extends CActiveRecordBehavior {
      *
      * @return CStatusBehavior
      */
-    private function parseStatus() {
+    protected function parseStatus() {
         $this->statusText = isset($this->statuses[$this->getStatus()])
             ? $this->statuses[$this->getStatus()]
             : 'unknown';
@@ -151,8 +145,8 @@ class CStatusBehavior extends CActiveRecordBehavior {
         return $this;
     }
 
-    private function translateStatus($statusName) {
-        return self::t($this->getStatusGroup(), $statusName);
+    protected function translateStatus($statusName) {
+        return Yii::t($this->getStatusGroup(), $statusName, array(), __CLASS__);
     }
 
     /**
@@ -164,6 +158,5 @@ class CStatusBehavior extends CActiveRecordBehavior {
         $this->status = $this->getOwner()->{$this->statusField};
         $this->parseStatus();
         parent::afterFind($event);
-    }
-    
+    }    
 }
