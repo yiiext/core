@@ -311,10 +311,9 @@ class CEavBehavior extends CActiveRecordBehavior {
         $criteria = new CDbCriteria;
         $criteria->condition = $this->entityField . ' = :entity';
         $criteria->params = array(':entity' => $this->getModelTableFk());
-        if (is_array($attributes) && count($attributes) > 0) {
+        if (is_array($attributes) && !empty($attributes)) {
             $criteria->addInCondition($this->attributeField, $attributes);
         }
-
         return $criteria;
     }
 
