@@ -1,6 +1,7 @@
 next
 Warning: this version is not backwards compatible to 0.3.
 
+[+] Add caching attibutes, set CacheId
 [+] Add method deleteEavAttributes()
 [*] Delete findByEavAttributes() and findAllByEavAttributes() method. Use withEavAttributes()
 [+] New syntax: $contacts = Contact::model()->withEavAttributes(array('skype' => 'yii'))->findAll();

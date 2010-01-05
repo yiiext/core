@@ -32,7 +32,7 @@ class CEavBehaviourTest extends CDbTestCase {
         $contact = Contact::model()->findByPk(2);
         $this->assertEquals('AlexandrSkype', $contact->getEavAttribute('skype'));
     }
-    
+
     function testGetEavAttributes(){
         $this->prepareAttr();
 
@@ -177,6 +177,6 @@ class CEavBehaviourTest extends CDbTestCase {
         $contactsCount = $contactsCount->count();
         $this->assertEquals(1, $contactsCount);
     }
-
+    
 }
 

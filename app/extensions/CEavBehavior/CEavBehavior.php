@@ -11,54 +11,90 @@
  * @version 0.4
  *
  * @todo Lazy loading
- * @todo Add caching
  */
 class CEavBehavior extends CActiveRecordBehavior {
     /**
-     * @var string name of the table where data is stored.
-     * Required to be set on init behavior. No defaults.
+     * @access public
+     * @var string name of the table where data is stored. Required to be set on init behavior.
+     * @default ''
      */
     public $tableName = '';
 
     /**
-     * @var string name of the column to store entity name
-     * Default is 'entity'.
+     * @access public
+     * @var string name of the column to store entity name.
+     * @default 'entity'
      */
     public $entityField = 'entity';
 
     /**
-     * @var string name of the column to store attribute
-     * Default is 'attribute'.
+     * @access public
+     * @var string name of the column to store attribute.
+     * @default 'attribute'
      */
     public $attributeField = 'attribute';
 
     /**
-     * @var string name of the column to store value
-     * Default is 'value'.
+     * @access public
+     * @var string name of the column to store value.
+     * @default 'value'
      */
     public $valueField = 'value';
 
     /**
-     * @var string Owner model FK name
-     * Default is model's primaryKey
+     * @access public
+     * @var string Owner model FK name. If not set automatically assign to model's primaryKey.
+     * @default NULL
      */
     public $modelTableFk = NULL;
 
     /**
-     * @var array array of filtered attribute names
-     * Empty by default
+     * @access public
+     * @var array array of filtered attribute names.
+     * @default array()
      */
     public $safeAttributes = array();
 
     /**
-     * @var string prefix for each attribute
-     * Empty by default
+     * @access public
+     * @var string prefix for each attribute.
+     * @default ''
      */
     public $attributesPrefix = '';
 
-    private $attributes = array();
-    private $attributesForSave = array();
+    /**
+     * @access public
+     * @var string|false Caching component Id.
+     * @default FALSE
+     */
+    public $cacheId = FALSE;
 
+    /**
+     * @access protected
+     * @var $attributes
+     * @default array()
+     */
+    protected $attributes = array();
+
+    /**
+     * @access protected
+     * @var $attributes
+     * @default array()
+     */
+    protected $attributesForSave = array();
+
+    /**
+     * @access protected
+     * @var $attributes
+     * @default NULL
+     */
+    protected $cache = NULL;
+
+    /**
+     * @throws CException
+     * @param  $owner
+     * @return void
+     */
     public function attach($owner) {
         // Prepare translate component for behavior messages.
         if (!Yii::app()->hasComponent(__CLASS__)) {
@@ -69,6 +105,11 @@ class CEavBehavior extends CActiveRecordBehavior {
                 )
             ));
         }
+        // Prepare cache
+        $this->cache = is_string($this->cacheId) ? Yii::app()->getComponent($this->cacheId) : NULL;
+        if (!($this->cache instanceof ICache)) {
+            $this->cache = new CDummyCache;
+        }
         // tableName is required
         if (!is_string($this->tableName) || empty($this->tableName)) {
             throw new CException(self::t('yii', 'Property "{class}.{property}" is not defined.',
@@ -77,7 +118,22 @@ class CEavBehavior extends CActiveRecordBehavior {
         parent::attach($owner);
     }
 
-    private function getModelTableFkField() {
+    /**
+     * Returns key for caching model attributes.
+     *
+     * @access protected
+     * @return string
+     */
+    protected function getCacheKey() {
+        return __CLASS__ . $this->getOwner()->tableName() . $this->getModelTableFk();
+    }
+
+    /**
+     * @access protected
+     * @throws CException
+     * @return string
+     */
+    protected function getModelTableFkField() {
         if (is_string($this->modelTableFk) && !empty($this->modelTableFk)) {
             return trim($this->modelTableFk);
         }
@@ -87,13 +143,18 @@ class CEavBehavior extends CActiveRecordBehavior {
         }
         throw new CException(Yii::t(__CLASS__, 'Cannot get model table foreign key.', array(), __CLASS__));
     }
-    private function getModelTableFk() {
+
+    /**
+     * @access protected
+     * @return string
+     */
+    protected function getModelTableFk() {
         $modelTableFk = $this->getModelTableFkField();
         return $this->getOwner()->$modelTableFk;
     }
 
     /**
-     * Get attribute values indexed by attributes name
+     * Get attribute values indexed by attributes name.
      * 
      * @param array Array of attribute names to return. Returns all attributes if empty.
      * @return array
@@ -116,7 +177,7 @@ class CEavBehavior extends CActiveRecordBehavior {
     }
 
     /**
-     * Get attribute value
+     * Get attribute value.
      * 
      * @param string attribute name
      * @return string|false attribute value or null if attribute is not defined
@@ -175,7 +236,7 @@ class CEavBehavior extends CActiveRecordBehavior {
     }
 
     /**
-     * Check if attribute name is valid
+     * Check if attribute name is valid.
      *
      * @param string
      * @return bool
@@ -194,43 +255,46 @@ class CEavBehavior extends CActiveRecordBehavior {
     }
 
     /**
-     * Load and parse attributes
+     * Load and parse attributes.
      * 
-     * @param array The attributes that are being searched. Attributes array or once attribute name.
+     * @param array|string The attributes that are being searched. Attributes array or once attribute name.
      * @return CEavBehavior
      */
     protected function loadEavAttributes($attributes = array()) {
-        is_array($attributes) || $attributes = array($attributes);
+        if (($this->attributes = $this->cache->get($this->getCacheKey())) === FALSE) {
+            is_array($attributes) || $attributes = array($attributes);
 
-        $validAttributes = array();
-        foreach ($attributes as $i => $attribute) {
-            if ($this->checkEavAttribute($attribute)) {
-                $validAttributes[] = $this->attributesPrefix . $attribute;
+            $validAttributes = array();
+            foreach ($attributes as $i => $attribute) {
+                if ($this->checkEavAttribute($attribute)) {
+                    $validAttributes[] = $this->attributesPrefix . $attribute;
+                }
             }
-        }
 
-        $dataReader = $this->getOwner()
-            ->getCommandBuilder()
-            ->createFindCommand($this->tableName, $this->getLoadEavAttributesCriteria($validAttributes))
-            ->query();
+            $dataReader = $this->getOwner()
+                ->getCommandBuilder()
+                ->createFindCommand($this->tableName, $this->getLoadEavAttributesCriteria($validAttributes))
+                ->query();
 
-        $prefixLength = strlen($this->attributesPrefix);
-        foreach($dataReader as $row) {
-            $attributeLabel = substr($row[$this->attributeField], $prefixLength);
-            if (isset($this->attributes[$attributeLabel])) {
-                is_array($this->attributes[$attributeLabel])
-                    ? $this->attributes[$attributeLabel][] = $row[$this->valueField]
-                    : $this->attributes[$attributeLabel] = array($this->attributes[$attributeLabel], $row[$this->valueField]);
+            $prefixLength = strlen($this->attributesPrefix);
+            foreach($dataReader as $row) {
+                $attributeLabel = substr($row[$this->attributeField], $prefixLength);
+                if (isset($this->attributes[$attributeLabel])) {
+                    is_array($this->attributes[$attributeLabel])
+                        ? $this->attributes[$attributeLabel][] = $row[$this->valueField]
+                        : $this->attributes[$attributeLabel] = array($this->attributes[$attributeLabel], $row[$this->valueField]);
+                }
+                else {
+                    $this->attributes[$attributeLabel] = $row[$this->valueField];
+                }
             }
-            else {
-                $this->attributes[$attributeLabel] = $row[$this->valueField];
-            }
+            $this->cache->set($this->getCacheKey(), $this->attributes);
         }
         return $this;
     }
 
     /**
-     * Save attribute
+     * Create command for save attribute.
      *
      * @return boolean
      */
@@ -246,7 +310,7 @@ class CEavBehavior extends CActiveRecordBehavior {
     }
 
     /**
-     * Returns criteria for loading attributes
+     * Returns criteria for loading attributes.
      * This method should be overloaded if you are using custom DB schema.
      *
      * @param array|string attributes that are searched. Attribute array or single attribute name.
@@ -263,7 +327,7 @@ class CEavBehavior extends CActiveRecordBehavior {
     }
 
     /**
-     * Returns criteria for deleting all attributes
+     * Returns criteria for deleting all attributes.
      *
      * @return CdbCriteria
      */
@@ -278,7 +342,7 @@ class CEavBehavior extends CActiveRecordBehavior {
     }
 
     /**
-     * Get criteria to limit query by eav-attributes
+     * Get criteria to limit query by eav-attributes.
      *
      * @access protected
      * @param $attributes
@@ -321,7 +385,7 @@ class CEavBehavior extends CActiveRecordBehavior {
     }
 
     /**
-     * Limit current AR query to have all attributes and values specified
+     * Limit current AR query to have all attributes and values specified.
      *
      * @param string|array $attributes
      * @param string|array $values
@@ -339,15 +403,13 @@ class CEavBehavior extends CActiveRecordBehavior {
         }
 
         // $attributes be array of elements: $attribute => $values
-        if (is_array($attributes)) {
-            $criteria = $this->getFindByEavAttributesCriteria($attributes);
-            $this->getOwner()->getDbCriteria()->mergeWith($criteria);
-        }
+        $criteria = $this->getFindByEavAttributesCriteria($attributes);
+        $this->getOwner()->getDbCriteria()->mergeWith($criteria);
         return $this->getOwner();
     }
 
     /**
-     * Loads attributes after finding model if preload is set
+     * Loads attributes after finding model if preload is set.
      *
      * @param CModelEvent
      */
@@ -361,7 +423,7 @@ class CEavBehavior extends CActiveRecordBehavior {
     }
 
     /**
-     * Save attributes after saving model
+     * Save attributes after saving model.
      *
      * @param CModelEvent
      */
@@ -374,21 +436,25 @@ class CEavBehavior extends CActiveRecordBehavior {
                 ->execute();
 
             foreach ($this->attributesForSave as $attribute => $values) {
-                // if null, delete attribute from db
-                if (is_null($values)) return FALSE;
+                // if null, delete attribute
+                if (is_null($values)) {
+                    unset($this->attributes[$attribute]);
+                    continue;
+                }
                 // create array of values for convenience
                 if (!is_array($values)) $values = array($values);
                 foreach ($values as $value) {
                     $this->createSaveEavAttributeCommand($attribute, $value)->execute();
                 }
             }
+            $this->cache->set($this->getCacheKey(), $this->attributes);
             $this->attributesForSave = array();
         }
         parent::afterSave($event);
     }
 
     /**
-     * Delete attributes after deleting model
+     * Delete attributes after deleting model.
      *
      * @param CModelEvent
      */
@@ -399,6 +465,7 @@ class CEavBehavior extends CActiveRecordBehavior {
             ->createDeleteCommand($this->tableName, $this->getDeleteEavAttributesCriteria())
             ->execute();
 
+        $this->cache->delete($this->getCacheKey());
         parent::afterDelete($event);
     }
 }
