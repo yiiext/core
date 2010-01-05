@@ -8,10 +8,8 @@
  * @author Veaceslav Medvedev <slavcopost@gmail.com>
  * @link http://code.google.com/p/yii-slavco-dev/wiki/CEavBehavior
  *
- * @version 1.4
+ * @version 0.4
  *
- * @todo Ошибка в сохранении массива createSaveEavAttributeCommand
- * @todo Сохраняется только последние изменение
  * @todo Lazy loading
  * @todo Add caching
  */
@@ -44,7 +42,7 @@ class CEavBehavior extends CActiveRecordBehavior {
      * @var string Owner model FK name
      * Default is model's primaryKey
      */
-    public $modelTableFk = null;
+    public $modelTableFk = NULL;
 
     /**
      * @var array array of filtered attribute names
@@ -95,30 +93,6 @@ class CEavBehavior extends CActiveRecordBehavior {
     }
 
     /**
-     * Find a single model by attribute set
-     *
-     * @param array attribute set indexed by attribute name
-     * @param string additional condition
-     * @param array params used only when using $condition
-     * @return CActiveRecord|NULL
-     */
-    public function findByEavAttributes($attributes, $condition = '', $params = array()) {
-        return $this->getOwner()->find($this->getFindEavAttributeCriteria($attributes, $condition, $params));
-    }
-
-    /**
-     * Find all models by attribute set
-     *
-     * @param array attribute set indexed by attribute name
-     * @param string additional condition
-     * @param array params used only when using $condition
-     * @return array
-     */
-    public function findAllByEavAttributes($attributes, $condition = '', $params = array()) {
-        return $this->getOwner()->findAll($this->getFindEavAttributeCriteria($attributes, $condition, $params));
-    }
-
-    /**
      * Get attribute values indexed by attributes name
      * 
      * @param array Array of attribute names to return. Returns all attributes if empty.
@@ -155,7 +129,7 @@ class CEavBehavior extends CActiveRecordBehavior {
     }
 
     /**
-     * Set attribute value
+     * Set attribute value.
      *
      * @param string attribute name
      * @param mixed attribute value
@@ -165,10 +139,37 @@ class CEavBehavior extends CActiveRecordBehavior {
         if ($this->checkEavAttribute($attribute)) {
             $this->attributes[$attribute] = $value;
             // remember changed attribute
-            if (!array_key_exists($this->attributesPrefix . $attribute, $this->attributesForSave)
-                || $this->attributesForSave[$this->attributesPrefix . $attribute] !== $value) {
-                $this->attributesForSave[$this->attributesPrefix . $attribute] = $value;
+            $this->attributesForSave[$this->attributesPrefix . $attribute] = $value;
+        }
+        return $this->getOwner();
+    }
+
+    /**
+     * Set attributes values.
+     *
+     * @param array attribute => value
+     * @return CActiveRecord
+     */
+    public function setEavAttributes($attributes) {
+        if (is_array($attributes)) {
+            foreach ($attributes as $attribute => $value) {
+                $this->setEavAttribute($attribute, $value);
             }
+        }
+        return $this->getOwner();
+    }
+
+    /**
+     * Delete all or specified attributes.
+     *
+     * @param array $attributes
+     * @return CActiveRecord
+     */
+    public function deleteEavAttributes($attributes = array()) {
+        is_array($attributes) || $attributes = array($attributes);
+        !empty($attributes) || $attributes = array_keys($this->attributes);
+        foreach ($attributes as $attribute) {
+            $this->setEavAttribute($attribute, NULL);
         }
         return $this->getOwner();
     }
@@ -207,7 +208,6 @@ class CEavBehavior extends CActiveRecordBehavior {
                 $validAttributes[] = $this->attributesPrefix . $attribute;
             }
         }
-
 
         $dataReader = $this->getOwner()
             ->getCommandBuilder()
@@ -263,42 +263,6 @@ class CEavBehavior extends CActiveRecordBehavior {
     }
 
     /**
-     * Returns criteria for finding models by attributes
-     *
-     * @param array attributes indexed by attribute name
-     * @param string Addition condition
-     * @param array Params used only when $condition is used
-     * @return CDbCriteria
-     */
-    protected function getFindEavAttributeCriteria($attributes, $condition = '', $params = array()) {
-        if (!is_array($attributes)) {
-            throw new CException(Yii::t(__CLASS__, 'Attributes are required to build find criteria.', array(), __CLASS__));
-        }
-
-        $criteria = new CDbCriteria;
-        $criteria->condition = $condition;
-        $criteria->params = $params;
-        $criteria->join = 'LEFT JOIN ' . $this->tableName . ' ON ' . $this->getModelTableFkField() . ' = ' . $this->tableName . '.' . $this->entityField;
-        $criteria->group = $this->getModelTableFkField();
-
-        foreach ($attributes as $attribute => $values) {
-            $attributeCondition = $this->tableName . '.' . $this->attributeField . ' = "' . $this->attributesPrefix . $attribute . '"';
-            $valuesCondition = array();
-            if (!is_array($values)) {
-                $values = array($values);
-            }
-            foreach ($values as $value) {
-                $valuesCondition[] = $this->tableName . '.' . $this->valueField . ' LIKE "%' . $value . '%"';
-            }
-            $criteria->addCondition(array(
-                    $attributeCondition,
-                    implode(' OR ', $valuesCondition),
-                ), 'OR');
-        }
-        return $criteria;
-    }
-
-    /**
      * Returns criteria for deleting all attributes
      *
      * @return CdbCriteria
@@ -311,6 +275,75 @@ class CEavBehavior extends CActiveRecordBehavior {
             $criteria->addInCondition($this->attributeField, $attributes);
         }
         return $criteria;
+    }
+
+    /**
+     * Get criteria to limit query by eav-attributes
+     *
+     * @access protected
+     * @param $attributes
+     * @return CDbCriteria
+     */
+    protected function getFindByEavAttributesCriteria($attributes){
+        $criteria = new CDbCriteria();
+        $pk = $this->getModelTableFkField();
+
+        if (!empty($attributes)){
+            $conn = $this->getOwner()->dbConnection;
+            $i = 0;
+            foreach ($attributes as $attribute => $values) {
+                // If search models with attribute name with specified values.
+                if (is_string($attribute)) {
+                    $attribute = $conn->quoteValue($attribute);
+                    if (!is_array($values)) $values = array($values);
+                    foreach ($values as $value) {
+                        $value = $conn->quoteValue($value);
+                        $criteria->join .= "\nJOIN {$this->tableName} eavb$i"
+                                        .  "\nON {$this->getOwner()->tableName()}.{$pk} = eavb$i.{$this->entityField}"
+                                        .  "\nAND eavb$i.{$this->attributeField} = $attribute"
+                                        .  "\nAND eavb$i.{$this->valueField} = $value";
+                        $i++;
+                    }
+                }
+                // If search models with attribute name with anything values.
+                elseif (is_int($attribute)) {
+                    $values = $conn->quoteValue($values);
+                    $criteria->join .= "\nJOIN {$this->tableName} eavb$i"
+                                    .  "\nON {$this->getOwner()->tableName()}.{$pk} = eavb$i.{$this->entityField}"
+                                    .  "\nAND eavb$i.{$this->attributeField} = $values";
+                    $i++;
+                }
+            }
+            $criteria->distinct = TRUE;
+            $criteria->group .= "{$this->getOwner()->tableName()}.{$pk}";
+        }
+        return $criteria;
+    }
+
+    /**
+     * Limit current AR query to have all attributes and values specified
+     *
+     * @param string|array $attributes
+     * @param string|array $values
+     * @return CActiveRecord
+     */
+    public function withEavAttributes($attributes = array()) {
+        // Create array for convenience.
+        if (is_string($attributes)) {
+            $attributes = array($attributes);
+        }
+
+        // If not set attributes, search models with anything attributes exists.
+        if (is_array($attributes) && empty($attributes)) {
+            $attributes = $this->safeAttributes;
+        }
+
+        // $attributes be array of elements: $attribute => $values
+        if (is_array($attributes)) {
+            $criteria = $this->getFindByEavAttributesCriteria($attributes);
+            $this->getOwner()->getDbCriteria()->mergeWith($criteria);
+        }
+        return $this->getOwner();
     }
 
     /**
@@ -366,7 +399,6 @@ class CEavBehavior extends CActiveRecordBehavior {
             ->createDeleteCommand($this->tableName, $this->getDeleteEavAttributesCriteria())
             ->execute();
 
-        $this->attributes = array();
         parent::afterDelete($event);
     }
 }

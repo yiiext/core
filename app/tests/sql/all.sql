@@ -57,3 +57,20 @@ CREATE TABLE IF NOT EXISTS `PostColor` (
   `colorId` INT(10) UNSIGNED NOT NULL,
   PRIMARY KEY  (`postId`,`colorId`)
 );
+
+/* Contact table */
+CREATE TABLE IF NOT EXISTS `contact` (
+  `id` int(10) unsigned NOT NULL AUTO_INCREMENT,
+  `name` varchar(255) NOT NULL,
+  PRIMARY KEY (`id`)
+) ENGINE=MyISAM DEFAULT CHARSET=utf8 AUTO_INCREMENT=1;
+
+/* Contact attributes */
+CREATE TABLE IF NOT EXISTS `contactattr` (
+  `id` bigint(20) unsigned NOT NULL AUTO_INCREMENT,
+  `entity` bigint(20) unsigned NOT NULL,
+  `attribute` varchar(250) NOT NULL,
+  `value` text NOT NULL,
+  PRIMARY KEY (`id`),
+  KEY `ikEntity` (`entity`)
+) ENGINE=MyISAM DEFAULT CHARSET=utf8 AUTO_INCREMENT=1;
