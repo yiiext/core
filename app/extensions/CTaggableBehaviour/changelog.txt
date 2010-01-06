@@ -1,5 +1,5 @@
 next
-
+[*] Fixed saving empty tags.
 [*] Fixed caching.
 
 0.8

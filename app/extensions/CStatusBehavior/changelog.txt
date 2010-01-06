@@ -1,15 +1,15 @@
 next
-[-] Remove method for translate status. Now used Yii:t
+[*] Yii:t() is now used to translate status.
 [*] All private methods and properties transform in protected.
-[+] Add magic method __toString() to get status.
+[+] Added magic method __toString() to get status.
 
 0.4
 [-] Remove getStatusName method.
-[*] Add param to prevent translating in getStatuses and getStatusText methods.
+[+] Added param to prevent translating in getStatuses and getStatusText methods.
 
 0.3
-[+] Add getStatuses method.
-[+] Add getStatusName method for return original status without translated.
+[+] Added getStatuses method.
+[+] Added getStatusName method for return original status without translated.
 
 0.2
 [*] Small code corrections.
