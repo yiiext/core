@@ -1,5 +1,0 @@
-CREATE TABLE `Post` (
-  `id` INT(10) UNSIGNED NOT NULL AUTO_INCREMENT,
-  `status` VARCHAR(255) NOT NULL DEFAULT 'published',
-  PRIMARY KEY  (`id`)
-);
