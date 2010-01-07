@@ -170,8 +170,7 @@ class CEavBehaviourTest extends CDbTestCase {
         $this->assertEquals(1, $contactsCount);
 
         // Количество контактов с телефонами
-        // Запрос возвращает две стройки для одной модели т.к. у нее два телефона :(
-        return;
+        // Запрос возвращает две стройки для одной модели т.к. у нее два телефона :(        
         $contactsCount = Contact::model()->withEavAttributes(array('phone'));
         //var_dump($contactsCount->getCommandBuilder()->createCountCommand($contactsCount->getTableSchema(), $contactsCount->getDbCriteria())->text);
         $contactsCount = $contactsCount->count();
