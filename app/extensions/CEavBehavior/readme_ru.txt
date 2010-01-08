@@ -6,11 +6,9 @@
 SQL для таблицы:
 {{{
 CREATE TABLE IF NOT EXISTS `eavAttr` (
-  `id` bigint(20) unsigned NOT NULL AUTO_INCREMENT,
   `entity` bigint(20) unsigned NOT NULL,
   `attribute` varchar(250) NOT NULL,
   `value` text NOT NULL,
-  PRIMARY KEY (`id`),
   KEY `ikEntity` (`entity`)
 ) ENGINE=MyISAM  DEFAULT CHARSET=utf8;
 }}}
@@ -64,7 +62,7 @@ $user = User::model()->findByPk(1);
 $user->getEavAttribute('attribute1');
 }}}
 
-==== setEavAttribute($attribute, $value) ====
+==== setEavAttribute($attribute, $value, $save = FALSE) ====
 Устанавливает значение атрибута
 
 {{{
@@ -72,32 +70,18 @@ $user = User::model()->findByPk(1);
 $user->setEavAttribute('attribute1', 'value1');
 }}}
 
-==== checkEavAttribute($attribute) ====
-Проверяет если атрибут разрешен
+==== setEavAttributes($attribute, $save = FALSE) ====
+Устанавливает значение атрибутов
 
 {{{
 $user = User::model()->findByPk(1);
-echo $user->checkEavAttribute('attribute1') ? 'Yes' : 'No';
+$user->setEavAttributes(array('attribute1' => 'value1', 'attribute2' => 'value2'));
 }}}
 
-==== findByEavAttribute($attributes, $condition = '', $params = array()) ====
-Ищет первую модель с заданными атрибутами
+==== withEavAttributes($attributes) ====
+Позволяет ограничить запрос AR записями с указанными атрибутами.
 
 {{{
-$users = User::model()->findByEavAttributes(array(
-   'seacrh_attribute1' => array('value1', 'value2'),
-   'seacrh_attrubute2' => 'value3'
-));
-echo $users->name;
-}}}
-
-==== findAllByEavAttributes($attributes, $condition = '', $params = array()) ====
-Ищет модели с заданными атрибутами
-
-{{{
-$users = User::model()->findAllByEavAttributes(array(
-   'seacrh_attribute1' => array('value1', 'value2'),
-   'seacrh_attrubute2' => 'value3'
-));
-echo $users->count();
+$users = User::model()->withEavAttributes(array('skype'))->findAll();
+$usersCount = User::model()->withEavAttributes(array('skype'))->count();
 }}}

@@ -13,6 +13,8 @@ class Contact extends CActiveRecord {
                 'class' => 'ext.CEavBehavior.CEavBehavior',
                 'tableName' => 'contactattr',
                 'safeAttributes' => array('phone', 'skype'),
+                //'cacheId' => 'cache',
+                'preload' => FALSE,
             ),
         );
     }

@@ -6,11 +6,9 @@
 SQL dump:
 {{{
 CREATE TABLE IF NOT EXISTS `eavAttr` (
-  `id` bigint(20) unsigned NOT NULL AUTO_INCREMENT,
   `entity` bigint(20) unsigned NOT NULL,
   `attribute` varchar(250) NOT NULL,
   `value` text NOT NULL,
-  PRIMARY KEY (`id`),
   KEY `ikEntity` (`entity`)
 ) ENGINE=MyISAM  DEFAULT CHARSET=utf8;
 }}}
@@ -65,7 +63,7 @@ $user = User::model()->findByPk(1);
 $user->getEavAttribute('attribute1');
 }}}
 
-==== setEavAttribute($attribute, $value) ====
+==== setEavAttribute($attribute, $value, $save = FALSE) ====
 Set attribute value.
 
 {{{
@@ -73,32 +71,19 @@ $user = User::model()->findByPk(1);
 $user->setEavAttribute('attribute1', 'value1');
 }}}
 
-==== checkEavAttribute($attribute) ====
-Check if attribute name is valid.
+==== setEavAttributes($attributes, $save = FALSE) ====
+Set attributes values.
 
 {{{
 $user = User::model()->findByPk(1);
-echo $user->checkEavAttribute('attribute1') ? 'Yes' : 'No';
+$user->setEavAttributes(array('attribute1' => 'value1', 'attribute2' => 'value2'));
 }}}
 
-==== findByEavAttribute($attributes, $condition = '', $params = array()) ====
-Find a single model by attribute set.
+==== withEavAttributes($attributes) ====
+Limits AR query to records with specified attributes.
 
 {{{
-$users = User::model()->findByEavAttributes(array(
-   'seacrh_attribute1' => array('value1', 'value2'),
-   'seacrh_attrubute2' => 'value3'
-));
-echo $users->name;
+$users = User::model()->withEavAttributes(array('skype'))->findAll();
+$usersCount = User::model()->withEavAttributes(array('skype'))->count();
 }}}
 
-==== findAllByEavAttributes($attributes, $condition = '', $params = array()) ====
-Find all models by attribute set.
-
-{{{
-$users = User::model()->findAllByEavAttributes(array(
-   'seacrh_attribute1' => array('value1', 'value2'),
-   'seacrh_attrubute2' => 'value3'
-));
-echo $users->count();
-}}}
