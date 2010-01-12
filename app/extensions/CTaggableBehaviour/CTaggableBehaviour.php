@@ -4,7 +4,7 @@
  *
  * Provides tagging ability for a model.
  *
- * @version 0.8
+ * @version 0.9
  * @author Alexander Makarov
  * @link http://yiiframework.ru/forum/viewtopic.php?f=9&t=389
  */

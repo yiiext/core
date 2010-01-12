@@ -1,4 +1,6 @@
-next
+0.9
+Warning: this version is not compatible with Yii 1.0.
+
 [+] Added resetAllTagsCache() and resetAllTagsWithModelsCountCache().
 [*] Fixed getAllTags() and getAllTagsWithModelsCount() cache issues.
 [*] Now tags are saved on save() only if they were changed. 
