@@ -528,7 +528,7 @@ class CEavBehavior extends CActiveRecordBehavior {
                 foreach ($values as $value) {
                     $value = $conn->quoteValue($value);
                     $criteria->join .= "\nJOIN {$this->tableName} eavb$i"
-                                    .  "\nON {$this->getOwner()->tableName()}.{$pk} = eavb$i.{$this->entityField}"
+                                    .  "\nON t.{$pk} = eavb$i.{$this->entityField}"
                                     .  "\nAND eavb$i.{$this->attributeField} = $attribute"
                                     .  "\nAND eavb$i.{$this->valueField} = $value";
                     $i++;
@@ -538,13 +538,13 @@ class CEavBehavior extends CActiveRecordBehavior {
             elseif (is_int($attribute)) {
                 $values = $conn->quoteValue($values);
                 $criteria->join .= "\nJOIN {$this->tableName} eavb$i"
-                                .  "\nON {$this->getOwner()->tableName()}.{$pk} = eavb$i.{$this->entityField}"
+                                .  "\nON t.{$pk} = eavb$i.{$this->entityField}"
                                 .  "\nAND eavb$i.{$this->attributeField} = $values";
                 $i++;
             }
         }
         $criteria->distinct = TRUE;
-        $criteria->group .= "{$this->getOwner()->tableName()}.{$pk}";
+        $criteria->group .= "t.{$pk}";
         return $criteria;
     }
 }

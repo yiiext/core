@@ -1,3 +1,6 @@
+next
+[*] Extension is now compatible only with Yii 1.1.
+
 0.4
 Warning: this version is not backwards compatible to 0.3.
 
