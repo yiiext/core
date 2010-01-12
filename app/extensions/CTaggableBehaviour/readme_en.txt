@@ -13,7 +13,7 @@ In your ActiveRecord model define `behaviors()` method:
 function behaviors() {
     return array(
         'tags' => array(
-            'class' => 'ext.СTaggableBehaviour.СTaggableBehaviour',
+            'class' => 'ext.CTaggableBehaviour.CTaggableBehaviour',
             // Table where tags are stored
             'tagTable' => 'Tag',
             // Cross-table that stores tag-model connections.
@@ -26,7 +26,7 @@ function behaviors() {
             'tagBindingTableTagId' => 'tagId',
             // Caching component ID.
             // false by default.
-            'CacheID' => 'cache',
+            'cacheID' => 'cache',
             
             // Save nonexisting tags.
             // When false, throws exception when saving nonexisting tag.
@@ -124,6 +124,9 @@ Limits AR query to records with all tags specified.
 $posts = Post::model()->taggedWith('php, yii')->findAll();
 $postCount = Post::model()->taggedWith('php, yii')->count();
 ~~~
+
+### resetAllTagsCache() and resetAllTagsWithModelsCountCache()
+could be used to reset getAllTags() or getAllTagsWithModelsCount() cache.
 
 Bonus features
 --------------

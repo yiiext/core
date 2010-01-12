@@ -39,14 +39,15 @@ class CTaggableBehaviour extends CActiveRecordBehavior {
     /**
      * Caching component Id
      */
-    public $cacheID = false;
+    public $cacheID = '';
 
-    private $tags = null;
+    private $tags = array();
+    private $originalTags = array();
 
     /**
      * @var CCache
      */
-    private $cache = null;
+    protected $cache = null;
 
     /**
      * @return CDbConnection
@@ -56,16 +57,19 @@ class CTaggableBehaviour extends CActiveRecordBehavior {
     }
 
     /**
-     * Get cache component
-     *
-     * @access private
-     * @return CCache
+     * @throws CException
+     * @param CComponent
+     * @return void
      */
-    protected function getCacheComponent(){
-        if($this->cacheID!==false){
-            $this->cache = Yii::app()->getComponent($this->cacheID);
+    public function attach($owner) {
+        // Prepare cache component
+        $this->cache = Yii::app()->getComponent($this->cacheID);
+        if (!($this->cache instanceof ICache)) {
+            // If not set cache component, use dummy cache.
+            $this->cache = new CDummyCache;
         }
-        return $this->cache;
+        
+        parent::attach($owner);
     }
 
     /**
@@ -175,9 +179,9 @@ class CTaggableBehaviour extends CActiveRecordBehavior {
      * @return void
      */
     function removeAllTags(){
+        $this->loadTags();
         $this->tags = array();
-
-        return $this->owner;
+        return $this->getOwner();
     }
 
     /**
@@ -216,97 +220,134 @@ class CTaggableBehaviour extends CActiveRecordBehavior {
     }
 
     /**
+     * If we need to save tags               
+     *
+     * @access private
+     * @return boolean
+     */
+    private function needToSave(){
+        $diff = array_merge(
+            array_diff($this->tags, $this->originalTags),
+            array_diff($this->originalTags, $this->tags)
+        );
+
+        return !empty($diff);
+    }
+
+    /**
 	 * Saves model tags on model save.
      * 
 	 * @param CModelEvent $event
      * @throw Exception
 	 */
     function afterSave($event){
-        $conn = $this->getConnection();
+        if($this->needToSave()){
+            $conn = $this->getConnection();
 
-        if(!$this->createTagsAutomatically){
-            // checking if all of the tags are existing ones
-            foreach($this->tags as $tag){
-                $tagId = $conn->createCommand(
-                    sprintf(
-                        "SELECT id
-                         FROM `%s`
-                         WHERE name = %s",
-                         $this->tagTable,
-                         $conn->quoteValue($tag)
-                    )
-                )->queryScalar();
-
-                if(!$tagId){
-                    throw new Exception("Tag \"$tag\" does not exist. Please add it before assigning or enable createTagsAutomatically.");
-                }
-            }
-        }
-
-        if(!$this->owner->getIsNewRecord()){
-            // delete all present tag bindings if record is existing one
-            $conn->createCommand(
-                sprintf(
-                    "DELETE
-                     FROM `%s`
-                     WHERE %s = %d",
-                     $this->getTagBindingTableName(),
-                     $this->getModelTableFkName(),
-                     $this->owner->primaryKey
-                )
-            )->execute();
-        }
-        
-        // add new tag bindings and tags if there are any
-        if(!empty($this->tags)){
-            foreach($this->tags as $tag){
-                if (empty($tag)) return;
-                // try to get existing tag
-                $tagId = $conn->createCommand(
-                    sprintf(
-                        "SELECT id
-                         FROM `%s`
-                         WHERE name = %s",
-                         $this->tagTable,
-                         $conn->quoteValue($tag)
-                    )
-                )->queryScalar();
-
-                // if there is no existing tag, create one
-                if(!$tagId){
-                    $conn->createCommand(
+            if(!$this->createTagsAutomatically){
+                // checking if all of the tags are existing ones
+                foreach($this->tags as $tag){
+                    $tagId = $conn->createCommand(
                         sprintf(
-                            "INSERT
-                             INTO `%s`(name)
-                             VALUES (%s)",
+                            "SELECT id
+                             FROM `%s`
+                             WHERE name = %s",
                              $this->tagTable,
                              $conn->quoteValue($tag)
                         )
-                    )->execute();
+                    )->queryScalar();
 
-                    $tagId = $conn->getLastInsertID();
+                    if(!$tagId){
+                        throw new Exception("Tag \"$tag\" does not exist. Please add it before assigning or enable createTagsAutomatically.");
+                    }
                 }
+            }
 
-                // bind tag to it's model
+            if(!$this->owner->getIsNewRecord()){
+                // delete all present tag bindings if record is existing one
                 $conn->createCommand(
                     sprintf(
-                        "INSERT
-                         INTO `%s`(%s, %s)
-                         VALUES (%d, %d)",
+                        "DELETE
+                         FROM `%s`
+                         WHERE %s = %d",
                          $this->getTagBindingTableName(),
                          $this->getModelTableFkName(),
-                         $this->tagBindingTableTagId,
-                         $this->owner->primaryKey,                         
-                         $tagId
+                         $this->owner->primaryKey
                     )
                 )->execute();
             }
+
+            // add new tag bindings and tags if there are any
+            if(!empty($this->tags)){
+                foreach($this->tags as $tag){
+                    if (empty($tag)) return;
+                    // try to get existing tag
+                    $tagId = $conn->createCommand(
+                        sprintf(
+                            "SELECT id
+                             FROM `%s`
+                             WHERE name = %s",
+                             $this->tagTable,
+                             $conn->quoteValue($tag)
+                        )
+                    )->queryScalar();
+
+                    // if there is no existing tag, create one
+                    if(!$tagId){
+                        $conn->createCommand(
+                            sprintf(
+                                "INSERT
+                                 INTO `%s`(name)
+                                 VALUES (%s)",
+                                 $this->tagTable,
+                                 $conn->quoteValue($tag)
+                            )
+                        )->execute();
+
+                        // reset all tags cache
+                        $this->resetAllTagsCache();
+                        $this->resetAllTagsWithModelsCountCache();
+
+                        $tagId = $conn->getLastInsertID();
+                    }
+
+                    // bind tag to it's model
+                    $conn->createCommand(
+                        sprintf(
+                            "INSERT
+                             INTO `%s`(%s, %s)
+                             VALUES (%d, %d)",
+                             $this->getTagBindingTableName(),
+                             $this->getModelTableFkName(),
+                             $this->tagBindingTableTagId,
+                             $this->owner->primaryKey,
+                             $tagId
+                        )
+                    )->execute();
+                }
+            }
+
+
+            $this->cache->set($this->getCacheKey(), $this->tags);
         }
 
-        $cache = $this->getCacheComponent();
-        if($cache) $cache->set($this->getCacheKey(), $this->tags);
-
         parent::afterSave($event);
+    }
+
+    /**
+     * Reset cache used for getAllTags()
+     * @return void
+     */
+    function resetAllTagsCache(){
+        $this->cache->delete('Taggable'.$this->owner->tableName().'All');
+    }
+
+    /**
+     * Reset cache used for getAllTagsWithModelsCount() 
+     * @return void
+     */
+    function resetAllTagsWithModelsCountCache(){
+        $this->cache->delete('Taggable'.$this->owner->tableName().'AllWithCount');
     }
 
     /**
@@ -328,8 +369,8 @@ class CTaggableBehaviour extends CActiveRecordBehavior {
             )
         )->execute();
 
-        $cache = $this->getCacheComponent();
-        if($cache) $cache->delete($this->getCacheKey());
+        $this->cache->delete($this->getCacheKey());
+        $this->resetAllTagsWithModelsCountCache();
 
         parent::afterDelete($event);
     }
@@ -342,14 +383,9 @@ class CTaggableBehaviour extends CActiveRecordBehavior {
      */
     protected function loadTags(){
         if($this->tags!=null) return;
+        if($this->owner->getIsNewRecord()) return;
 
-        if($this->owner->getIsNewRecord()){
-            $this->tags = array();
-            return;
-        }
-
-        $cache = $cache = $this->getCacheComponent();
-        if(!$cache || !($tags = $cache->get($this->getCacheKey()))){
+        if(!($tags = $this->cache->get($this->getCacheKey()))){
             // getting associated tags
             $conn = $this->getConnection();
             $tags = $conn->createCommand(
@@ -366,10 +402,10 @@ class CTaggableBehaviour extends CActiveRecordBehavior {
                 )
             )->queryColumn();
 
-            if($cache) $cache->set($this->getCacheKey(), $tags);
+            $this->cache->set($this->getCacheKey(), $tags);
         }
 
-        $this->tags = $tags;        
+        $this->originalTags = $this->tags = $tags;
     }
 
     /**
@@ -399,7 +435,7 @@ class CTaggableBehaviour extends CActiveRecordBehavior {
             for($i=0, $count=count($tags); $i<$count; $i++){
                 $tag = $conn->quoteValue($tags[$i]);
                 $criteria->join.=
-                    "JOIN {$this->getTagBindingTableName()} bt$i ON {$this->owner->tableName()}.{$pk} = bt$i.{$this->getModelTableFkName()}
+                    "JOIN {$this->getTagBindingTableName()} bt$i ON t.{$pk} = bt$i.{$this->getModelTableFkName()}
                      JOIN {$this->tagTable} tag$i ON tag$i.id = bt$i.{$this->tagBindingTableTagId} AND tag$i.`name` = $tag";
             }
         }
@@ -414,15 +450,14 @@ class CTaggableBehaviour extends CActiveRecordBehavior {
      * @return array
      */
     public function getAllTags($criteria = null){
-        $cache = $this->getCacheComponent();
-        if(!$cache || !($tags = $cache->get('Taggable'.$this->owner->tableName().'All'))){
+        if(!($tags = $this->cache->get('Taggable'.$this->owner->tableName().'All'))){
             // getting associated tags
             $builder = $this->owner->getCommandBuilder();
             $criteria = new CDbCriteria();
             $criteria->select = 'name';
             $tags = $builder->createFindCommand($this->tagTable, $criteria)->queryColumn();
 
-            if($cache) $cache->set('Taggable'.$this->owner->tableName().'All', $tags);
+            $this->cache->set('Taggable'.$this->owner->tableName().'All', $tags);
         }
 
         return $tags;
@@ -433,8 +468,7 @@ class CTaggableBehaviour extends CActiveRecordBehavior {
      * @return array
      */
     public function getAllTagsWithModelsCount($criteria = null){
-        $cache = $this->getCacheComponent();
-        if(!$cache || !($tags = $cache->get('Taggable'.$this->owner->tableName().'AllWithCount'))){
+        if(!($tags = $this->cache->get('Taggable'.$this->owner->tableName().'AllWithCount'))){
             // getting associated tags
             $conn = $this->getConnection();
             $tags = $conn->createCommand(
@@ -449,7 +483,7 @@ class CTaggableBehaviour extends CActiveRecordBehavior {
                 )
             )->queryAll();
 
-            if($cache) $cache->set('Taggable'.$this->owner->tableName().'AllWithCount', $tags);
+            $this->cache->set('Taggable'.$this->owner->tableName().'AllWithCount', $tags);
         }
 
         return $tags;

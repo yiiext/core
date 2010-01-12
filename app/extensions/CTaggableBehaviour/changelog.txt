@@ -1,4 +1,8 @@
 next
+[+] Added resetAllTagsCache() and resetAllTagsWithModelsCountCache().
+[*] Fixed getAllTags() and getAllTagsWithModelsCount() cache issues.
+[*] Now tags are saved on save() only if they were changed. 
+[*] Extension is now compatible only with Yii 1.1.
 [*] Fixed saving empty tags.
 [*] Fixed caching.
 

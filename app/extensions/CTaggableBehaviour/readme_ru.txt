@@ -13,7 +13,7 @@ TaggableBehaviour
 function behaviors() {
     return array(
         'tags' => array(
-            'class' => 'ext.СTaggableBehaviour.СTaggableBehaviour',
+            'class' => 'ext.CTaggableBehaviour.CTaggableBehaviour',
             // Имя таблицы для хранения тегов 
             'tagTable' => 'Tag',
             // Имя кросс-таблицы, связывающей тег с моделью.
@@ -26,7 +26,7 @@ function behaviors() {
             'tagBindingTableTagId' => 'tagId',
             // ID компонента, реализующего кеширование.
             // По умолчанию ID равен false. 
-            'CacheID' => 'cache',
+            'cacheID' => 'cache',
 
             // Создавать несуществующие теги автоматически.
             // При значении false сохранение выкидывает исключение если добавляемый тег не существует.
@@ -125,6 +125,9 @@ $posts = Post::model()->taggedWith('php, yii')->findAll();
 $postCount = Post::model()->taggedWith('php, yii')->count();
 ~~~
 
+### resetAllTagsCache() и resetAllTagsWithModelsCountCache()
+Используются для сборса кеша getAllTags() и getAllTagsWithModelsCount().
+
 
 
 Приятные бонусы
@@ -208,3 +211,19 @@ $soft->addTag("Antivirus");
 $soft->os->addTag("Windows");
 $soft->save();
 ~~~
+
+Автодополнение для контроллера
+------------------------------
+
+~~~
+[php]
+public function actions(){
+    return array(
+        'autocomplete_tags' => array(
+            'class' => 'application.extensions.CTaggableBehaviour.CTaggableAutocompleteAction',
+            'x' => 'y',
+        )
+    );
+}
+~~~
+
