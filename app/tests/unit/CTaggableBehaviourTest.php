@@ -14,9 +14,12 @@ class CTaggableBehaviourTest extends CDbTestCase {
     }
 
     private function assertTagsAreEqual($tags1, $tags2){
-        foreach($tags1 as $tag){
-            $this->assertContains($tag, $tags2);
+        $diff = array_merge(array_diff($tags1, $tags2), array_diff($tags2, $tags1));
+        if(!empty($diff)){
+            echo '1='.print_r($tags1, true);
+            echo '2='.print_r($tags2, true);
         }
+        $this->assertEquals(array(), $diff);
     }
 
     private function prepareTags(){
@@ -47,13 +50,13 @@ class CTaggableBehaviourTest extends CDbTestCase {
         $this->assertTagsAreEqual(array("php", "yii", "cool tag"), $post->getTags());
 
         $post = Post::model()->findByPk(1);
-        $post->setTags("php");
+        $post->setTags("php")->save();
 
         $post = Post::model()->findByPk(1);
         $this->assertTagsAreEqual(array("php"), $post->getTags());
 
         $post = Post::model()->findByPk(1);
-        $post->setTags(array("php", "yii"));
+        $post->setTags(array("php", "yii"))->save();
         
         $post = Post::model()->findByPk(1);
         $this->assertTagsAreEqual(array("php", "yii"), $post->getTags());
@@ -66,7 +69,7 @@ class CTaggableBehaviourTest extends CDbTestCase {
         $post->addTags("  yii, cool tag")->save();
 
         $post = Post::model()->findByPk(1);
-        $this->assertTagsAreEqual(array("php", "yii", "cool tag"), $post->getTags());
+        $this->assertTagsAreEqual(array("php", "yii", "cool tag", "mysql"), $post->getTags());
     }
 
     function testRemoveTags(){
@@ -76,7 +79,7 @@ class CTaggableBehaviourTest extends CDbTestCase {
         $post->removeTags("yii")->save();
 
         $post = Post::model()->findByPk(1);
-        $this->assertTagsAreEqual(array("php"), $post->getTags());
+        $this->assertTagsAreEqual(array("php", "mysql"), $post->getTags());
     }
 
     function testRemoveAllTags(){
@@ -86,7 +89,7 @@ class CTaggableBehaviourTest extends CDbTestCase {
         $post->removeAllTags()->save();
 
         $post = Post::model()->findByPk(1);
-        $this->assertEquals(array(), $post->getTags());
+        $this->assertTagsAreEqual(array(), $post->getTags());
     }
 
     function testGetAllTagsWithModelsCount(){
