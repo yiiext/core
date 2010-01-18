@@ -40,14 +40,12 @@ class CTwigViewRenderer extends CApplicationComponent implements IViewRenderer {
         // adding back Yii autoload handler
         spl_autoload_register(array('YiiBase','autoload'));
 
-        require_once Yii::getPathOfAlias('application.extensions.Twig').'/Twig_Loader_File.php';
-
         // setting cache path to application runtime directory
         $cache_path = Yii::app()->getRuntimePath().DIRECTORY_SEPARATOR.'views_twig'.DIRECTORY_SEPARATOR;
 
-        // here we are using custom twig loader (see Twig_Loader_File.php)
-        $loader = new Twig_Loader_File($cache_path);
-        $this->twig = new Twig_Environment($loader);
+        // here we are using twig loader
+        $loader = new Twig_Loader_Filesystem(Yii::app()->getBasePath());
+        $this->twig = new Twig_Environment($loader, array('cache'=>$cache_path, 'auto_reload'=>true));
     }
 
     /**
@@ -67,6 +65,7 @@ class CTwigViewRenderer extends CApplicationComponent implements IViewRenderer {
         if(!is_file($sourceFile) || ($file=realpath($sourceFile))===false)
             throw new CException(Yii::t('yii','View file "{file}" does not exist.', array('{file}'=>$sourceFile)));
 
+	$sourceFile = substr($sourceFile, strlen(Yii::app()->getBasePath()));
         $template = $this->twig->loadTemplate($sourceFile);
 
         return $template->render($data);
