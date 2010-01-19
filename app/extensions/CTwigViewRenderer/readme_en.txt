@@ -1,3 +1,6 @@
+Twig renderer for Yii
+=====================
+
 This extension allows you to use [Twig](http://www.twig-project.org/) templates in Yii.
 
 ###Resources

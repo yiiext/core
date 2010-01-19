@@ -2,22 +2,11 @@
 /**
  * Twig renderer for Yii
  *
- * Download and extract all Twig files from
- * fabpot-Twig-______.zip\fabpot-Twig-______\lib\Twig\
- * under protected/vendors/Twig.
- *
- * Add the following to your config file 'components' section:
- *
- * 'viewRenderer'=>array(
- *     'class'=>'application.extensions.Twig.CTwigViewRenderer',
- *     //'fileExtension' => '.tpl',
- *  ),
- *
  * @author Alexander Makarov <sam@rmcreative.ru>
- * @link http://www.yiiframework.com/
+ * @link http://code.google.com/p/yiiext/
  * @link http://www.twig-project.org/
  *
- * @version 0.9
+ * @version 0.9.1
  */
 class CTwigViewRenderer extends CApplicationComponent implements IViewRenderer {
     public $fileExtension='.html';
