@@ -79,7 +79,7 @@ class CUplodifyWidget  extends CWidget  {
      *
      * @var array
      */
-    public $settings = array();
+    private $settings = array();
 
     private $scriptPath = '';
 
