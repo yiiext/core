@@ -106,7 +106,7 @@ class CUplodifyWidget  extends CWidget  {
      */
     public function setSettings($settings) {
         foreach ($settings as $key => $value) {
-            if (array_key_exists($var, $this->defaults) === TRUE && $this->defaults[$key] != $value) {
+            if (array_key_exists($key, $this->defaults) === TRUE && $this->defaults[$key] != $value) {
                 $this->settings[$key] = $value;
             }
         }
