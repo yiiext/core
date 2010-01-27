@@ -12,7 +12,7 @@
  */
 class CUplodifyWidget  extends CWidget  {
     /**
-     * Defaults options. For more info read {@link http://www.uploadify.com/documentation/ documents}
+     * Default options. For more info read {@link http://www.uploadify.com/documentation/ documents}
      *
      * @var array
      */
@@ -21,7 +21,7 @@ class CUplodifyWidget  extends CWidget  {
         'id' => 'uploadifyFileId',
         'expressInstall' => NULL,
         'displayData' => 'percentage',
-        // Options from documuments
+        // Options from documents
         'uploader' => 'uploadify.swf',
         'script' => 'uploadify.php',
         'checkScript' => 'check.php',
@@ -84,16 +84,16 @@ class CUplodifyWidget  extends CWidget  {
     private $scriptPath = '';
 
     public function __construct() {
-        $this->scriptPath = dirname(__FILE__) . DIRECTORY_SEPARATOR . 'vendors';
+        $this->scriptPath = dirname(__FILE__).'/vendors';
         // Publish defaults assets
         $am = Yii::app()->getAssetManager();
-        $this->settings['uploader'] = $am->publish($this->scriptPath . DIRECTORY_SEPARATOR . 'uploadify.swf');
-        $this->settings['cancelImg'] = $am->publish($this->scriptPath . DIRECTORY_SEPARATOR . 'cancel.png');
-        $this->settings['expressInstall'] = $am->publish($this->scriptPath . DIRECTORY_SEPARATOR . 'expressInstall.swf');
+        $this->settings['uploader'] = $am->publish($this->scriptPath.'/uploadify.swf');
+        $this->settings['cancelImg'] = $am->publish($this->scriptPath.'/cancel.png');
+        $this->settings['expressInstall'] = $am->publish($this->scriptPath.'/expressInstall.swf');
     }
 
     public function __get($var) {
-        if (array_key_exists($var, $this->defaults) === TRUE) {
+        if (array_key_exists($var, $this->defaults)) {
             return isset($this->settings[$var]) ? $this->settings[$var] : $this->defaults[$var];
         }
         return parent::__get($var);
@@ -106,7 +106,7 @@ class CUplodifyWidget  extends CWidget  {
      */
     public function setSettings($settings) {
         foreach ($settings as $key => $value) {
-            if (array_key_exists($key, $this->defaults) === TRUE && $this->defaults[$key] != $value) {
+            if (array_key_exists($key, $this->defaults) && $this->defaults[$key] != $value) {
                 $this->settings[$key] = $value;
             }
         }
@@ -131,12 +131,12 @@ class CUplodifyWidget  extends CWidget  {
         $am = Yii::app()->getAssetManager();
         $cs = Yii::app()->clientScript;
         $cs->registerCoreScript('jquery');
-        $cs->registerScriptFile($am->publish($this->scriptPath . DIRECTORY_SEPARATOR . 'jquery.uploadify.v2.1.0.min.js'));
-        $cs->registerScriptFile($am->publish($this->scriptPath . DIRECTORY_SEPARATOR . 'swfobject.js'));
-        $cs->registerCssFile($am->publish($this->scriptPath . DIRECTORY_SEPARATOR . 'uploadify.css'));
+        $cs->registerScriptFile($am->publish($this->scriptPath.'/jquery.uploadify.v2.1.0.min.js'));
+        $cs->registerScriptFile($am->publish($this->scriptPath.'/swfobject.js'));
+        $cs->registerCssFile($am->publish($this->scriptPath.'/uploadify.css'));
 
         // fileDesc is required if fileExt set.
-        if (empty($this->settings['fileExt']) === FALSE && empty($this->settings['fileDesc']) === TRUE) {
+        if (!empty($this->settings['fileExt']) && empty($this->settings['fileDesc'])) {
             $this->settings['fileDesc'] = 'Supported files (' . $this->settings['fileExt'] . ')';
         }
 
@@ -145,8 +145,7 @@ class CUplodifyWidget  extends CWidget  {
     }
 
     public function run() {
-        echo CHtml::activeFileField($this->model, $this->modelAttribute, array('id' => $this->id));
-        echo "\n";
+        echo CHtml::activeFileField($this->model, $this->modelAttribute, array('id' => $this->id))."\n";
 
         $cs = Yii::app()->clientScript;
         $cs->registerScript('loadUploadify',
