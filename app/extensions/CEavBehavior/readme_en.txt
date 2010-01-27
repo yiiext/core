@@ -1,20 +1,29 @@
-#summary Allows model to work with custom fields on the fly (EAV pattern)
+CEavBehaviour
+=============
 
-== Installing and configuring ==
-----------------
-==== Create a table that will store EAV-attributes ====
+Allows model to work with custom fields on the fly (EAV pattern).
+
+Installing and configuring
+--------------------------
+
+### Create a table that will store EAV-attributes
+
 SQL dump:
-{{{
+
+~~~
+[sql]
 CREATE TABLE IF NOT EXISTS `eavAttr` (
   `entity` bigint(20) unsigned NOT NULL,
   `attribute` varchar(250) NOT NULL,
   `value` text NOT NULL,
   KEY `ikEntity` (`entity`)
 ) ENGINE=MyISAM  DEFAULT CHARSET=utf8;
-}}}
+~~~
 
-==== Attach behaviour to your model ====
-{{{
+### Attach behaviour to your model
+
+~~~
+[php]
 function behaviors() {
     return array(
         'eavAttr' => array(
@@ -43,47 +52,52 @@ function behaviors() {
         )
     );
 }
-}}}
+~~~
 
-== Methods ==
+Methods
 -------
-==== getEavAttributes($attributes) ====
+
+### getEavAttributes($attributes)
 Get attribute values indexed by attributes name.
 
-{{{
+~~~
+[php]
 $user = User::model()->findByPk(1);
 $user->getEavAttributes(array('attribute1', 'attribute2'));
-}}}
+~~~
 
-==== getEavAttribute($attribute) ====
+### getEavAttribute($attribute)
 Get attribute value.
 
-{{{
+~~~
+[php]
 $user = User::model()->findByPk(1);
 $user->getEavAttribute('attribute1');
-}}}
+~~~
 
-==== setEavAttribute($attribute, $value, $save = FALSE) ====
+### setEavAttribute($attribute, $value, $save = FALSE)
 Set attribute value.
 
-{{{
+~~~
+[php]
 $user = User::model()->findByPk(1);
 $user->setEavAttribute('attribute1', 'value1');
-}}}
+~~~
 
-==== setEavAttributes($attributes, $save = FALSE) ====
+### setEavAttributes($attributes, $save = FALSE)
 Set attributes values.
 
-{{{
+~~~
+[php]
 $user = User::model()->findByPk(1);
 $user->setEavAttributes(array('attribute1' => 'value1', 'attribute2' => 'value2'));
-}}}
+~~~
 
-==== withEavAttributes($attributes) ====
+### withEavAttributes($attributes)
 Limits AR query to records with specified attributes.
 
-{{{
+~~~
+[php]
 $users = User::model()->withEavAttributes(array('skype'))->findAll();
 $usersCount = User::model()->withEavAttributes(array('skype'))->count();
-}}}
-
+~~~

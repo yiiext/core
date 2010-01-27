@@ -1,5 +1,6 @@
-TaggableBehaviour
-=================
+CTaggableBehaviour
+==================
+
 Allows active record model to manage tags.
 
 Installation and configuration

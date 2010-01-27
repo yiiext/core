@@ -1,3 +1,6 @@
+CSmartyViewRenderer
+===================
+
 This extension allows you to use [Smarty](http://www.smarty.net/) templates in Yii.
 
 ###Resources

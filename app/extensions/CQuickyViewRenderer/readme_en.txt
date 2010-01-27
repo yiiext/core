@@ -1,3 +1,6 @@
+CQuickyViewRenderer
+===================
+
 This extension allows you to use [Quicky](http://code.google.com/p/quicky/) templates in Yii.
 
 ###Resources

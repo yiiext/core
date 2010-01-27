@@ -1,5 +1,5 @@
-EnsureNullBehavior
-==================
+CEnsureNullBehavior
+===================
 
 Ensures no empty AR property value is written to DB if property's default is `NULL`.
 Useful if you want to be sure all empty values will be saved as nulls.

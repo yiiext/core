@@ -1,3 +1,6 @@
+CDwooViewRenderer
+=================
+
 This extension allows you to use [Dwoo](http://dwoo.org/) templates in Yii.
 
 ###Resources

@@ -1,20 +1,27 @@
-#summary Добавляет модели возможность работать с eav-моделью данных
+CEavBehaviour
+=============
 
-== Установка и настройка ==
-----------------
-==== Создать таблицу для храниениея EAV-аттрибутов. ====
+Добавляет модели возможность работать с eav-моделью данных.
+
+Установка и настройка
+---------------------
+
+### Создать таблицу для храниениея EAV-аттрибутов
+
 SQL для таблицы:
-{{{
+~~~
+[sql]
 CREATE TABLE IF NOT EXISTS `eavAttr` (
   `entity` bigint(20) unsigned NOT NULL,
   `attribute` varchar(250) NOT NULL,
   `value` text NOT NULL,
   KEY `ikEntity` (`entity`)
 ) ENGINE=MyISAM  DEFAULT CHARSET=utf8;
-}}}
+~~~
 
-==== Подключить поведение к модели: ====
-{{{
+### Подключить поведение к модели
+~~~
+[sql]
 function behaviors() {
     return array(
         'eavAttr' => array(
@@ -42,46 +49,51 @@ function behaviors() {
         )
     );
 }
-}}}
+~~~
 
-== Методы ==
--------
-==== getEavAttributes($attributes) ====
-Возвращает массив значений атрибутов, индексированные именем атрибута
+Методы
+------
+### getEavAttributes($attributes)
+Возвращает массив значений атрибутов, индексированные именем атрибута.
 
-{{{
+~~~
+[php]
 $user = User::model()->findByPk(1);
 $user->getEavAttributes(array('attribute1', 'attribute2'));
-}}}
+~~~
 
-==== getEavAttribute($attribute) ====
-Возвращает значение атрибута
+### getEavAttribute($attribute)
+Возвращает значение атрибута.
 
-{{{
+~~~
+[php]
 $user = User::model()->findByPk(1);
 $user->getEavAttribute('attribute1');
-}}}
+~~~
 
-==== setEavAttribute($attribute, $value, $save = FALSE) ====
-Устанавливает значение атрибута
+### setEavAttribute($attribute, $value, $save = FALSE)
+Устанавливает значение атрибута.
 
-{{{
+~~~
+[php]
 $user = User::model()->findByPk(1);
 $user->setEavAttribute('attribute1', 'value1');
-}}}
+~~~
 
-==== setEavAttributes($attribute, $save = FALSE) ====
-Устанавливает значение атрибутов
+### setEavAttributes($attribute, $save = FALSE)
+Устанавливает значение атрибутов.
 
-{{{
+~~~
+[php]
 $user = User::model()->findByPk(1);
 $user->setEavAttributes(array('attribute1' => 'value1', 'attribute2' => 'value2'));
-}}}
+~~~
 
-==== withEavAttributes($attributes) ====
+### withEavAttributes($attributes)
 Позволяет ограничить запрос AR записями с указанными атрибутами.
 
-{{{
+~~~
+[php]
 $users = User::model()->withEavAttributes(array('skype'))->findAll();
 $usersCount = User::model()->withEavAttributes(array('skype'))->count();
-}}}
+~~~
