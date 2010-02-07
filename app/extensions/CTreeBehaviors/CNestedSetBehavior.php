@@ -29,10 +29,12 @@
 * TODO: (creocoder)написать тесты
 * TODO: (creocoder)реализовать актуализацию дерева в уже созданных во время выполнения объектах. Через Yii Events, либо паттер Registry?
 * TODO: (creocoder)наследоваться от CTreeBehavior или реализовывать интерфейс ITree? (преимущества, недостатки)
+*       (samdark)занятней всего будет выделить общий функционал в abstract CTreeBehaviour для последующей реализации других способов хранение дерева 
 * TODO: (creocoder)доработать с учетом 't' префикса
 * TODO: (creocoder)смущает постоянная проверка $this->hasManyRoots. Вынести этот функционал в дочерний CNestedSetWithManyRootsBehavior,
 * что ускорит работу методов, когда не нужны множественные корни?
-* TODO: (creocoder)реализовать поддержку множественных корней находящихся в другой таблице?
+*       (samdark) На скорости сильно не скажется. Можно оставить как есть.
+* TODO: (creocoder)реализовать поддержку множественных корней находящихся в другой таблице? 
 * TODO: (creocoder)использовать ли quoteColumn() метод для обрамления всех полей в кавычки? (распухнут 'condition')
 *
 * TODO: (creocoder)-== в перспективе ==-
@@ -44,13 +46,18 @@
 
 class CNestedSetBehavior extends CActiveRecordBehavior
 {
+    /**
+     * @var boolean Хранится ли в таблице более одного дерева
+     */
 	public $hasManyRoots=false;
+
 	public $root='root';
 	public $left='lft';
 	public $right='rgt';
 	public $level='level';
 
 	//TODO: (creocoder)реализовать в виде named space и/или добавить $criteria, как аргумент
+    // (samdark) нет слова Childs, есть Children
 	public function findChilds()
 	{
 		$criteria=new CDbCriteria(array(
@@ -67,6 +74,7 @@ class CNestedSetBehavior extends CActiveRecordBehavior
 	}
 
 	//TODO: (creocoder)переименовать в findDescendants()?
+    // (samdark): да.
 	//TODO: (creocoder)реализовать в виде named space и/или добавить $criteria, как аргумент
 	public function findAllChilds()
 	{
@@ -83,6 +91,7 @@ class CNestedSetBehavior extends CActiveRecordBehavior
 	}
 
 	//TODO: (creocoder)переименовать в findPath()?
+    // (samdark) да.
 	//TODO: (creocoder)реализовать в виде named space и/или добавить $criteria, как аргумент
 	public function findParents()
 	{
@@ -150,7 +159,10 @@ class CNestedSetBehavior extends CActiveRecordBehavior
 
 	//TODO: (creocoder)есть возможность сделать через beforeDelete() возвращающий в итоге false, тогда будет возможно
 	// просто $node->delete(), но повлияет на нижестоящие в behaviors() поведения, обсудить
+    // (samdark) можно просто перекрыть delete() без вызова parent::delete().
+    // Обязательно в этом случае триггернуть события onBeforeDelete и onAfterDelete.
 	//TODO: (creocoder)учесть возможность переноса дочерних категорий на уровень вверх, вместо их удаления
+    // (samdark) бесполезная фича. Если удаляют, вложенные тоже убивают.
 	public function deleteNode()
 	{
 		$transaction=$this->owner->getDbConnection()->beginTransaction();
@@ -199,6 +211,7 @@ class CNestedSetBehavior extends CActiveRecordBehavior
 	}
 
 	//TODO: (creocoder)может лучше return (bool)$this->owner->getAttribute($this->level)?
+    // (samdark) да.
 	public function isRoot()
 	{
 		return $this->owner->getAttribute($this->level)==0;
