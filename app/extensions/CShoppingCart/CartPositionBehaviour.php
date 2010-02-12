@@ -4,7 +4,7 @@
  * Объект позиции в корзине
  *
  * @author pirrat <mrakobesov@gmail.com>
- * @version 0.2 beta
+ * @version 0.5rc2
  * @package ShoppingCart
  */
 
@@ -15,12 +15,12 @@ class CartPositionBehaviour extends CActiveRecordBehavior {
      * кол-во единиц позиции
      * @var int
      */
-    private $quantity = 1;
+    private $quantity = 0;
     /**
      * Обновлять модель при востановлении из сессии?
      * @var boolean
      */
-    private $refresh;
+    private $refresh = true;
 
 
     public function init() {

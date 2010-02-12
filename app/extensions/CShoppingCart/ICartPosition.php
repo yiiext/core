@@ -4,7 +4,7 @@
  * ICartPosition
  *
  * @author pirrat <mrakobesov@gmail.com>
- * @version 0.2 beta
+ * @version 0.5 rc2
  * @package ShoppingCart
  */
 interface ICartPosition {
