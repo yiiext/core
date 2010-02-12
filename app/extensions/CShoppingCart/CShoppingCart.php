@@ -96,7 +96,7 @@ class CShoppingCart extends CMap
 
         $product->setQuantity($quantity);
 
-        if($this->itemAt($key) && $product->getQuantity() < 1)
+        if($product->getQuantity() < 1)
             $this->remove($key);
         else
             parent::add($key, $product);
