@@ -4,7 +4,7 @@
  *
  * Provides tagging ability for a model.
  *
- * @version 0.9
+ * @version 1.0
  * @author Alexander Makarov
  * @link http://yiiframework.ru/forum/viewtopic.php?f=9&t=389
  */
@@ -53,12 +53,12 @@ class CTaggableBehaviour extends CActiveRecordBehavior {
      * @return CDbConnection
      */
     protected function getConnection(){
-        return $this->owner->dbConnection;
+        return $this->getOwner()->dbConnection;
     }
 
     /**
      * @throws CException
-     * @param CComponent
+     * @param CComponent $owner
      * @return void
      */
     public function attach($owner) {
@@ -90,7 +90,7 @@ class CTaggableBehaviour extends CActiveRecordBehavior {
      */
     private function getTagBindingTableName(){
         if($this->tagBindingTable === null){
-            $this->tagBindingTable = $this->owner->tableName().'Tag';
+            $this->tagBindingTable = $this->getOwner()->tableName().'Tag';
         }
         return $this->tagBindingTable;
     }
@@ -103,7 +103,7 @@ class CTaggableBehaviour extends CActiveRecordBehavior {
      */
     private function getModelTableFkName(){
         if($this->modelTableFk === null){
-            $tableName = $this->owner->tableName();
+            $tableName = $this->getOwner()->tableName();
             $tableName[0] = strtolower($tableName[0]);
             $this->modelTableFk = $tableName.'Id';
         }
@@ -120,7 +120,7 @@ class CTaggableBehaviour extends CActiveRecordBehavior {
         $tags = $this->toTagsArray($tags);
         $this->tags = array_unique($tags);
 
-        return $this->owner;
+        return $this->getOwner();
     }
 
     /**
@@ -135,7 +135,7 @@ class CTaggableBehaviour extends CActiveRecordBehavior {
         $tags = $this->toTagsArray($tags);
         $this->tags = array_unique(array_merge($this->tags, $tags));
 
-        return $this->owner;
+        return $this->getOwner();
     }
 
     /**
@@ -160,13 +160,14 @@ class CTaggableBehaviour extends CActiveRecordBehavior {
         $tags = $this->toTagsArray($tags);
         $this->tags = array_diff($this->tags, $tags);
 
-        return $this->owner;
+        return $this->getOwner();
     }
 
     /**
-     * Alias of removeTags
+     * Remove one or more tags.
+     * Alias of removeTags.
      *
-     * @param  $tags
+     * @param string|array $tags
      * @return void
      */
     function removeTag($tags){
@@ -211,8 +212,8 @@ class CTaggableBehaviour extends CActiveRecordBehavior {
      * Used as a callback to trim tags
      *
      * @access private
-     * @param  $item
-     * @param  $key
+     * @param string $item
+     * @param string $key
      * @return string
      */
     private function trim(&$item, $key){
@@ -263,7 +264,7 @@ class CTaggableBehaviour extends CActiveRecordBehavior {
                 }
             }
 
-            if(!$this->owner->getIsNewRecord()){
+            if(!$this->getOwner()->getIsNewRecord()){
                 // delete all present tag bindings if record is existing one
                 $conn->createCommand(
                     sprintf(
@@ -272,7 +273,7 @@ class CTaggableBehaviour extends CActiveRecordBehavior {
                          WHERE %s = %d",
                          $this->getTagBindingTableName(),
                          $this->getModelTableFkName(),
-                         $this->owner->primaryKey
+                         $this->getOwner()->primaryKey
                     )
                 )->execute();
             }
@@ -320,7 +321,7 @@ class CTaggableBehaviour extends CActiveRecordBehavior {
                              $this->getTagBindingTableName(),
                              $this->getModelTableFkName(),
                              $this->tagBindingTableTagId,
-                             $this->owner->primaryKey,
+                             $this->getOwner()->primaryKey,
                              $tagId
                         )
                     )->execute();
@@ -339,7 +340,7 @@ class CTaggableBehaviour extends CActiveRecordBehavior {
      * @return void
      */
     function resetAllTagsCache(){
-        $this->cache->delete('Taggable'.$this->owner->tableName().'All');
+        $this->cache->delete('Taggable'.$this->getOwner()->tableName().'All');
     }
 
     /**
@@ -347,7 +348,7 @@ class CTaggableBehaviour extends CActiveRecordBehavior {
      * @return void
      */
     function resetAllTagsWithModelsCountCache(){
-        $this->cache->delete('Taggable'.$this->owner->tableName().'AllWithCount');
+        $this->cache->delete('Taggable'.$this->getOwner()->tableName().'AllWithCount');
     }
 
     /**
@@ -365,7 +366,7 @@ class CTaggableBehaviour extends CActiveRecordBehavior {
                  WHERE %s = %d",
                  $this->getTagBindingTableName(),
                  $this->getModelTableFkName(),
-                 $this->owner->primaryKey
+                 $this->getOwner()->primaryKey
             )
         )->execute();
 
@@ -383,7 +384,7 @@ class CTaggableBehaviour extends CActiveRecordBehavior {
      */
     protected function loadTags(){
         if($this->tags!=null) return;
-        if($this->owner->getIsNewRecord()) return;
+        if($this->getOwner()->getIsNewRecord()) return;
 
         if(!($tags = $this->cache->get($this->getCacheKey()))){
             // getting associated tags
@@ -398,7 +399,7 @@ class CTaggableBehaviour extends CActiveRecordBehavior {
                     $this->getTagBindingTableName(),
                     $this->tagBindingTableTagId,
                     $this->getModelTableFkName(),
-                    $this->owner->primaryKey
+                    $this->getOwner()->primaryKey
                 )
             )->queryColumn();
 
@@ -415,20 +416,20 @@ class CTaggableBehaviour extends CActiveRecordBehavior {
      * @return string
      */
     private function getCacheKey(){
-        return 'Taggable'.$this->owner->tableName().$this->owner->primaryKey;
+        return 'Taggable'.$this->getOwner()->tableName().$this->tagTable.$this->getOwner()->primaryKey;
     }
 
     /**
      * Get criteria to limit query by tags
      *
      * @access private
-     * @param $tags
+     * @param array $tags
      * @return CDbCriteria
      */
     protected function getFindByTagsCriteria($tags){
         $criteria = new CDbCriteria();
 
-        $pk = $this->owner->tableSchema->primaryKey;
+        $pk = $this->getOwner()->tableSchema->primaryKey;
 
         if(!empty($tags)){
             $conn = $this->getConnection();
@@ -446,29 +447,31 @@ class CTaggableBehaviour extends CActiveRecordBehavior {
     /**
      * Get all possible tags for current model class
      *
-     * @param  $criteria
+     * @param CDbCriteria $criteria
      * @return array
      */
     public function getAllTags($criteria = null){
-        if(!($tags = $this->cache->get('Taggable'.$this->owner->tableName().'All'))){
+        if(!($tags = $this->cache->get('Taggable'.$this->getOwner()->tableName().'All'))){
             // getting associated tags
-            $builder = $this->owner->getCommandBuilder();
+            $builder = $this->getOwner()->getCommandBuilder();
             $criteria = new CDbCriteria();
             $criteria->select = 'name';
             $tags = $builder->createFindCommand($this->tagTable, $criteria)->queryColumn();
 
-            $this->cache->set('Taggable'.$this->owner->tableName().'All', $tags);
+            $this->cache->set('Taggable'.$this->getOwner()->tableName().'All', $tags);
         }
 
         return $tags;
     }
 
     /**
-     * @param  $limit
+     * Get all possible tags with models count for each for this model class.
+     *
+     * @param CDbCriteria $criteria
      * @return array
      */
     public function getAllTagsWithModelsCount($criteria = null){
-        if(!($tags = $this->cache->get('Taggable'.$this->owner->tableName().'AllWithCount'))){
+        if(!($tags = $this->cache->get('Taggable'.$this->getOwner()->tableName().'AllWithCount'))){
             // getting associated tags
             $conn = $this->getConnection();
             $tags = $conn->createCommand(
@@ -483,7 +486,7 @@ class CTaggableBehaviour extends CActiveRecordBehavior {
                 )
             )->queryAll();
 
-            $this->cache->set('Taggable'.$this->owner->tableName().'AllWithCount', $tags);
+            $this->cache->set('Taggable'.$this->getOwner()->tableName().'AllWithCount', $tags);
         }
 
         return $tags;
@@ -526,10 +529,10 @@ class CTaggableBehaviour extends CActiveRecordBehavior {
         
         if(!empty($tags)){
             $criteria = $this->getFindByTagsCriteria($tags);
-            $this->owner->getDbCriteria()->mergeWith($criteria);
+            $this->getOwner()->getDbCriteria()->mergeWith($criteria);
         }
 
-        return $this->owner;
+        return $this->getOwner();
     }
 
     /**
