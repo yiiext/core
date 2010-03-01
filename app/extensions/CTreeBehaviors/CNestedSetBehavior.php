@@ -5,7 +5,7 @@
  * TODO: изменить значение левого и правого ключа на +1
  * TODO: проверять существование цели в appendTo,prependTo,insertBefore,insertAfter?
  *
- * @version 0.4
+ * @version 0.5
  * @author creocoder <creocoder@gmail.com>
  */
 
@@ -120,7 +120,7 @@ class CNestedSetBehavior extends CActiveRecordBehavior
 	 * Gets record of previous sibling.
 	 * @return CActiveRecord the record found. Null if no record is found.
 	 */
-	public function getPrevSibling() //TODO: переименовать просто в prev()?
+	public function getPrevSibling() //TODO: переименовать в prev()?
 	{
 		$owner=$this->getOwner();
 		$condition=$this->right.'='.$owner->getAttribute($this->left)-1;
@@ -135,7 +135,7 @@ class CNestedSetBehavior extends CActiveRecordBehavior
 	 * Gets record of next sibling.
 	 * @return CActiveRecord the record found. Null if no record is found.
 	 */
-	public function getNextSibling() //TODO: переименовать просто в next()?
+	public function getNextSibling() //TODO: переименовать в next()?
 	{
 		$owner=$this->getOwner();
 		$condition=$this->left.'='.$owner->getAttribute($this->right)+1;
@@ -146,278 +146,12 @@ class CNestedSetBehavior extends CActiveRecordBehavior
 		return $owner->find($condition);
 	}
 
-	public function remove()
-	{
-		$owner=$this->getOwner();
-
-		$transaction=$owner->getDbConnection()->beginTransaction();
-
-		try
-		{
-			$condition=$this->left.'>='.$owner->getAttribute($this->left).' AND '.
-				$this->right.'<='.$owner->getAttribute($this->right);
-
-			$root=$this->hasManyRoots ? $owner->getAttribute($this->root) : null;
-
-			if($root!==null)
-				$condition.=' AND '.$this->root.'='.$root;
-
-			$owner->deleteAll($condition);
-
-			$first=$owner->getAttribute($this->right)+1;
-			$delta=$owner->getAttribute($this->left)-$owner->getAttribute($this->right)-1;
-			$this->shiftLeftRightValues($first,$delta,$root);
-
-			$transaction->commit();
-
-			return true;
-		}
-		catch(Exception $e)
-		{
-			$transaction->rollBack();
-
-			return false;
-		}
-	}
-
-	/**
-	 * Appends node to owner as last child.
-	 * @return boolean whether the appending succeeds.
-	 * @throws CException if the target node is self.
-	 */
-	public function append($node,$runValidation=true)
-	{
-		return $node->appendTo($this->getOwner(),$runValidation);
-	}
-
-	/**
-	 * Appends owner to node as last child.
-	 * @return boolean whether the appending succeeds.
-	 * @throws CException if the target node is self.
-	 */
-	public function appendTo($node,$runValidation=true)
-	{
-		$owner=$this->getOwner();
-
-		if($owner===$node)
-			throw new CException(Yii::t('yiiext','The target node should not be self.'));
-
-		if($runValidation && !$owner->validate())
-			return false;
-
-		$db=$owner->getDbConnection();
-		$extTransFlag=$db->getCurrentTransaction();
-
-		if($extTransFlag===null)
-			$transaction=$db->beginTransaction();
-
-		try
-		{
-			$key=$node->getAttribute($this->right);
-			$root=$this->hasManyRoots ? $node->getAttribute($this->root) : null;
-			$this->shiftLeftRightValues($key,2,$root);
-			$owner->setAttribute($this->left,$key);
-			$owner->setAttribute($this->right,$key+1);
-			$owner->setAttribute($this->level,$node->getAttribute($this->level)+1);
-
-			if($root!==null)
-				$owner->setAttribute($this->root,$root);
-
-			$owner->save(false);
-
-			if($extTransFlag===null)
-				$transaction->commit();
-
-			return true;
-		}
-		catch(Exception $e)
-		{
-			if($extTransFlag===null)
-				$transaction->rollBack();
-
-			return false;
-		}
-	}
-
-	/**
-	 * Prepends node to owner as first child.
-	 * @return boolean whether the prepending succeeds.
-	 * @throws CException if the target node is self.
-	 */
-	public function prepend($node,$runValidation=true)
-	{
-		return $node->prependTo($this->getOwner(),$runValidation);
-	}
-
-	/**
-	 * Prepends owner to node as first child.
-	 * @return boolean whether the prepending succeeds.
-	 * @throws CException if the target node is self.
-	 */
-	public function prependTo($node,$runValidation=true)
-	{
-		$owner=$this->getOwner();
-
-		if($owner===$node)
-			throw new CException(Yii::t('yiiext','The target node should not be self.'));
-
-		if($runValidation && !$owner->validate())
-			return false;
-
-		$db=$owner->getDbConnection();
-		$extTransFlag=$db->getCurrentTransaction();
-
-		if($extTransFlag===null)
-			$transaction=$db->beginTransaction();
-
-		try
-		{
-			$key=$node->getAttribute($this->left)+1;
-			$root=$this->hasManyRoots ? $node->getAttribute($this->root) : null;
-			$this->shiftLeftRightValues($key,2,$root);
-			$owner->setAttribute($this->left,$key);
-			$owner->setAttribute($this->right,$key+1);
-			$owner->setAttribute($this->level,$node->getAttribute($this->level)+1);
-
-			if($root!==null)
-				$owner->setAttribute($this->root,$root);
-
-			$owner->save(false);
-
-			if($extTransFlag===null)
-				$transaction->commit();
-
-			return true;
-		}
-		catch(Exception $e)
-		{
-			if($extTransFlag===null)
-				$transaction->rollBack();
-
-			return false;
-		}
-	}
-
-	/**
-	 * Inserts owner as previous sibling of node.
-	 * @return boolean whether the inserting succeeds.
-	 * @throws CException if the target node is self or target node is root.
-	 */
-	public function insertBefore($node,$runValidation=true)
-	{
-		if($node->isRoot())
-			throw new CException(Yii::t('yiiext','The target node should not be root.'));
-
-		$owner=$this->getOwner();
-
-		if($owner===$node)
-			throw new CException(Yii::t('yiiext','The target node should not be self.'));
-
-		if($runValidation && !$owner->validate())
-			return false;
-
-		$db=$owner->getDbConnection();
-		$extTransFlag=$db->getCurrentTransaction();
-
-		if($extTransFlag===null)
-			$transaction=$db->beginTransaction();
-
-		try
-		{
-			$key=$node->getAttribute($this->left);
-			$root=$this->hasManyRoots ? $node->getAttribute($this->root) : null;
-			$this->shiftLeftRightValues($key,2,$root);
-			$owner->setAttribute($this->left,$key);
-			$owner->setAttribute($this->right,$key+1);
-			$owner->setAttribute($this->level,$node->getAttribute($this->level));
-
-			if($root!==null)
-				$owner->setAttribute($this->root,$root);
-
-			$owner->save(false);
-
-			if($extTransFlag===null)
-				$transaction->commit();
-
-			return true;
-		}
-		catch(Exception $e)
-		{
-			if($extTransFlag===null)
-				$transaction->rollBack();
-
-			return false;
-		}
-	}
-
-	/**
-	 * Inserts owner as next sibling of node.
-	 * @return boolean whether the inserting succeeds.
-	 * @throws CException if the target node is self or target node is root.
-	 */
-	public function insertAfter($node,$runValidation=true)
-	{
-		if($node->isRoot())
-			throw new CException(Yii::t('yiiext','The target node should not be root.'));
-
-		$owner=$this->getOwner();
-
-		if($owner===$node)
-			throw new CException(Yii::t('yiiext','The target node should not be self.'));
-
-		if($runValidation && !$owner->validate())
-			return false;
-
-		$db=$owner->getDbConnection();
-		$extTransFlag=$db->getCurrentTransaction();
-
-		if($extTransFlag===null)
-			$transaction=$db->beginTransaction();
-
-		try
-		{
-			$key=$node->getAttribute($this->right)+1;
-			$root=$this->hasManyRoots ? $node->getAttribute($this->root) : null;
-			$this->shiftLeftRightValues($key,2,$root);
-			$owner->setAttribute($this->left,$key);
-			$owner->setAttribute($this->right,$key+1);
-			$owner->setAttribute($this->level,$node->getAttribute($this->level));
-
-			if($root!==null)
-				$owner->setAttribute($this->root,$root);
-
-			$owner->save(false);
-
-			if($extTransFlag===null)
-				$transaction->commit();
-
-			return true;
-		}
-		catch(Exception $e)
-		{
-			if($extTransFlag===null)
-				$transaction->rollBack();
-
-			return false;
-		}
-	}
-
-	public function isLeaf()
-	{
-		return $this->getOwner()->getAttribute($this->right)-$this->getOwner()->getAttribute($this->left)===1;
-	}
-
-	public function isRoot()
-	{
-		return !(boolean)$this->getOwner()->getAttribute($this->level); //TODO: стоит отталкиваться от значения левого ключа в 1
-	}
-
 	/**
 	 * Create root node. Only used in multiple-root trees.
 	 * @return boolean whether the creating succeeds.
 	 * @throws CException if many root mode is off.
 	 */
-	public function createRoot($runValidation=true)
+	public function createRoot($runValidation=true) //TODO: переименовать в saveAsRoot()?
 	{
 		if(!$this->hasManyRoots)
 			throw new CException(Yii::t('yiiext','Many roots mode is off.'));
@@ -456,7 +190,191 @@ class CNestedSetBehavior extends CActiveRecordBehavior
 		}
 	}
 
-	protected function shiftLeftRightValues($first,$delta,$root=null)
+	/**
+	 * Deletes node it's descendants.
+	 * @return boolean whether the creating succeeds.
+	 */
+	public function remove()
+	{
+		$owner=$this->getOwner();
+
+		$transaction=$owner->getDbConnection()->beginTransaction();
+
+		try
+		{
+			$condition=$this->left.'>='.$owner->getAttribute($this->left).' AND '.
+				$this->right.'<='.$owner->getAttribute($this->right);
+
+			$root=$this->hasManyRoots ? $owner->getAttribute($this->root) : null;
+
+			if($root!==null)
+				$condition.=' AND '.$this->root.'='.$root;
+
+			$owner->deleteAll($condition);
+
+			$first=$owner->getAttribute($this->right)+1;
+			$delta=$owner->getAttribute($this->left)-$owner->getAttribute($this->right)-1;
+			$this->shiftLeftRight($first,$delta,$root);
+
+			$transaction->commit();
+
+			return true;
+		}
+		catch(Exception $e)
+		{
+			$transaction->rollBack();
+
+			return false;
+		}
+	}
+
+	/**
+	 * Appends target to node as last child.
+	 * @return boolean whether the appending succeeds.
+	 * @throws CException if the target node is self.
+	 */
+	public function append($target,$runValidation=true)
+	{
+		return $target->appendTo($this->getOwner(),$runValidation);
+	}
+
+	/**
+	 * Appends node to target as last child.
+	 * @return boolean whether the appending succeeds.
+	 * @throws CException if the target node is self.
+	 */
+	public function appendTo($target,$runValidation=true)
+	{
+		$this->getOwner()->setAttribute($this->level,$target->getAttribute($this->level)+1);
+		$key=$target->getAttribute($this->right);
+		$this->addNode($target,$key,$runValidation);
+	}
+
+	/**
+	 * Prepends target to node as first child.
+	 * @return boolean whether the prepending succeeds.
+	 * @throws CException if the target node is self.
+	 */
+	public function prepend($target,$runValidation=true)
+	{
+		return $target->prependTo($this->getOwner(),$runValidation);
+	}
+
+	/**
+	 * Prepends node to target as first child.
+	 * @return boolean whether the prepending succeeds.
+	 * @throws CException if the target node is self.
+	 */
+	public function prependTo($target,$runValidation=true)
+	{
+		$this->getOwner()->setAttribute($this->level,$target->getAttribute($this->level)+1);
+		$key=$target->getAttribute($this->left)+1;
+		$this->addNode($target,$key,$runValidation);
+	}
+
+	/**
+	 * Inserts node as previous sibling of target.
+	 * @return boolean whether the inserting succeeds.
+	 * @throws CException if the target node is self or target node is root.
+	 */
+	public function insertBefore($target,$runValidation=true)
+	{
+		if($target->isRoot())
+			throw new CException(Yii::t('yiiext','The target node should not be root.'));
+
+		$this->getOwner()->setAttribute($this->level,$target->getAttribute($this->level));
+		$key=$target->getAttribute($this->left);
+		$this->addNode($target,$key,$runValidation);
+	}
+
+	/**
+	 * Inserts node as next sibling of target.
+	 * @return boolean whether the inserting succeeds.
+	 * @throws CException if the target node is self or target node is root.
+	 */
+	public function insertAfter($target,$runValidation=true)
+	{
+		if($target->isRoot())
+			throw new CException(Yii::t('yiiext','The target node should not be root.'));
+
+		$this->getOwner()->setAttribute($this->level,$target->getAttribute($this->level));
+		$key=$target->getAttribute($this->right)+1;
+		$this->addNode($target,$key,$runValidation);
+	}
+
+	/**
+	 * Move node as previous sibling of target.
+	 * @return boolean whether the moving succeeds.
+	 * @throws CException if the target node is self or target node is root.
+	 */
+	public function moveBefore($target)
+	{
+		if($target->isRoot())
+			throw new CException(Yii::t('yiiext','The target node should not be root.'));
+
+		$key=$target->getAttribute($this->left);
+		$levelDiff=$target->getAttribute($this->level)-$this->getOwner()->getAttribute($this->level);
+		$this->moveNode($target,$key,$levelDiff);
+	}
+
+	/**
+	 * Move node as next sibling of target.
+	 * @return boolean whether the moving succeeds.
+	 * @throws CException if the target node is self or target node is root.
+	 */
+	public function moveAfter($target)
+	{
+		if($target->isRoot())
+			throw new CException(Yii::t('yiiext','The target node should not be root.'));
+
+		$key=$target->getAttribute($this->right)+1;
+		$levelDiff=$target->getAttribute($this->level)-$this->getOwner()->getAttribute($this->level);
+		$this->moveNode($target,$key,$levelDiff);
+	}
+
+	/**
+	 * Move node as first child of target.
+	 * @return boolean whether the moving succeeds.
+	 * @throws CException if the target node is self.
+	 */
+	public function moveAsFirst($target)
+	{
+		$key=$target->getAttribute($this->left)+1;
+		$levelDiff=$target->getAttribute($this->level)-$this->getOwner()->getAttribute($this->level)+1;
+		$this->moveNode($target,$key,$levelDiff);
+	}
+
+	/**
+	 * Move node as last child of target.
+	 * @return boolean whether the moving succeeds.
+	 * @throws CException if the target node is self.
+	 */
+	public function moveAsLast($target)
+	{
+		$key=$target->getAttribute($this->right);
+		$levelDiff=$target->getAttribute($this->level)-$this->getOwner()->getAttribute($this->level)+1;
+		$this->moveNode($target,$key,$levelDiff);
+	}
+
+	/**
+	 * Determines if node is leaf.
+	 * @return boolean whether the creating succeeds.
+	 */
+	public function isLeaf()
+	{
+		return $this->getOwner()->getAttribute($this->right)-$this->getOwner()->getAttribute($this->left)===1;
+	}
+
+	/**
+	 * Determines if node is root.
+	 * @return boolean whether the creating succeeds.
+	 */
+	public function isRoot()
+	{
+		return !(boolean)$this->getOwner()->getAttribute($this->level); //TODO: стоит отталкиваться от значения левого ключа в 1
+	}
+
+	protected function shiftLeftRight($first,$delta,$root)
 	{
 		$owner=$this->getOwner();
 
@@ -471,8 +389,104 @@ class CNestedSetBehavior extends CActiveRecordBehavior
 		}
 	}
 
-	protected function saveNode($left,$right,$level)
+	protected function shiftLeftRightRange($first,$last,$delta,$root)
 	{
+		$owner=$this->getOwner();
 
+		foreach(array($this->left,$this->right) as $key)
+		{
+			$condition=$key.'>='.$first.' AND '.$key.'<='.$last;
+
+			if($root!==null)
+				$condition.=' AND '.$this->root.'='.$root;
+
+			$owner->updateAll(array($key=>new CDbExpression($key.sprintf('%+d',$delta))),$condition);
+		}
+	}
+
+	protected function addNode($target,$key,$runValidation)
+	{
+		$owner=$this->getOwner();
+
+		if($runValidation && !$owner->validate())
+			return false;
+
+		if($owner===$target)
+			throw new CException(Yii::t('yiiext','The target node should not be self.'));
+
+		$db=$owner->getDbConnection();
+		$extTransFlag=$db->getCurrentTransaction();
+
+		if($extTransFlag===null)
+			$transaction=$db->beginTransaction();
+
+		try
+		{
+			$root=$this->hasManyRoots ? $target->getAttribute($this->root) : null;
+			$this->shiftLeftRight($key,2,$root);
+			$owner->setAttribute($this->left,$key);
+			$owner->setAttribute($this->right,$key+1);
+
+			if($root!==null)
+				$owner->setAttribute($this->root,$root);
+
+			$owner->save(false);
+
+			if($extTransFlag===null)
+				$transaction->commit();
+
+			return true;
+		}
+		catch(Exception $e)
+		{
+			if($extTransFlag===null)
+				$transaction->rollBack();
+
+			return false;
+		}
+	}
+
+	protected function moveNode($target,$key,$levelDiff)
+	{
+		$owner=$this->getOwner();
+
+		if($owner===$target)
+			throw new CException(Yii::t('yiiext','The target node should not be self.')); //TODO: исправить смысл фразы
+
+		$transaction=$owner->getDbConnection()->beginTransaction();
+
+		try
+		{
+			$left=$owner->getAttribute($this->left);
+			$right=$owner->getAttribute($this->right);
+			$delta=$right-$left+1;
+			$root=$this->hasManyRoots ? $owner->getAttribute($this->root) : null;
+
+			$this->shiftLeftRight($key,$delta,$root);
+
+        	if($left>=$key)
+        	{
+				$left+=$delta;
+				$right+=$delta;
+        	}
+
+			$condition=$this->left.'>='.$left.' AND '.$this->right.'<='.$right;
+
+			if($root!==null)
+				$condition.=' AND '.$this->root.'='.$root;
+
+			$owner->updateAll(array($this->level=>new CDbExpression($this->level.sprintf('%+d',$levelDiff))),$condition);
+
+			$this->shiftLeftRightRange($left,$right,$key-$left,$root);
+			$this->shiftLeftRight($right+1,-$delta,$root);
+
+			$transaction->commit();
+		}
+		catch(Exception $e)
+		{
+			$transaction->rollBack();
+
+			return false;
+		}
 	}
 }
