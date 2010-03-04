@@ -16,12 +16,14 @@ class CEnsureNullBehavior extends CActiveRecordBehavior
 
 	public function beforeSave($event)
 	{
-		if($this->owner->getIsNewRecord() || $this->useOnUpdate)
+		$owner=$this->getOwner();
+
+		if($owner->getIsNewRecord() || $this->useOnUpdate)
 		{
-			foreach($this->owner->getTableSchema()->columns as $column)
+			foreach($owner->getTableSchema()->columns as $column)
 			{
-				if($column->allowNull && trim($this->owner->getAttribute($column->name))==='')
-					$this->owner->setAttribute($column->name,null);
+				if($column->allowNull && trim($owner->getAttribute($column->name))==='')
+					$owner->setAttribute($column->name,null);
 			}
 		}
 	}
