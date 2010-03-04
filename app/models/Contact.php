@@ -10,7 +10,7 @@ class Contact extends CActiveRecord {
     public function behaviors() {
         return array(
             'attr' => array(
-                'class' => 'ext.CEavBehavior.CEavBehavior',
+                'class' => 'ext.yiiext.behaviors.model.eav.CEavBehavior',
                 'tableName' => 'contactattr',
                 'safeAttributes' => array('phone', 'skype'),
                 //'cacheId' => 'cache',

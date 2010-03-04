@@ -12,17 +12,17 @@ class Post extends CActiveRecord {
     public function behaviors() {
         return array(
             'tags' => array(
-                'class' => 'ext.CTaggableBehaviour.CTaggableBehaviour',
+                'class' => 'ext.yiiext.behaviors.model.taggable.CTaggableBehaviour',
                 'cacheID' => 'cache'
             ),
             'colors' => array(
-                'class' => 'ext.CTaggableBehaviour.CTaggableBehaviour',
+                'class' => 'ext.yiiext.behaviors.model.taggable.CTaggableBehaviour',
                 'tagTable' => 'Color',
                 'tagBindingTable' => 'PostColor',
                 'tagBindingTableTagId' => 'colorId',
             ),
             'statuses' => array(
-                'class' => 'ext.CStatusBehavior.CStatusBehavior',
+                'class' => 'ext.yiiext.behaviors.model.status.CStatusBehavior',
                 'statusField' => 'status',
             ),
         );
