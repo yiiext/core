@@ -11,7 +11,7 @@ return array(
     'import' => array(
         'application.models.*',
         'application.components.*',
-        'ext.CShoppingCart.*',
+        'ext.yiiext.components.shoppingCart.*',
     ),
     'components' => array(
         'fixture' => array(
@@ -23,7 +23,7 @@ return array(
             'username'=>'root',
             'password'=>'',
             'charset'=>'utf8',
-            
+
             'emulatePrepare'=>true,
             'enableParamLogging' => true,
         ),
