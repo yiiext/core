@@ -1,0 +1,10 @@
+next
+[+] readme_ru.
+[*] Code style fixes.
+[*] Compatible with Yii 1.1.
+
+1.2
+[*] Transform module into widget extension.
+
+1.1
+[+] Initial public release.
