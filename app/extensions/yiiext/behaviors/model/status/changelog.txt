@@ -3,6 +3,7 @@
 [*] All private methods and properties transform in protected.
 [+] Added magic method __toString() to get status.
 [*] New naming conventions.
+[+] readme_en.
 
 0.4
 [-] Remove getStatusName method.

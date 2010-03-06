@@ -71,7 +71,6 @@ class Book extends CActiveRecord {
 ### Использование
 ~~~
 [php]
-// Выбираем запись
 $post=Post::model()->findByPk(1);
 // Выводим статус
 echo $post->getStatus();
@@ -82,7 +81,6 @@ if ($post->save() === FASLE) {
     echo 'ошибки сохранения';
 }
 
-// Выбираем запись
 $post = Post::model()->findByPk(1);
 // Изменяем статус cохраняем только поле status
 $post->setStatus('draft')->saveStatus();
