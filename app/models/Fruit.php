@@ -7,7 +7,7 @@ class Fruit extends CActiveRecord {
     public function behaviors() {
         return array(
             'trash' => array(
-                'class' => 'ext.yiiext.behaviors.model.trashBin.CTrashBinBehavior',
+                'class' => 'ext.yiiext.behaviors.model.trashBin.ETrashBinBehavior',
                 'trashFlagField' => 'deleted'
             ),
         );

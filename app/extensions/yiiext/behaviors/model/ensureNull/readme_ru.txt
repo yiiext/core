@@ -1,5 +1,5 @@
-CEnsureNullBehavior
-===================
+Ensure NULL behavior
+====================
 
 Сохраняет пустые значения атрибута AR как `NULL`, если по умоланию для атрибута
 они равны `NULL`. Полезен для предотвращения появления пустых значений в БД и
@@ -15,7 +15,7 @@ CEnsureNullBehavior
 function behaviors() {
     return array(
         'ensureNull' => array(
-            'class' => 'ext.EnsureNullBehavior.EnsureNullBehavior',
+            'class' => 'ext.yiiext.behaviors.ensureNull.EEnsureNullBehavior',
             // Использовать ли при обновлении записи
             // 'useOnUpdate' => false,
         )

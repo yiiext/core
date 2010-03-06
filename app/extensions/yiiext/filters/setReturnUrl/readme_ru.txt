@@ -1,30 +1,43 @@
-CSetReturnUrlFilter
+SetReturnUrl Filter
 ===================
 
-Позволяет сохранять текущий url в сессии для всех или выборочных действий
+Позволяет сохранять текущий URL в сессии для всех или выборочных действий
 контроллера, чтобы затем к нему вернуться.
 
 
 Установка и настройка
 ---------------------
-Скопировать в папку `extensions` вашего приложения.
+Распаковать в папку `extensions` вашего приложения.
+
+Настроить приложение (`config/main.php`):
+~~~
+[php]
+return array(
+    'import'=>array(
+        // …
+        'ext.yiiext.filters.setReturnUrl.ESetReturnUrlFilter',
+    ),
+    // …
+);
+~~~
+
 Определить в контроллере метод `filters()`:
 ~~~
 [php]
 function filters() {
     return array(
         array(
-            'CSetReturnUrlFilter',
+            'ESetReturnUrlFilter',
             // Использовать для выбранных действий
-            // 'CSetReturnUrlFilter + index',
+            // 'ESetReturnUrlFilter + index',
         ),
     );
 }
-        'ensureNull' => array(
-            'class' => 'ext.EnsureNullBehavior.EnsureNullBehavior',
-            // Использовать ли при обновлении записи
-            // 'useOnUpdate' => false,
-        )
-    );
-}
+~~~
+
+Использование
+-------------
+~~~
+[php]
+$this->redirect(Yii::app()->user->returnUrl);
 ~~~

@@ -1,4 +1,4 @@
-CStatusBehavior
+Status Behavior
 ===============
 
 Поведение для моделей, которым нужен статус, например статус постов.
@@ -15,7 +15,7 @@ class Post extends CActiveRecord {
     public function behaviors() {
         return array(
             'statuses' => array(
-                'class' => 'ext.CStatusBehavior.CStatusBehavior',
+                'class' => 'ext.yiiext.behaviors.model.status.EStatusBehavior',
                 // Поле зарезервированное для статуса
                 'statusField' => 'status',
                 // Разрешенные статусы, по умолчнию array('draft', 'published', 'archived').

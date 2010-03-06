@@ -1,2 +1,6 @@
+1.0.1
+[*] New naming conventions.
+[+] English readme.
+
 1.0
 [+] Initial release.

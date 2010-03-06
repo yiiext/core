@@ -12,7 +12,7 @@
 class EImageColumn extends CGridColumn {
     /**
 	 * @var string a PHP expression that is evaluated for every data cell and whose result
-	 * is used as the CSS class name for the data cell. In this expression, the variable
+	 * is used as the path to image. In this expression, the variable
 	 * <code>$row</code> the row number (zero-based); <code>$data</code> the data model for the row;
 	 * and <code>$this</code> the column object.
 	 */

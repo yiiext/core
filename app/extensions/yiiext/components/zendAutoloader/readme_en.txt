@@ -49,8 +49,8 @@ require_once(dirname($webRoot).'/framework/yii.php');
 $configFile=$webRoot.'/../protected/config/main.php';
 $app = Yii::createWebApplication($configFile);
 
-Yii::import("ext.yiiext.components.ZendAutoloader.ZendAutoloader", true);
-Yii::registerAutoloader(array("ZendAutoloader", "loadClass"));
+Yii::import("ext.yiiext.components.zendAutoloader.EZendAutoloader", true);
+Yii::registerAutoloader(array("EZendAutoloader", "loadClass"));
 
 $app->run();
 ~~~

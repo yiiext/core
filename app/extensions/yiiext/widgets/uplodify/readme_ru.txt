@@ -1,5 +1,5 @@
-Обёртка для плагина Uploadify jQuery plugin
-===========================================
+Обёртка для плагина jQuery Uploadify
+====================================
 
 Установка и настройка
 ---------------------
@@ -9,7 +9,7 @@
 return array(
     'import'=>array(
         // …
-        'ext.CUplodifyWidget.*',
+        'ext.yiiext.widgets.uploadify.*',
     ),
     // …
 );
@@ -18,13 +18,13 @@ return array(
 Используем в представлении `views/form.php`:
 ~~~
 [php]
-<?php $this->widget('CUplodifyWidget', array(
-        // модель
-        'model' => $model,
-        // имя поля модели
-        'modelAttribute' => 'fileAttribute',
-        'settings' => array(),
-    )); ?>
+<?php $this->widget('EUplodifyWidget', array(
+    // модель
+    'model' => $model,
+    // имя поля модели
+    'modelAttribute' => 'fileAttribute',
+    'settings' => array(),
+)); ?>
 ~~~
    
 ### Настройки
@@ -32,7 +32,7 @@ return array(
 Виджет принимает три параметра:
 
 - `model` — модель.
-- `modelAttribute` — имя атрибута модели типа file.
+- `modelAttribute` — имя атрибута модели типа `file`.
 - `settings` — [Настройки uplodify](http://www.uploadify.com/documentation).
 
 Пример использования
@@ -74,7 +74,7 @@ class SwfUploadUploadAction extends CAction {
     public function run() {
         $folder = $this->folder;
         if ($folder === FALSE) {
-            throw new CException(Yii::t(__CLASS__, "Folder not exists.", array()));
+            throw new CException(Yii::t(__CLASS__, "Folder does not exists.", array()));
         }
         if (isset($_FILES['UploadifyFile']) === TRUE) {
             $model = new UploadifyFile;

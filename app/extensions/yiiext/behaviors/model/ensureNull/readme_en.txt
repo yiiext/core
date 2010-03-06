@@ -1,5 +1,5 @@
-CEnsureNullBehavior
-===================
+Ensure NULL behavior
+====================
 
 Ensures no empty AR property value is written to DB if property's default is `NULL`.
 Useful if you want to be sure all empty values will be saved as nulls.
@@ -14,7 +14,7 @@ Define `behaviors()` method in your ActiveRecord mode as follows:
 function behaviors() {
     return array(
         'ensureNull' => array(
-            'class' => 'ext.EnsureNullBehavior.EnsureNullBehavior',
+            'class' => 'ext.yiiext.behaviors.ensureNull.EEnsureNullBehavior',
             // Uncomment if you don't want to ensure nulls on update
             // 'useOnUpdate' => false,
         )

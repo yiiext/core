@@ -1,7 +1,8 @@
-next
+0.5
 [*] Yii:t() is now used to translate status.
 [*] All private methods and properties transform in protected.
 [+] Added magic method __toString() to get status.
+[*] New naming conventions.
 
 0.4
 [-] Remove getStatusName method.
