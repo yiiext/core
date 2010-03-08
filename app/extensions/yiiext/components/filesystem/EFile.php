@@ -18,14 +18,11 @@ class EFile extends CComponent {
     }
 
     public static function getInstance($filePath) {
-        if (isset(self::$_files[$filePath])) {
-            return self::$_files[$filePath];
-        }
-        else {
+        if (!isset(self::$_files[$filePath])) {
             $file = self::$_files[$filePath] = new EFile($filePath);
             $file->_md = new EFileMetaData($file);
-            return $file;
         }
+        return self::$_files[$filePath];
     }
 
     public function setFilePath($filePath) {
@@ -42,11 +39,10 @@ class EFile extends CComponent {
     }
 
     public function getMetaData() {
-        if ($this->_md !== NULL) {
-			return $this->_md;
+        if ($this->_md === NULL) {
+			$this->_md = self::getInstance($this->_filePath)->_md;
         }
-		else {
-			return $this->_md = self::getInstance($this->_filePath)->_md;
-        }
+        return $this->_md;
     }
+
 }
