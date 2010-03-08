@@ -128,7 +128,14 @@ class EFileHelper extends CFileHelper {
      * @return string
      */
     public static function fileSize($fileName) {
-        return sprintf("%u", filesize($fileName));
+        if (is_dir($fileName)) {
+            $result = explode("\t", exec("du -hs " . $fileName), 2);
+            $fileSize = ($result[1] == $fileName ? $result[0] : NULL);
+        }
+        else {
+            $fileSize = filesize($fileName);
+        }
+        return sprintf("%u", $fileSize);
     }
     /**
      * Takes a humanized value of size.
@@ -235,9 +242,3 @@ class EFileHelper extends CFileHelper {
         return Yii::app()->dateFormatter->format($format, $time);
     }
 }
-//TODO: function directoryFiles
-//TODO: function deleteDirectoryFiles
-//TODO: function directorySize
-//TODO: function remoteFileSize
-//TODO: function readFile
-//TODO: function writeFile
