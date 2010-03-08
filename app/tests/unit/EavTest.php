@@ -131,7 +131,7 @@ class EavTest extends CDbTestCase {
         // Количество контактов с заданным скайпом
         $contactsCount = Contact::model()->withEavAttributes(array('skype' => 'SlavaSkype'))->count();
         $this->assertEquals(1, $contactsCount);
-        
+
         // Количество контактов с заданными телефонами
         $contactsCount = Contact::model()->withEavAttributes(array('phone' => array('+373 1', '+373 2')))->count();
         $this->assertEquals(1, $contactsCount);
