@@ -10,3 +10,5 @@ TODO: function writeFile
 
 TODO: $file = EFileMetaData::getInstance($file);
 TODO: metadata lazyLoading
+
+неплохо бы сделать поддержку protocols, чтобы можно было бы EFile::getInstance('http://www.example.com/example.jpg');
