@@ -18,6 +18,13 @@ class EFile extends CComponent {
         $this->setFilePath($filePath);
     }
 
+    public function __get($name) {
+        if (isset($this->getMetaData()->attributes[$name])) {
+            return $this->getMetaData()->attributes[$name];
+        }
+        return parent::__get($name);
+    }
+
     public static function getInstance($filePath) {
         if (!isset(self::$_files[$filePath])) {
             $file = self::$_files[$filePath] = new EFile($filePath);
@@ -67,40 +74,39 @@ class EFile extends CComponent {
  */
 
 class EFileMetaData {
-    protected $_attributes = array(
-        'name', 'path', 'dirName', 'type', 'extension', 'mime', 'isDir',
-        'size', 'permissions', 'modifiedTime', 'accessedTime',
+    public $attributes = array(
+        'name' => NULL,
+        'path' => NULL,
+        'dirName' => NULL,
+        'type' => NULL,
+        'extension' => NULL,
+        'mime' => NULL,
+        'isDir' => NULL,
+        'size' => NULL,
+        'permissions' => NULL,
+        'modifiedTime' => NULL,
+        'accessedTime' => NULL,
     );
+    
     protected $_file;
     protected $_filePath;
-    protected $_metaData = array();
 
     public function __construct($file) {
         $this->_file = $file;
         $this->_filePath = $file->getFilePath();
         clearstatcache(TRUE, $this->_filePath);
-        foreach ($this->_attributes as $attribute) {
-            $this->__get($attribute);
+        foreach ($this->attributes as $attribute => $value) {
+            $this->getAttribute($attribute);
         }
     }
-    public function __get($attribute) {
-        if (!in_array($attribute, $this->_attributes)) {
-            return NULL;
-        }
-        if (!isset($this->_metaData[$attribute])) {
+    protected function getAttribute($attribute) {
+        if ($this->attributes[$attribute] === NULL) {
             $getter = 'get' . $attribute;
 		    if (method_exists($this, $getter)) {
-                $this->_metaData[$attribute] = $this->$getter();
-            }
-            else {
-                throw new CException(Yii::t('yiiext', 'Attribute {attribute} for file "{file}" not exists.',
-                    array('{attribute}' => $attribute, '{file}' => $this->_filePath)));
+                $this->attributes[$attribute] = $this->$getter();
             }
         }
-        return $this->_metaData[$attribute];
-    }
-    public function toArray() {
-        return $this->_metaData;
+        return $this->attributes[$attribute];
     }
     public function getIsDir() {
         return is_dir($this->_filePath);
