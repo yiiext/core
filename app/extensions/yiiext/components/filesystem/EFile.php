@@ -11,7 +11,7 @@ class EFile extends CComponent {
 
     private $_filePath;                 // file path
     private $_md;                       // meta data
-    private $_children = array();       // children files
+    private $_children;                 // children files
     private $_parent;                   // parent file
 
     public function __construct($filePath) {
@@ -23,8 +23,8 @@ class EFile extends CComponent {
     }
 
     public function __get($name) {
-        if (isset($this->getMetaData()->attributes[$name])) {
-            return $this->getMetaData()->attributes[$name];
+        if (in_array($name, EFileMetaData::$attributeLabels)) {
+            return $this->getMetaData()->getAttribute($name);
         }
         return parent::__get($name);
     }
@@ -56,11 +56,10 @@ class EFile extends CComponent {
         return $this->_parent;
     }
 
-    public function getFiles() {
-        if (!$this->isDir) {
-            return NULL;
+    public function getFiles($ignoreCache = FALSE) {
+        if ($ignoreCache || $this->_children === NULL) {
+            $this->_children = new EFileFinder($this->path, array('depth' => 0));
         }
-        $finder = new EFileFinder;
-        return  $finder->findAll($this->path);
+        return $this->_children;
     }
 }

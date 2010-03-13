@@ -4,6 +4,7 @@
  *
  * @author Veaceslav Medvedev <slavcopost@gmail.com>
  * @version 0.1
+ * @package yiiext.filesystem
  */
 class EFileHelper extends CFileHelper {
     /**
@@ -240,5 +241,18 @@ class EFileHelper extends CFileHelper {
             return Yii::app()->dateFormatter->formatDateTime($time);
         }
         return Yii::app()->dateFormatter->format($format, $time);
+    }
+
+    public static function removeDirectory($dir, $removeSubFiles = TRUE) {
+        d(glob($dir), 10);
+        foreach (glob($dir) as $file) {
+            if (is_dir($file)) {
+                self::removeDirectory("{$file}/.*");
+                //rmdir($file);
+            }
+            else {
+                //unlink($file);
+            }
+        }
     }
 }
