@@ -9,7 +9,7 @@
 class EFileCriteria {
     const T = 1024;
     /**
-     * @var string the mask of searching files. This refers to first parameter in a function glob().
+     * @var string the mask for files names.
      * Defaults to '*', meaning all files.
      */
     public $pattern = '*';
@@ -17,7 +17,7 @@ class EFileCriteria {
      * @var array the files attributes of search.
      * @see EFileMetaData::attributeLabels
      */
-    public $condition = array();
+    protected $condition = array();
     /**
      * @var integer recursion depth. It defaults to -1.
 	 * Depth -1 means searching for all directories and files under the directory;
@@ -34,10 +34,7 @@ class EFileCriteria {
      * @param mixed array criteria initial property values (indexed by property name)
      * or string the path of config file.
      */
-    public function __construct($data = NULL) {
-        if (is_string($data)) {
-            $data = new CConfiguration($data); 
-        }
+    public function __construct($data = array()) {
         if (is_array($data)) {
             foreach ($data as $name => $value) {
                 $this->$name = $value;
@@ -54,17 +51,21 @@ class EFileCriteria {
             else {
                 $this->condition[$name] = $value;
             }
+            return;
         }
+        throw new CException(Yii::t('yiiext','Property "{class}.{property}" is not defined.',
+			array('{class}'=>get_class($this), '{property}'=>$name)));
     }
 
     public function __get($name) {
         if (property_exists($this, $name)) {
             return $this->$name;
         }
-        if (in_array($name, EFileMetaData::$attributeLabels) && isset($this->condition[$name])) {
-            return $this->condition[$name];
+        if (in_array($name, EFileMetaData::$attributeLabels)) {
+            return isset($this->condition[$name]) ? $this->condition[$name] : NULL;
         }
-        return NULL;
+        throw new CException(Yii::t('yiiext','Property "{class}.{property}" is not defined.',
+			array('{class}'=>get_class($this), '{property}'=>$name)));
     }
 
     protected function setSize($value) {
@@ -87,7 +88,7 @@ class EFileCriteria {
 
     public function mergeWith($criteria, $useAnd = TRUE) {
         $and = $useAnd ? 'AND' : 'OR';
-        if (is_array($criteria)) {
+        if (!($criteria instanceof EFileCriteria)) {
             $criteria = new self($criteria);
         }
         
@@ -98,6 +99,17 @@ class EFileCriteria {
         if ($criteria->limit > 0) {
             $this->limit = $criteria->limit;
         }
+        
         return $this;
     }
+
+    /**
+	 * @return array the array representation of the criteria
+	 */
+	public function toArray() {
+		$result = array();
+		foreach (array_merge(array('pattern', 'depth', 'limit'), EFileMetaData::$attributeLabels) as $name)
+			$result[$name] = $this->$name;
+		return $result;
+	}
 }

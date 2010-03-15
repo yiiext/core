@@ -19,6 +19,7 @@ class EFile extends CComponent {
             throw new CException(Yii::t('yiiext', 'File "{file}" not exists.',
                 array('{file}' => $filePath)));
         }
+
         $this->_filePath = $filePath;
     }
 
@@ -57,9 +58,38 @@ class EFile extends CComponent {
     }
 
     public function getFiles($ignoreCache = FALSE) {
+        if (!$this->isDir) {
+            return NULL;
+        }
         if ($ignoreCache || $this->_children === NULL) {
             $this->_children = new EFileFinder($this->path, array('depth' => 0));
         }
         return $this->_children;
+    }
+
+    public function validate($criteria) {
+        if (!$this->isDir && !fnmatch($criteria->pattern, $this->name)) {
+            return FALSE;
+        }
+        if (!$this->isDir && $criteria->extension !== NULL && !in_array($this->extension, $criteria->extension)) {
+            return FALSE;
+        }
+        return TRUE;
+    }
+}
+
+class EFilesCollection {
+    protected $items = array();
+
+    public function add($file) {
+        $this->items[] = $file;
+    }
+
+    public function insert($file, $index) {
+        //
+    }
+
+    public function getCount() {
+        return count($this->items);
     }
 }

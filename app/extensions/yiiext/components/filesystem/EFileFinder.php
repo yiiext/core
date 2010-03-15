@@ -11,6 +11,7 @@ class EFileFinder {
     public $files = array();
 
     public function __construct($dir, $criteria = NULL) {
+        //TODO: вызов поиска в конструкторе, не совсем хорошее занятие
         $this->find($dir, $criteria);
     }
 
@@ -18,32 +19,32 @@ class EFileFinder {
         return $this->files;
     }
 
+    protected function addFile(EFile $file, $sort = FALSE) {
+        //TODO: устроить сортировку сразу в цикле проверки файлов
+        $this->files[] = $file;
+        $this->count++;
+    }
+
+    //TODO: не использовать критерий при рекурсии?
     protected function find($dir, $criteria = NULL) {
         if (!($criteria instanceof EFileCriteria)) {
             $criteria = new EFileCriteria($criteria);
         }
-        $handle = opendir($dir); 
-        if ($criteria->limit == 0 || $this->count < $criteria->limit) {
-            while (($file = readdir($handle)) !== FALSE) {
-                if ($file === '.' || $file === '..') {
-                    continue;
-                }
-                if (!@fnmatch($criteria->pattern, $file)) {
-                    continue;
-                }
-                $path = $dir . DIRECTORY_SEPARATOR . $file;
-                //TODO: временная проверка. в винде есть файлы которые не названны не верными символоми 
-                if (!file_exists(realpath($path))) {
-                    continue;
-                }
-                $file = EFile::getInstance($path);
-                //TODO: запуск валидаторов
-                if ($file->isDir && $criteria->depth) {
-                    $this->find($path, $criteria->mergeWith(array('depth' => $criteria->depth - 1)));
+        $handle = opendir($dir);
+        while (($fileName = readdir($handle)) !== FALSE) {
+            if ($criteria->limit != 0 && $this->count >= $criteria->limit) {
+                break;
+            }
+            if ($fileName === '.' || $fileName === '..') {
+                continue;
+            }
+            $file = EFile::getInstance($dir . DIRECTORY_SEPARATOR . $fileName);
+            if ($file->validate($criteria)) {
+                if ($file->isDir && ($depth = $criteria->depth)) {
+                    $this->find($file->path, $criteria->mergeWith(array('depth' => $depth - 1)));
                 }
                 else {
-                    $this->files[] = $file;
-                    $this->count++;
+                    $this->addFile($file);
                 }
             }
         }
