@@ -57,39 +57,42 @@ class EFile extends CComponent {
         return $this->_parent;
     }
 
-    public function getFiles($ignoreCache = FALSE) {
-        if (!$this->isDir) {
-            return NULL;
-        }
-        if ($ignoreCache || $this->_children === NULL) {
-            $this->_children = new EFileFinder($this->path, array('depth' => 0));
+    public function getFiles() {
+        if ($this->_children === NULL) {
+            $this->_children = $this->find(NULL, 0);
         }
         return $this->_children;
     }
 
-    public function validate($criteria) {
-        if (!$this->isDir && !fnmatch($criteria->pattern, $this->name)) {
-            return FALSE;
+    public static function findRecursive($dir, $validators = NULL, $depth = -1, $limit = 0) {
+        if (!($validators instanceof EFileValidators)) {
+            $validators = new EFileValidators($validators);
         }
-        if (!$this->isDir && $criteria->extension !== NULL && !in_array($this->extension, $criteria->extension)) {
-            return FALSE;
+        $list = new CList;
+        $handle = opendir($dir);
+        while (($fileName = readdir($handle)) !== FALSE) {
+            if ($limit > 0 && $list->count >= $limit) {
+                break;
+            }
+            if ($fileName === '.' || $fileName === '..') {
+                continue;
+            }
+            $file = EFile::getInstance($dir . DIRECTORY_SEPARATOR . $fileName);
+            //TODO: подумать о сортировке прямо в цикле поиска
+            if ($validators->validate($file)) {
+                if ($file->isDir && $depth) {
+                    $list->mergeWith(self::findRecursive($file->path, $validators, $depth - 1, $limit - $list->count));
+                }
+                else {
+                    $list->add($file);
+                }
+            }
         }
-        return TRUE;
-    }
-}
-
-class EFilesCollection {
-    protected $items = array();
-
-    public function add($file) {
-        $this->items[] = $file;
+        closedir($handle);
+        return $list;
     }
 
-    public function insert($file, $index) {
-        //
-    }
-
-    public function getCount() {
-        return count($this->items);
+    public function find($validators = NULL, $depth = -1, $limit = 0) {
+        return $this->isDir ? self::findRecursive($this->path, $validators, $depth, $limit) : NULL;
     }
 }
