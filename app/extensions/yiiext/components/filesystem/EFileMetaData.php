@@ -47,7 +47,7 @@ class EFileMetaData {
 		return $this->attributes;
 	}
 	/**
-	 * @param  $file
+	 * @param $file
 	 * @param boolean $loadAttributes
 	 * @return void
 	 */
@@ -70,7 +70,7 @@ class EFileMetaData {
 		return $this;
 	}
 	/**
-	 * @param  $attribute
+	 * @param $attribute
 	 * @return array
 	 */
 	public function getAttribute($attribute) {

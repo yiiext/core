@@ -7,12 +7,12 @@
  * @package yiiext.filesystem
  */
 class EFile extends CComponent {
-	private static $_files = array();   // file path => EFile
+	private static $_files = array();	// file path => EFile
 
-	private $_filePath;				 // file path
-	private $_md;					   // meta data
-	private $_children;				 // children files
-	private $_parent;				   // parent file
+	private $_filePath;					// file path
+	private $_md;						// meta data
+	private $_children;					// children files
+	private $_parent;					// parent file
 
 	public function __construct($filePath) {
 		if (!file_exists($filePath)) {

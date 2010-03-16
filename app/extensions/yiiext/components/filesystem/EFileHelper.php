@@ -10,7 +10,7 @@ class EFileHelper extends CFileHelper {
 	/**
 	 * @static
 	 * @access public
-	 * @param  string $path
+	 * @param string $path
 	 * @param boolean $addSlash
 	 * @param string $slash
 	 * @return string|false
@@ -223,7 +223,7 @@ class EFileHelper extends CFileHelper {
 			$i++;
 		}
 		$fileSize = round($fileSize, $options['round']);
-		$n = $fileSize == 0 || $fileSize  == 1 ? 'singular' : 'plural';
+		$n = $fileSize == 0 || $fileSize == 1 ? 'singular' : 'plural';
 		$humanizeSize = $fileSize . $options['prefix'] . $options['standards'][$options['standard']][$options['width']][$i] . $options['units'][$options['unit']][$n][$options['width']];
 		return $humanizeSize;
 	}
