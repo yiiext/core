@@ -16,16 +16,14 @@ class EFile extends CComponent {
 
 	public function __construct($filePath) {
 		if (!file_exists($filePath)) {
-			throw new CException(Yii::t('yiiext', 'File "{file}" not exists.',
-				array('{file}' => $filePath)));
+			throw new CException(Yii::t('yiiext', 'File "{file}" not exists.', array('{file}' => $filePath)));
 		}
 		$this->_filePath = $filePath;
 	}
 
 	public function __get($name) {
-		if (in_array($name, EFileMetaData::$attributeLabels)) {
+		if (in_array($name, EFileMetaData::$attributeLabels))
 			return $this->getMetaData()->getAttribute($name);
-		}
 
 		return parent::__get($name);
 	}
@@ -45,51 +43,44 @@ class EFile extends CComponent {
 	}
 
 	public function getMetaData() {
-		if ($this->_md === NULL) {
+		if ($this->_md === NULL)
 			$this->_md = self::getInstance($this->_filePath)->_md;
-		}
 
 		return $this->_md;
 	}
 
 	public function getParent() {
-		if ($this->_parent === NULL) {
+		if ($this->_parent === NULL)
 			$this->_parent = self::getInstance($this->getMetaData()->dirName);
-		}
 
 		return $this->_parent;
 	}
 
 	public function getFiles() {
-		if ($this->_children === NULL) {
+		if ($this->_children === NULL)
 			$this->_children = $this->find(NULL, 0);
-		}
 		
 		return $this->_children;
 	}
 
 	public static function findRecursive($dir, $filters = NULL, $depth = -1, $limit = 0) {
-		if (!($filters instanceof EFileFilters)) {
+		if (!($filters instanceof EFileFilters))
 			$filters = new EFileFilters($filters);
-		}
+		
 		$list = new CList;
 		$handle = opendir($dir);
 		while (($fileName = readdir($handle)) !== FALSE) {
-			if ($limit > 0 && $list->count >= $limit) {
+			if ($limit > 0 && $list->count >= $limit)
 				break;
-			}
-			if ($fileName === '.' || $fileName === '..') {
+			if ($fileName === '.' || $fileName === '..')
 				continue;
-			}
 			$file = EFile::getInstance($dir . DIRECTORY_SEPARATOR . $fileName);
 			//TODO: подумать о сортировке прямо в цикле поиска
 			if ($filters->run($file)) {
-				if ($file->isDir && $depth) {
+				if ($file->isDir && $depth)
 					$list->mergeWith(self::findRecursive($file->path, $filters, $depth - 1, $limit - $list->count));
-				}
-				else {
+				else
 					$list->add($file);
-				}
 			}
 		}
 		closedir($handle);
