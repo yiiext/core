@@ -1,0 +1,2 @@
+work with assets from vendors/ckeditor
+fixes from http://www.yiiframework.com/extension/ckeditor/reviews/
