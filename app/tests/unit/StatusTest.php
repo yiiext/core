@@ -7,39 +7,26 @@ class StatusTest extends CDbTestCase {
         'posts'=>'Post',
     );
 
-    function testSetStatuses(){
-        
-    }
+	function testGetStatus(){
+		$this->setUp();
 
-    function testGetStatuses(){
-        
-    }
+		$post = Post::model()->findByPk(1);
+		$post->setStatus(1);
+		$this->assertEquals(1, $post->getStatus());
+	}
 
-    function testGetStatusGroup(){
-        
-    }
+	function testGetStatusText(){
+		$this->setUp();
 
-    function testGetStatusText(){
-        $this->setUp();
-        
-        $post = Post::model()->findByPk(1);
-        $post->setStatus('draft');
-        $this->assertEquals('draft', $post->getStatusText(FALSE));
-    }
+		$post = Post::model()->findByPk(1);
+		$post->setStatus(1);
+		$this->assertEquals('published', $post->getStatusText());
+	}
 
-    function testGetTranslatedStatusText(){
-        $this->setUp();
-
-        $post = Post::model()->findByPk(1);
-        $post->setStatus('draft');
-        $this->assertEquals('черновик', $post->getStatusText());
-    }
-
-    
     function testSetStatus(){
         $post = Post::model()->findByPk(1);
         $post->setStatus('draft');
-        $this->assertEquals('draft', $post->getStatusText(FALSE));
+        $this->assertEquals('draft', $post->getStatusText());
     }
 
     /**
@@ -62,19 +49,15 @@ class StatusTest extends CDbTestCase {
         $this->assertEquals('draft', $post->getStatusText(FALSE));
     }
 
-    function testAfterFind(){
-        
-    }
-
-    function testAfterSave(){
+    function testModelSave(){
         $this->setUp();
         
         $post = Post::model()->findByPk(1);
-        $post->setStatus('draft');
+        $post->setStatus('archived');
         $post->save();
 
         $post = Post::model()->findByPk(1);
-        $this->assertEquals('draft', $post->getStatusText(FALSE));
+        $this->assertEquals('archived', $post->getStatusText(FALSE));
     }
 }
 

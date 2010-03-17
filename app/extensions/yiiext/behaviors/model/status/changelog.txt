@@ -1,3 +1,10 @@
+0.6
+Warning: this version is not backwards compatible to 0.5.
+
+[*] Change setStatus() to took status value and status text. 
+[-] Remove translate statuses.
+[-] Remove message component. Used 'yiiext' group for messages.
+
 0.5
 [*] Yii:t() is now used to translate status.
 [*] All private methods and properties transform in protected.

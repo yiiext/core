@@ -19,12 +19,9 @@ class Post extends CActiveRecord {
                 // Field used for status
                 'statusField' => 'status',
                 // Allowed statuses. Default is array('draft', 'published', 'archived').
-                // One can pass an array where key is DB field name, value is
-                // what user will see. Also you can use localized status messages.
+                // One can pass an array where key is DB field name, value is what user will see.
                 // 'statuses' => array('draft', 'published', 'archived'),
-                // Status group. Default values is "default".
-                // Used for Yii::t('default', ...).
-                // 'statusGroup' => 'default',
+                // 'statuses' => array('d' => 'draft', 'p' => 'published', 'a' => 'archived'),
             ),
         );
     }
@@ -59,9 +56,6 @@ class Book extends CActiveRecord {
                   'reserved' => 'reserved',
                   'sale' => 'sale',
                 ),
-                // Using a group of statuses to separate translations.
-                // Translations are stored in /extensionDirectory/messages/language/group.php
-                'statusGroup' => 'books',
             ),
         );
     }

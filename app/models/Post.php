@@ -24,6 +24,7 @@ class Post extends CActiveRecord {
             'statuses' => array(
                 'class' => 'ext.yiiext.behaviors.model.status.EStatusBehavior',
                 'statusField' => 'status',
+				//'statuses' => array('draft' => 'draft', 'published' => 'published', 'archived' => 'archived'),
             ),
         );
     }
