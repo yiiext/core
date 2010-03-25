@@ -7,10 +7,10 @@ class TaggableTest extends CDbTestCase {
         'posts'=>'Post',
     );
 
-    function setUp(){
+    function setUp($table='Tag'){
         parent::setUp();
-        Yii::app()->db->createCommand("truncate Tag")->query();
-        Yii::app()->db->createCommand("truncate PostTag")->query();
+        Yii::app()->db->createCommand("truncate {$table}")->query();
+        Yii::app()->db->createCommand("truncate Post{$table}")->query();
     }
 
     private function assertTagsAreEqual($tags1, $tags2){
@@ -133,7 +133,7 @@ class TaggableTest extends CDbTestCase {
         $this->prepareTags();
 
         $post = Post::model()->findByPk(1);
-        $this->assertEquals("yii, mysql, php", (string)$post->tags);
+        $this->assertEquals("yii, mysql, php", $post->tags->toString());
     }
 
     function testHasTag(){
@@ -183,5 +183,104 @@ class TaggableTest extends CDbTestCase {
         $post->colors->addTags("blue");
         $post->addTags("test");        
         $post->save();
+    }
+
+    function testTagTableName(){
+        $this->setUp('Food');
+
+        $post = Post::model()->findByPk(1);
+        $post->food->addTags('apple, meat');
+        $post->save();
+        $this->assertTagsAreEqual($post->food->getTags(), array('apple', 'meat'));
+        
+        $post = Post::model()->findByPk(1);
+        $post->food->addTags("pear");
+        $post->save();
+        $this->assertTagsAreEqual($post->food->getTags(), array('apple', 'meat', 'pear'));
+        
+        $post = Post::model()->findByPk(1);
+        $post->food->removeTags("meat");
+        $post->save();
+        $this->assertTagsAreEqual($post->food->getTags(), array('apple', 'pear'));
+        
+        $post = Post::model()->findByPk(1);
+        $post->food->setTags("pear, meat");
+        $post->save();
+        $this->assertTagsAreEqual($post->food->getTags(), array('meat', 'pear'));
+        
+        $post = Post::model()->findByPk(1);
+        $food = $post->food->getAllTags();
+        $this->assertTagsAreEqual($food, array('apple', 'meat', 'pear'));
+    }
+    
+    function testTagTableCount(){
+        $this->setUp('Food');
+
+        $post1 = Post::model()->findByPk(1);
+        $post1->food->addTags("apple, meat");
+        $post1->save();
+        
+        $post2 = Post::model()->findByPk(2);
+        $post2->food->addTags("pear, meat");
+        $post2->save();
+        // 1-apple, meat; 2-meat, pear
+        $tagsWithModelsCount = Post::model()->food->getAllTagsWithModelsCount();
+
+        $this->assertTrue(in_array(array(
+            'name' => 'apple',
+            'count' => 1
+        ), $tagsWithModelsCount));
+
+        $this->assertTrue(in_array(array(
+            'name' => 'meat',
+            'count' => 2
+        ), $tagsWithModelsCount));
+
+        $this->assertTrue(in_array(array(
+            'name' => 'pear',
+            'count' => 1
+        ), $tagsWithModelsCount));
+        
+        $post1 = Post::model()->findByPk(1);
+        $post1->food->removeTags("meat");
+        $post1->save();
+        // 1-apple; 2-meat, pear
+        $tagsWithModelsCount = Post::model()->food->getAllTagsWithModelsCount();
+
+        $this->assertTrue(in_array(array(
+            'name' => 'apple',
+            'count' => 1
+        ), $tagsWithModelsCount));
+
+        $this->assertTrue(in_array(array(
+            'name' => 'meat',
+            'count' => 1
+        ), $tagsWithModelsCount));
+
+        $this->assertTrue(in_array(array(
+            'name' => 'pear',
+            'count' => 1
+        ), $tagsWithModelsCount));
+        
+        $post2 = Post::model()->findByPk(2);
+        $post2->food->setTags("pear, apple");
+        $post2->save();
+        // 1-apple; 2-apple, pear
+        $tagsWithModelsCount = Post::model()->food->getAllTagsWithModelsCount();
+
+        $this->assertTrue(in_array(array(
+            'name' => 'apple',
+            'count' => 2
+        ), $tagsWithModelsCount));
+
+        $this->assertTrue(in_array(array(
+            'name' => 'meat',
+            'count' => 0
+        ), $tagsWithModelsCount));
+
+        $this->assertTrue(in_array(array(
+            'name' => 'pear',
+            'count' => 1
+        ), $tagsWithModelsCount));
     }
 }

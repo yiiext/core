@@ -58,6 +58,26 @@ CREATE TABLE IF NOT EXISTS `PostColor` (
   PRIMARY KEY  (`postId`,`colorId`)
 );
 
+/* Tag table */
+DROP TABLE IF EXISTS `Food`;
+CREATE TABLE IF NOT EXISTS `Food` (
+  `id` INT(10) UNSIGNED NOT NULL AUTO_INCREMENT,
+  `title` VARCHAR(255) NOT NULL,
+  `count` INT(10) default 0,
+  `create_time` INT(10) default NULL,
+  `update_time` INT(10) default NULL,
+  PRIMARY KEY  (`id`),
+  UNIQUE KEY `Food_title` (`title`)
+);
+
+/* Tag binding table */
+DROP TABLE IF EXISTS `PostFood`;
+CREATE TABLE IF NOT EXISTS `PostFood` (
+  `postId` INT(10) UNSIGNED NOT NULL,
+  `foodId` INT(10) UNSIGNED NOT NULL,
+  PRIMARY KEY  (`postId`,`foodId`)
+);
+
 /* Contact table */
 CREATE TABLE IF NOT EXISTS `contact` (
   `id` int(10) unsigned NOT NULL AUTO_INCREMENT,

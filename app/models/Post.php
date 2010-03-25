@@ -10,21 +10,33 @@ class Post extends CActiveRecord {
     }
 
     public function behaviors() {
+        // import taggable folder because of EARTaggableBehaviour inheritance
+        Yii::import('ext.yiiext.behaviors.model.taggable.*');
+        
         return array(
             'tags' => array(
-                'class' => 'ext.yiiext.behaviors.model.taggable.ETaggableBehaviour',
-                'cacheID' => 'cache'
+                'class' => 'ETaggableBehaviour',
+                //'cacheID' => 'cache'
             ),
             'colors' => array(
-                'class' => 'ext.yiiext.behaviors.model.taggable.ETaggableBehaviour',
+                'class' => 'ETaggableBehaviour',
                 'tagTable' => 'Color',
                 'tagBindingTable' => 'PostColor',
                 'tagBindingTableTagId' => 'colorId',
             ),
+            'food' => array(
+                'class' => 'EARTaggableBehaviour',
+                'tagTable' => 'Food',
+                'tagModel' => 'Food',
+                'tagBindingTable' => 'PostFood',
+                'tagBindingTableTagId' => 'foodId',
+                'tagTableName' => 'title',
+                'tagTableCount' => 'count'
+            ),
             'statuses' => array(
                 'class' => 'ext.yiiext.behaviors.model.status.EStatusBehavior',
                 'statusField' => 'status',
-				//'statuses' => array('draft' => 'draft', 'published' => 'published', 'archived' => 'archived'),
+				        //'statuses' => array('draft' => 'draft', 'published' => 'published', 'archived' => 'archived'),
             ),
         );
     }
