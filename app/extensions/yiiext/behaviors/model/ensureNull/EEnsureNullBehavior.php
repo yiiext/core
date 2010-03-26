@@ -7,7 +7,7 @@
 * @version 1.0.1
 * @author creocoder <creocoder@gmail.com>
 */
-class CEnsureNullBehavior extends CActiveRecordBehavior
+class EEnsureNullBehavior extends CActiveRecordBehavior
 {
 	/**
 	* @var bool Ensure nulls on update
