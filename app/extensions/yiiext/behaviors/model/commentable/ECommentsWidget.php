@@ -7,6 +7,8 @@ class ECommentsWidget extends CWidget {
 	public $comments = array();
 	public $owner;
 
+	public $formBeforeComments = false;
+
 	function init(){
 		if(!isset($this->owner)) throw new CException(Yii::t('yiiext', 'owner should be defined.'));
 		if(!isset($this->model)) throw new CException(Yii::t('yiiext', 'model should be defined.'));
@@ -23,13 +25,23 @@ class ECommentsWidget extends CWidget {
 		$this->saveComment($model);
 
 		echo CHtml::tag("h2", array(), 'Comments');
-		
+
+		if($this->formBeforeComments){
+			echo CHtml::tag("h3", array(), 'Post new comment');
+
+			if(Yii::app()->user->checkAccess('postComments')){
+				$this->renderForm($model);
+			}
+		}
+
 		$this->renderComments($this->comments);
 
-		echo CHtml::tag("h3", array(), 'Post new comment');
-		
-		if(Yii::app()->user->checkAccess('postComments')){
-			$this->renderForm($model);
+		if(!$this->formBeforeComments){
+			echo CHtml::tag("h3", array(), 'Post new comment');
+
+			if(Yii::app()->user->checkAccess('postComments')){
+				$this->renderForm($model);
+			}
 		}
 	}
 
@@ -37,7 +49,7 @@ class ECommentsWidget extends CWidget {
 		echo CHtml::tag("ol", array('class' => 'comments'));
 		foreach($comments as $comment){
 			echo CHtml::tag("li", array(
-				'id' => 'comment-'.$comment->id,				
+				'id' => 'comment-'.$comment->getPrimaryKey(),				
 			));
 			$this->render('comment', array('comment' => $comment));
 			echo CHtml::closeTag("li");
@@ -57,7 +69,7 @@ class ECommentsWidget extends CWidget {
 			$model->attributes = $_POST['Comment'];
 			//$parentId = isset($_POST['parent_id']) ? (int)$_POST['parent_id'] : 0;
 			if($this->owner->addComment($model)){
-				$this->getController()->redirect(array('question/view', 'id' => $this->owner->id));				
+				$this->getController()->redirect(array('question/view', 'id' => $this->owner->getPrimaryKey()));				
 			}
 		}
 	}

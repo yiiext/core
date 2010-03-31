@@ -22,13 +22,23 @@ class ETreeCommentsWidget extends ECommentsWidget {
 
 		echo CHtml::tag("h2", array(), 'Comments');
 
+		if($this->formBeforeComments){
+			echo CHtml::tag("h3", array('class' => 'postNewComment'), 'Post new comment');
+
+			if(Yii::app()->user->checkAccess('postComments')){
+				$this->renderForm($model);
+			}
+		}
+
 		$comments = $this->getForest($this->comments);
 		$this->renderComments($comments);
 
-		echo CHtml::tag("h3", array('class' => 'postNewComment'), 'Post new comment');
+		if(!$this->formBeforeComments){
+			echo CHtml::tag("h3", array('class' => 'postNewComment'), 'Post new comment');
 
-		if(Yii::app()->user->checkAccess('postComments')){
-			$this->renderForm($model);
+			if(Yii::app()->user->checkAccess('postComments')){
+				$this->renderForm($model);
+			}
 		}
 	}
 
@@ -36,12 +46,12 @@ class ETreeCommentsWidget extends ECommentsWidget {
 		echo CHtml::tag("ol", array('class' => 'comments'));
 		foreach($comments as $comment){
 			echo CHtml::tag("li", array(
-				'id' => 'comment-'.$comment->id,				
+				'id' => 'comment-'.$comment->getPrimaryKey(),
 			));
 			$this->render('comment', array('comment' => $comment));
 			echo CHtml::link('Reply', '', array(
 				'class' => 'reply',
-				'data-id' => $comment->id,				
+				'data-id' => $comment->getPrimaryKey(),
 			));
 			if(!empty($comment->childNodes)){
 				$this->renderComments($comment->childNodes);

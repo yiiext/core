@@ -24,8 +24,8 @@ class ECommentable extends CActiveRecordBehavior {
 	 * @param int $parentId Parent comment id.
 	 * @return boolean
 	 */
-    function addComment(ECommentModel $comment){		
-		$comment->{$this->ownerIdField} = $this->getOwner()->id;
+    function addComment(ECommentModel $comment){				
+		$comment->setAttribute($this->ownerIdField, $this->getOwner()->getPrimaryKey());
 
 		return $comment->save(false);
     }
@@ -41,7 +41,7 @@ class ECommentable extends CActiveRecordBehavior {
 		$comment = $this->getModelInstance();
 
 		$criteria = new CDbCriteria();
-		$criteria->compare($this->ownerIdField, $this->getOwner()->id);
+		$criteria->compare($this->ownerIdField, $this->getOwner()->getPrimaryKey());
 
 		if($parentId!==null){
 			$criteria->compare($this->parentIdField, $parentId);
@@ -55,7 +55,7 @@ class ECommentable extends CActiveRecordBehavior {
 
 		$criteria = new CDbCriteria();
 		$criteria->order = "id DESC";
-		$criteria->compare($this->ownerIdField, $this->getOwner()->id);
+		$criteria->compare($this->ownerIdField, $this->getOwner()->getPrimaryKey());
 
 		if($parentId!==null){
 			$criteria->compare($this->parentIdField, $parentId);
@@ -71,6 +71,6 @@ class ECommentable extends CActiveRecordBehavior {
 		if(!isset($this->commentModelClass)){
 			throw new CException(Yii::t('yiiext', 'commentModelClass should be defined.'));;
 		}
-        return call_user_func(array($this->commentModelClass, 'model'));
+        return CActiveRecord::model($this->commentModelClass);
 	}
 }
