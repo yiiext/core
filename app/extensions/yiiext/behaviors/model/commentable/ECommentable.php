@@ -73,4 +73,14 @@ class ECommentable extends CActiveRecordBehavior {
 		}
         return CActiveRecord::model($this->commentModelClass);
 	}
+
+	function afterDelete($event){
+		// removing all model's comments
+		$comments = $this->getComments();
+		foreach($comments as $comment){
+			$comment->delete();
+		}
+
+		parent::afterDelete($event);
+	}
 }

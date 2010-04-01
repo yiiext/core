@@ -26,10 +26,12 @@ return array(
 [php]
 function filters() {
     return array(
+    	'accessControl',
+    	…
         array(
             'ESetReturnUrlFilter',
-            // Использовать для выбранных действий
-            // 'ESetReturnUrlFilter + index',
+            // Использовать для выбранных действий (здесь index и view)
+            // 'ESetReturnUrlFilter + index, view',
         ),
     );
 }

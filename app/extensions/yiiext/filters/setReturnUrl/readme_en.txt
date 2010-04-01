@@ -26,10 +26,12 @@ In controller implement `filters()` method:
 [php]
 function filters() {
     return array(
+    	'accessControl',
+    	…
         array(
             'ESetReturnUrlFilter',
-            // Use for spcified actions:
-            // 'ESetReturnUrlFilter + index',
+            // Use for spcified actions (index and view):
+            // 'ESetReturnUrlFilter + index, view',
         ),
     );
 }
