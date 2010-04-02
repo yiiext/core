@@ -17,8 +17,7 @@ class ETreeCommentsWidget extends ECommentsWidget {
 	}
 
 	function run(){
-		$model = new $this->model();
-		$this->saveComment($model);
+		$model = new $this->model();		
 
 		echo CHtml::tag("h2", array(), 'Comments');
 
@@ -31,7 +30,11 @@ class ETreeCommentsWidget extends ECommentsWidget {
 		}
 
 		$comments = $this->getForest($this->comments);
-		$this->renderComments($comments);
+
+		echo CHtml::tag("div", array('class' => 'comments-container'));
+		$this->renderComments($this->comments);
+		echo CHtml::closeTag("div");
+
 
 		if(!$this->formBeforeComments){
 			echo CHtml::tag("h3", array('class' => 'postNewComment'), 'Post new comment');
@@ -42,10 +45,10 @@ class ETreeCommentsWidget extends ECommentsWidget {
 		}
 	}
 
-	protected function renderComments($comments){
-		echo CHtml::tag("ol", array('class' => 'comments'));
+	function renderComments($comments){		
+		echo CHtml::openTag("ol", array('class' => 'comments'));
 		foreach($comments as $comment){
-			echo CHtml::tag("li", array(
+			echo CHtml::openTag("li", array(
 				'id' => 'comment-'.$comment->getPrimaryKey(),
 			));
 			$this->render('comment', array('comment' => $comment));
@@ -54,11 +57,11 @@ class ETreeCommentsWidget extends ECommentsWidget {
 				'data-id' => $comment->getPrimaryKey(),
 			));
 			if(!empty($comment->childNodes)){
-				$this->renderComments($comment->childNodes);
+				$this->renderComments($comment->childNodes);				
 			}
 			echo CHtml::closeTag("li");
 		}
-		echo CHtml::closeTag("ol");
+		echo CHtml::closeTag("ol");		
 	}
 
 	/**
@@ -69,7 +72,7 @@ class ETreeCommentsWidget extends ECommentsWidget {
      * @param array $rows       Two-dimensional array of resulting rows.     
      * @return array            Transformed array (tree).
      */
-     protected function getForest($rows){
+     function getForest($rows){
 		$idName = $this->idFieldName;
 		$pidName = $this->parentIdFieldName;
 
