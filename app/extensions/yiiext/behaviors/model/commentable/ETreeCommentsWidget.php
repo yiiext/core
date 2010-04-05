@@ -52,10 +52,14 @@ class ETreeCommentsWidget extends ECommentsWidget {
 				'id' => 'comment-'.$comment->getPrimaryKey(),
 			));
 			$this->render('comment', array('comment' => $comment));
-			echo CHtml::link('Reply', '', array(
-				'class' => 'reply',
-				'data-id' => $comment->getPrimaryKey(),
-			));
+
+			if(Yii::app()->user->checkAccess('postComments')){
+				echo CHtml::link('Reply', '', array(
+					'class' => 'reply',
+					'data-id' => $comment->getPrimaryKey(),
+				));
+			}
+			
 			if(!empty($comment->childNodes)){
 				$this->renderComments($comment->childNodes);				
 			}
