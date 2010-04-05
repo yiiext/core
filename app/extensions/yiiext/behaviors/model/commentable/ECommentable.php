@@ -27,7 +27,7 @@ class ECommentable extends CActiveRecordBehavior {
     function addComment(ECommentModel $comment){				
 		$comment->setAttribute($this->ownerIdField, $this->getOwner()->getPrimaryKey());		
 
-		return $comment->save(false);
+		return $comment->save();
     }
 
 	/**
