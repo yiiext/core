@@ -2,7 +2,7 @@
 /**
  * 
  */
-class ETreeCommentsWidget extends ECommentsWidget {	
+class ETreeCommentsWidget extends ECommentsWidget {
 	public $idFieldName = 'id';
 	public $parentIdFieldName = 'parent_id';
 
@@ -32,7 +32,7 @@ class ETreeCommentsWidget extends ECommentsWidget {
 		$comments = $this->getForest($this->comments);
 
 		echo CHtml::tag("div", array('class' => 'comments-container'));
-		$this->renderComments($this->comments);
+		$this->renderComments($comments);
 		echo CHtml::closeTag("div");
 
 
@@ -45,7 +45,7 @@ class ETreeCommentsWidget extends ECommentsWidget {
 		}
 	}
 
-	function renderComments($comments){		
+	function renderComments($comments){
 		echo CHtml::openTag("ol", array('class' => 'comments'));
 		foreach($comments as $comment){
 			echo CHtml::openTag("li", array(
@@ -118,5 +118,5 @@ class ETreeCommentsWidget extends ECommentsWidget {
         }
 
         return $forest;
-    }	
+    }
 }
