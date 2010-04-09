@@ -11,7 +11,8 @@
 
 	<?if($this->useAjax):?>
 		<?=CHtml::ajaxSubmitButton($model->isNewRecord ? 'Post' : 'Save', $this->ajaxUrl, array(
-			'update' => '.comments-container',					
+			'update' => '.comments-container',
+			'success' => 'function(html){jQuery(".comments-container").html(html); $("#addCommentForm textarea").val("")}',			
 		))?>
 	<?else:?>
 		<?=CHtml::submitButton($model->isNewRecord ? 'Post' : 'Save')?>
