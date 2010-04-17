@@ -38,7 +38,7 @@ class EAliasBehavior extends CActiveRecordBehavior
 		$attribute = $this->getAttribute();
 		$copyAttribute = $this->getCopyAttribute();
 		
-		$value = ($copyAttribute !== NULL && $owner->getAttribute($copyAttribute) == '' ? $owner->getAttribute($copyAttribute) : $owner->getAttribute($attribute));
+		$value = ($copyAttribute !== NULL && $owner->getAttribute($attribute) == '' ? $owner->getAttribute($copyAttribute) : $owner->getAttribute($attribute));
 
 		$owner->setAttribute($attribute, self::translit($value));
 
