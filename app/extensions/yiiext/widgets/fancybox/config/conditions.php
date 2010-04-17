@@ -3,7 +3,7 @@
  * EFancyboxWidget conditions configs.
  *
  * @author Veaceslav Medvedev <slavcopost@gmail.com>
- * @package yiiext.gallery.fancybox
+ * @package yiiext.widgets.fancybox
  * @see http://fancybox.net/api
  */
 return array(

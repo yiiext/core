@@ -8,6 +8,9 @@
  */
 class EFancyboxWidget extends CWidget
 {
+	/**
+	 * @var EFancyboxConfiguration
+	 */
 	protected $_settings = NULL;
 	
 	protected $_enableMouseWheel = FALSE;
@@ -117,7 +120,7 @@ class EFancyboxWidget extends CWidget
 		if ($this->enableMouseWheel)
 			$clientScript->registerScriptFile($baseUrl . '/jquery.mousewheel-3.0.2.pack.js');
 
-		$clientScript->registerScriptFile($baseUrl . (defined('YII_DEBUG') ? '/jquery.fancybox-1.3.1.js' : '/jquery.fancybox-1.3.1.pack.js'));
+		$clientScript->registerScriptFile($baseUrl . (YII_DEBUG ? '/jquery.fancybox-1.3.1.js' : '/jquery.fancybox-1.3.1.pack.js'));
 
 		$clientScript->registerScript('fbRun_' . md5($this->selector), '$(' . $this->selector . ')' . ($this->group !== NULL ? '.attr("rel", "' . $this->group . '")' : '') . '.fancybox(' . $this->encodeSettings() . ');', CClientScript::POS_READY);
 	}
@@ -132,6 +135,8 @@ class EFancyboxWidget extends CWidget
 	 */
 	public static function image($src, $alt = '', $htmlOptions = array(), $linkHtmlOptions = array())
 	{
+		isset($linkHtmlOptions['title']) OR $linkHtmlOptions['title'] = $alt;
+		isset($htmlOptions['title']) OR $htmlOptions['title'] = $alt;
 		return CHtml::link(CHtml::image($src, $alt, $htmlOptions), $src, $linkHtmlOptions);
 	}
 	/**
