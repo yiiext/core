@@ -1,2 +1,6 @@
+[next]
+[-] remove method encodeSettings(). See getJSON().
+[+] add method getJSON() to configuration.
+
 0.1
 [+] Initial public release.

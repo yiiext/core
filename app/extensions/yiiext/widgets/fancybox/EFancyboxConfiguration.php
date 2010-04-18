@@ -38,12 +38,12 @@ class EFancyboxConfiguration extends CConfiguration
 			parent::add($key, $value);
 		}
 	}
-	public function contains($key)
-	{
-		parent::contains($key);
-	}
 	public function hasValidKey($key)
 	{
 		return in_array($key, $this->_k);
+	}
+	public function getJSON()
+	{
+		return CJavaScript::encode($this->toArray());
 	}
 }

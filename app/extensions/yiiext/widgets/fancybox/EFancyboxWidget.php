@@ -14,7 +14,7 @@ class EFancyboxWidget extends CWidget
 	protected $_settings = NULL;
 	
 	protected $_enableMouseWheel = FALSE;
-	protected $_selector = 'a[href$=.jpg],a[href$=.png],a[href$=.gif]'; //a:has(img)
+	protected $_selector = '"a[href$=.jpg],a[href$=.png],a[href$=.gif]"'; //a:has(img)
 	
 	/**
 	 * Group for fancybox. For all selected tags will be added `rel` option. 
@@ -64,14 +64,6 @@ class EFancyboxWidget extends CWidget
 		$this->_settings->copyFrom($data);
 	}
 	/**
-	 * Encode settings array.
-	 * @return string
-	 */
-	protected function encodeSettings()
-	{
-		return CJavaScript::encode($this->getSettings());
-	}
-	/**
 	 * @return boolean
 	 */
 	protected function getEnableMouseWheel()
@@ -92,7 +84,7 @@ class EFancyboxWidget extends CWidget
 	 */
 	protected function getSelector()
 	{
-		return CJavaScript::encode($this->_selector);
+		return $this->_selector;
 	}
 	/**
 	 * Set selector for generate fancybox.
@@ -100,7 +92,7 @@ class EFancyboxWidget extends CWidget
 	 */
 	protected function setSelector($value)
 	{
-		$this->_selector = $value;
+		$this->_selector = CJavaScript::encode($value);
 	}
 	/**
 	 * Run widget.
@@ -122,7 +114,11 @@ class EFancyboxWidget extends CWidget
 
 		$clientScript->registerScriptFile($baseUrl . (YII_DEBUG ? '/jquery.fancybox-1.3.1.js' : '/jquery.fancybox-1.3.1.pack.js'));
 
-		$clientScript->registerScript('fbRun_' . md5($this->selector), '$(' . $this->selector . ')' . ($this->group !== NULL ? '.attr("rel", "' . $this->group . '")' : '') . '.fancybox(' . $this->encodeSettings() . ');', CClientScript::POS_READY);
+		$clientScript->registerScript(
+			'fbRun_' . md5($this->selector),
+			'$(' . $this->selector . ')' . ($this->group !== NULL ? '.attr("rel", "' . $this->group . '")' : '') . '.fancybox(' . $this->_settings->getJSON() . ');',
+			CClientScript::POS_READY
+		);
 	}
 	/**
 	 * Generate HTML code, image tag wrapped with link tag. 
