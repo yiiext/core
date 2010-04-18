@@ -14,7 +14,7 @@ class EFancyboxWidget extends CWidget
 	protected $_settings = NULL;
 	
 	protected $_enableMouseWheel = FALSE;
-	protected $_selector = '"a[href$=.jpg],a[href$=.png],a[href$=.gif]"'; //a:has(img)
+	protected $_selector = '"a[href$=\'.jpg\'],a[href$=\'.png\'],a[href$=\'.gif\']"'; //a:has(img)
 	
 	/**
 	 * Group for fancybox. For all selected tags will be added `rel` option. 

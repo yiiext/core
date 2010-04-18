@@ -1,4 +1,5 @@
 [next]
+[*] fix default selector.
 [-] remove method encodeSettings(). See getJSON().
 [+] add method getJSON() to configuration.
 
