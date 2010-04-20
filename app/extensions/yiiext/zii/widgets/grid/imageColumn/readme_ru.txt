@@ -13,7 +13,7 @@ Image Column для CGridView
 ~~~
 [php]
 'import'=>array(
-    'ext.yiiext.zii.widgets.grid.imageColumn.EImageColumn',    
+	'ext.yiiext.zii.widgets.grid.imageColumn.EImageColumn',
 ),
 ~~~
 
@@ -22,26 +22,29 @@ Image Column для CGridView
 ~~~
 [php]
 $this->widget('zii.widgets.grid.CGridView', array(
-    'dataProvider'=>$dataProvider,
-    'filter'=>$model,
-    'columns'=>array(
-        'title:html',
-        'description:html',
-        array(
-            'class' => 'EImageColumn',
-            // См. ниже.
-            'imagePathExpression' => '/images/.$data->imagePath',
-            // Текст, отображаемый, если в ячейке пусто.
-            // Можно не задавать.
-            'emptyText' => '—',
-            // Размеры изображения в пикселях. Можно не задавать.
-            'width' => 120,
-            'height' => 120,
-        ),
-        array(
-            'class'=>'CButtonColumn',            
-        ),
-    ),
+	'dataProvider'=>$dataProvider,
+	'filter'=>$model,
+	'columns'=>array(
+		'title:html',
+		'description:html',
+		array(
+			'class' => 'EImageColumn',
+			// См. ниже.
+			'imagePathExpression' => '/images/.$data->imagePath',
+			// Текст, отображаемый, если в ячейке пусто.
+			// Можно не задавать.
+			'emptyText' => '—',
+			// Настройки тега img
+			'imageOptions' => array(
+				'alt' => 'no',
+				'width' => 120,
+				'height' => 120,
+			),
+		),
+		array(
+			'class'=>'CButtonColumn',
+		),
+	),
 ));
 ~~~
 

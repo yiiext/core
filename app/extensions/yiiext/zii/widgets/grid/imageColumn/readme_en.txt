@@ -34,9 +34,12 @@ $this->widget('zii.widgets.grid.CGridView', array(
             // Text used when cell is empty.
             // Optional.
             'emptyText' => '—',
-            // Image size in px. Optional.
-            'width' => 120,
-            'height' => 120,
+            // HTML options for image tag. Optional.
+			'imageOptions' => array(
+				'alt' => 'no',
+				'width' => 120,
+				'height' => 120,
+			),
         ),
         array(
             'class'=>'CButtonColumn',
