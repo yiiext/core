@@ -15,17 +15,17 @@ class Post extends CActiveRecord {
         
         return array(
             'tags' => array(
-                'class' => 'ETaggableBehaviour',
+                'class' => 'ETaggableBehavior',
                 //'cacheID' => 'cache'
             ),
             'colors' => array(
-                'class' => 'ETaggableBehaviour',
+                'class' => 'ETaggableBehavior',
                 'tagTable' => 'Color',
                 'tagBindingTable' => 'PostColor',
                 'tagBindingTableTagId' => 'colorId',
             ),
             'food' => array(
-                'class' => 'EARTaggableBehaviour',
+                'class' => 'EARTaggableBehavior',
                 'tagTable' => 'Food',
                 'tagModel' => 'Food',
                 'tagBindingTable' => 'PostFood',
