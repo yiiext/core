@@ -9,6 +9,8 @@
  * @version 1.0
  *
  */
+Yii::import('zii.widgets.grid.CGridColumn');
+
 class EImageColumn extends CGridColumn
 {
 	/**
