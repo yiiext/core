@@ -6,7 +6,7 @@
  *
  * @author Alexander Makarov
  *
- * @version 1.0
+ * @version 1.1
  *
  */
 Yii::import('zii.widgets.grid.CGridColumn');

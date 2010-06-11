@@ -1,4 +1,4 @@
-[next]
+1.1
 [-] Delete $witdh, $height. Use $imageOptions['width'] and $imageOptions['height'].
 [+] Add $imageOptions - the HTML options for the image tag.
 [+] Add default css-class for column.
