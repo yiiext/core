@@ -1,24 +1,24 @@
 /* Book table */
 DROP TABLE IF EXISTS `Book`;
-CREATE TABLE IF NOT EXISTS `Book` (
+CREATE TABLE `Book` (
   `id` INT(10) UNSIGNED NOT NULL AUTO_INCREMENT,
   `title` VARCHAR(255) NOT NULL,
   `price` FLOAT NOT NULL,
   PRIMARY KEY  (`id`)
-);              
+);
 
 /* Fruit table */
 DROP TABLE IF EXISTS `Fruit`;
-CREATE TABLE IF NOT EXISTS `Fruit` (
+CREATE TABLE `Fruit` (
   `id` INT(10) UNSIGNED NOT NULL AUTO_INCREMENT,
   `title` VARCHAR(255) NOT NULL,
   `deleted` BOOL NOT NULL DEFAULT 0,
   PRIMARY KEY  (`id`)
-);              
+);
 
 /* Post table */
 DROP TABLE IF EXISTS `Post`;
-CREATE TABLE IF NOT EXISTS `Post` (
+CREATE TABLE `Post` (
   `id` INT(10) UNSIGNED NOT NULL AUTO_INCREMENT,
   `status` VARCHAR(255) NOT NULL DEFAULT 'published',
   PRIMARY KEY  (`id`)
@@ -26,7 +26,7 @@ CREATE TABLE IF NOT EXISTS `Post` (
 
 /* Tag table */
 DROP TABLE IF EXISTS `Tag`;
-CREATE TABLE IF NOT EXISTS `Tag` (
+CREATE TABLE `Tag` (
   `id` INT(10) UNSIGNED NOT NULL AUTO_INCREMENT,
   `name` VARCHAR(255) NOT NULL,
   PRIMARY KEY  (`id`),
@@ -35,7 +35,7 @@ CREATE TABLE IF NOT EXISTS `Tag` (
 
 /* Tag binding table */
 DROP TABLE IF EXISTS `PostTag`;
-CREATE TABLE IF NOT EXISTS `PostTag` (
+CREATE TABLE `PostTag` (
   `postId` INT(10) UNSIGNED NOT NULL,
   `tagId` INT(10) UNSIGNED NOT NULL,
   PRIMARY KEY  (`postId`,`tagId`)
@@ -43,7 +43,7 @@ CREATE TABLE IF NOT EXISTS `PostTag` (
 
 /* Tag table */
 DROP TABLE IF EXISTS `Color`;
-CREATE TABLE IF NOT EXISTS `Color` (
+CREATE TABLE `Color` (
   `id` INT(10) UNSIGNED NOT NULL AUTO_INCREMENT,
   `name` VARCHAR(255) NOT NULL,
   PRIMARY KEY  (`id`),
@@ -52,7 +52,7 @@ CREATE TABLE IF NOT EXISTS `Color` (
 
 /* Tag binding table */
 DROP TABLE IF EXISTS `PostColor`;
-CREATE TABLE IF NOT EXISTS `PostColor` (
+CREATE TABLE `PostColor` (
   `postId` INT(10) UNSIGNED NOT NULL,
   `colorId` INT(10) UNSIGNED NOT NULL,
   PRIMARY KEY  (`postId`,`colorId`)
@@ -60,7 +60,7 @@ CREATE TABLE IF NOT EXISTS `PostColor` (
 
 /* Tag table */
 DROP TABLE IF EXISTS `Food`;
-CREATE TABLE IF NOT EXISTS `Food` (
+CREATE TABLE `Food` (
   `id` INT(10) UNSIGNED NOT NULL AUTO_INCREMENT,
   `title` VARCHAR(255) NOT NULL,
   `count` INT(10) default 0,
@@ -72,23 +72,41 @@ CREATE TABLE IF NOT EXISTS `Food` (
 
 /* Tag binding table */
 DROP TABLE IF EXISTS `PostFood`;
-CREATE TABLE IF NOT EXISTS `PostFood` (
+CREATE TABLE `PostFood` (
   `postId` INT(10) UNSIGNED NOT NULL,
   `foodId` INT(10) UNSIGNED NOT NULL,
   PRIMARY KEY  (`postId`,`foodId`)
 );
 
 /* Contact table */
-CREATE TABLE IF NOT EXISTS `contact` (
+DROP TABLE IF EXISTS `contact`;
+CREATE TABLE `contact` (
   `id` int(10) unsigned NOT NULL AUTO_INCREMENT,
   `name` varchar(255) NOT NULL,
   PRIMARY KEY (`id`)
 );
 
 /* Contact attributes */
-CREATE TABLE IF NOT EXISTS `contactattr` (
+DROP TABLE IF EXISTS `contactattr`;
+CREATE TABLE `contactattr` (
   `entity` bigint(20) unsigned NOT NULL,
   `attribute` varchar(250) NOT NULL,
   `value` text NOT NULL,
   KEY `ikEntity` (`entity`)
+);
+
+/* Category table */
+DROP TABLE IF EXISTS `category`;
+CREATE TABLE `category` (
+  `id` int(10) unsigned NOT NULL AUTO_INCREMENT,
+  `root` int(10) unsigned NOT NULL,
+  `lft` int(10) unsigned NOT NULL,
+  `rgt` int(10) unsigned NOT NULL,
+  `level` smallint(5) unsigned NOT NULL,
+  `name` varchar(50) NOT NULL,
+  PRIMARY KEY (`id`),
+  KEY `root` (`root`),
+  KEY `lft` (`lft`),
+  KEY `rgt` (`rgt`),
+  KEY `level` (`level`)
 );
