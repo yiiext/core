@@ -136,4 +136,88 @@ class ShoppingCartTest extends CDbTestCase {
 
         $cart[] = Post::model()->findByPk(1);
     }
+
+    function testCComponentPut()
+    {
+  
+        $this->setUp();
+        $cart = new EShoppingCart();
+
+        $product = new BaseProduct(1,100.00);     
+
+        try {
+        $cart->put($product);
+        }
+        catch (InvalidArgumentException $expected) {
+            return;
+        }
+        $this->fail('An expected exception has not been raised.');
+
+    }
+
+    function testEventOnUpdatePoistion()
+    {
+        $this->setUp();
+        $cart = new EShoppingCart();
+        $testVar = false;
+
+        $handler = function($event) use (&$testVar) {
+           $testVar = true;
+        };
+
+        $cart->attachEventHandler('onUpdatePoistion',$handler);
+
+        $book = Book::model()->findByPk(1);
+        $cart->put($book);
+
+        $this->assertTrue($cart->hasEvent('onUpdatePoistion'));
+        $this->assertTrue($cart->hasEventHandler('onUpdatePoistion'));
+        $this->assertTrue($testVar);
+    }
+
+    function testEventOnRemovePosition()
+    {
+        $this->setUp();
+        $cart = new EShoppingCart();
+        $testVar = false;
+
+        $handler = function($event) use (&$testVar) {
+           $testVar = true;
+        };
+
+        $cart->attachEventHandler('onRemovePosition',$handler);
+
+        $book = Book::model()->findByPk(1);
+        $cart->put($book);
+        $cart->remove($book->getId());
+
+        $this->assertTrue($cart->hasEvent('onRemovePosition'));
+        $this->assertTrue($cart->hasEventHandler('onRemovePosition'));
+        $this->assertTrue($testVar);
+    }
+
+    function  testSaveState()
+    {
+        $this->setUp();
+        $cart = new EShoppingCart();
+        $book = Book::model()->findByPk(1);
+        $cart->put($book);
+        $userShopingCartState = Yii::app()->getUser()->getState('EShoppingCart');
+        $this->assertEquals($userShopingCartState['Book1']->id, $cart["Book1"]->id);
+
+    }
+
+    function testRestoreFromSession()
+    {
+        $this->setUp();
+        $cart = new EShoppingCart();
+        $book = Book::model()->findByPk(1);
+        $cart->put($book);
+
+        $newCart = new EShoppingCart();
+        $newCart->restoreFromSession();
+        $this->assertEquals(1, $newCart->getItemsCount());
+
+
+    }
 }
