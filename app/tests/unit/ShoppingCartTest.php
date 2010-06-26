@@ -235,4 +235,16 @@ class ShoppingCartTest extends CDbTestCase {
         $cart->put($book,2);
         $this->assertEquals(159.84, $cart->getCost());
     }
+
+
+    function testEmpty()
+    {
+        $this->setUp();
+        $cart = new EShoppingCart();
+        $this->assertTrue($cart->isEmpty());
+        $book = Book::model()->findByPk(1);
+        $cart->put($book);
+        $this->assertFalse($cart->isEmpty());
+
+    }
 }
