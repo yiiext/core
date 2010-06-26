@@ -220,4 +220,19 @@ class ShoppingCartTest extends CDbTestCase {
 
 
     }
+
+    function testDiscount()
+    {
+        $this->setUp();
+        $cart = new EShoppingCart();
+        $cart->discounts = array(
+            array(
+            'class'=>'ext.yiiext.components.shoppingCart.discounts.TestDiscount',
+            'rate'=>40)
+        );
+        
+        $book = Book::model()->findByPk(1);
+        $cart->put($book,2);
+        $this->assertEquals(159.84, $cart->getCost());
+    }
 }
