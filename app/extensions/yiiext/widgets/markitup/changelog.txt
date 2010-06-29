@@ -1,2 +1,5 @@
+0.02
+[*] Fixed bug when using widget without model.
+
 0.01
 [+] Initial release.

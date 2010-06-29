@@ -2,7 +2,7 @@
 /**
  * MarkitupWidget
  *
- * @version 0.01
+ * @version 0.02
  * @author creocoder <creocoder@gmail.com>
  */
 class EMarkitupWidget extends CInputWidget
@@ -49,7 +49,7 @@ class EMarkitupWidget extends CInputWidget
 		if($this->hasModel())
 			echo CHtml::activeTextArea($this->model,$this->attribute,$this->htmlOptions);
 		else
-			echo CHtml::activeTextArea($name,$this->value,$this->htmlOptions);
+			echo CHtml::textArea($name,$this->value,$this->htmlOptions);
 	}
 
 	public function registerClientScript()
