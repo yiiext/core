@@ -156,6 +156,9 @@ class EImprovedErrorHandler extends CErrorHandler
 	}
 
 	protected function argumentsToString($args){
+		if(empty($args))
+			return '';
+
 		for($i=0;$i<count($args);$i++){
 			if(is_object($args[$i])){
 				if($args[$i] instanceof Iterator){
