@@ -169,24 +169,24 @@ class EImprovedErrorHandler extends CErrorHandler
 		return $sourceLines;
 	}
 
-	protected function argumentsToString($args){
-		for($i=0;$i<count($args);$i++){
-			if(is_object($args[$i])){
-				if($args[$i] instanceof Iterator){
-					$args[$i] = get_class($args[$i]).'('.(array)$args[$i].')';
+	protected function argumentsToString($args){		
+		foreach($args as $key => $value){
+			if(is_object($value)){
+				if($value instanceof Iterator){
+					$args[$key] = get_class($value).'('.$this->argumentsToString($value).')';
 				}
 				else {
-					$args[$i] = get_class($args[$i]);
+					$args[$key] = get_class($value);
 				}
 			}
-			else if(is_string($args[$i])){
-				$args[$i] = '"'.$args[$i].'"';
+			else if(is_string($value)){
+				$args[$key] = '"'.$value.'"';
 			}
-			else if(is_array($args[$i])){
-				$args[$i] = 'array('.$this->argumentsToString($args[$i]).')';
+			else if(is_array($value)){
+				$args[$key] = 'array('.$this->argumentsToString($value).')';
 			}
-			else if(is_resource($args[$i])) {
-				$args[$i] = 'resource';
+			else if(is_resource($value)) {
+				$args[$key] = 'resource';
 			}
 		}
 
