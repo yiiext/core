@@ -154,6 +154,7 @@ else
 </pre>
 </div>
 
+<?php if(!empty($data['trace'])):?>
 <div class="trace">
 	<h2>Stack Trace</h2>
 	<table>
@@ -163,13 +164,30 @@ else
 				<?php echo $n?>
 			</td>
 			<td>
-				<p class="method">at <strong><?php echo $trace['class'].'</strong>'.$trace['type'].'<strong>'.$trace['function']?></strong>(<?php echo $this->argumentsToString($trace['args'])?>)</p>
+				<p class="method">
+					at
+					<?php
+					if(!empty($trace['class'])){
+						echo "<strong>{$trace['class']}</strong>";
+						echo $trace['type'];
+					}
+
+					echo "<strong>{$trace['function']}</strong>(";
+
+					if(!empty($trace['args'])){
+						echo $this->argumentsToString($trace['args']);
+					}
+
+					echo ')';
+					?>
+				</p>
 				<p class="file"><?php echo $trace['file']."(".$trace['line'].")"?></p>
 			</td>
 		</tr>
 		<?php endforeach?>
 	</table>
 </div>
+<?php endif?>
 
 <div class="version">
 <?php echo date('Y-m-d H:i:s',$data['time']) .' '. $data['version']; ?>

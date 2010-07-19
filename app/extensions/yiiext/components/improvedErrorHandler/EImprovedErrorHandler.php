@@ -28,13 +28,30 @@ class EImprovedErrorHandler extends CErrorHandler
 				$fileName=$trace['file'];
 				$errorLine=$trace['line'];
 			}
+
+			$trace = $exception->getTrace();
+
+			foreach($trace as $i=>$t)
+			{
+				if(!isset($t['file']))
+					$trace[$i]['file']='unknown';
+
+				if(!isset($t['line']))
+					$trace[$i]['line']=0;
+
+				if(!isset($t['function']))
+					$trace[$i]['function']='unknown';
+
+				unset($trace[$i]['object']);
+			}
+
 			$this->_error=$data=array(
 				'code'=>($exception instanceof CHttpException)?$exception->statusCode:500,
 				'type'=>get_class($exception),
 				'message'=>$exception->getMessage(),
 				'file'=>$fileName,
 				'line'=>$errorLine,
-				'trace'=>$exception->getTrace(),
+				'trace'=>$trace,
 				'source'=>$this->getSourceLines($fileName,$errorLine),
 			);
 
@@ -71,7 +88,7 @@ class EImprovedErrorHandler extends CErrorHandler
 			if(!isset($t['function']))
 				$trace[$i]['function']='unknown';
 
-			unset($trace[$i]['object']);			
+			unset($trace[$i]['object']);
 		}
 
 		$app=Yii::app();
