@@ -34,7 +34,7 @@ class EImprovedErrorHandler extends CErrorHandler
 				'message'=>$exception->getMessage(),
 				'file'=>$fileName,
 				'line'=>$errorLine,
-				'trace'=>$exception->getTraceAsString(),
+				'trace'=>$exception->getTrace(),
 				'source'=>$this->getSourceLines($fileName,$errorLine),
 			);
 
@@ -71,10 +71,7 @@ class EImprovedErrorHandler extends CErrorHandler
 			if(!isset($t['function']))
 				$trace[$i]['function']='unknown';
 
-			unset($trace[$i]['object']);
-
-			/*if(isset($t['object']) && is_object($t['object']))
-				$traceLines[$i]['class']=get_class($t['object']);*/
+			unset($trace[$i]['object']);			
 		}
 
 		$app=Yii::app();
@@ -156,9 +153,6 @@ class EImprovedErrorHandler extends CErrorHandler
 	}
 
 	protected function argumentsToString($args){
-		if(empty($args))
-			return '';
-
 		for($i=0;$i<count($args);$i++){
 			if(is_object($args[$i])){
 				if($args[$i] instanceof Iterator){
