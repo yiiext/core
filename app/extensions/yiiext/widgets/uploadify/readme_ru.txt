@@ -18,7 +18,7 @@ return array(
 Используем в представлении `views/form.php`:
 ~~~
 [php]
-<?php $this->widget('EUplodifyWidget', array(
+<?php $this->widget('EUploadifyWidget', array(
     // модель
     'model' => $model,
     // имя поля модели
@@ -33,7 +33,7 @@ return array(
 
 - `model` — модель.
 - `modelAttribute` — имя атрибута модели типа `file`.
-- `settings` — [Настройки uplodify](http://www.uploadify.com/documentation).
+- `settings` — [Настройки uploadify](http://www.uploadify.com/documentation).
 
 Пример использования
 --------------------
@@ -68,7 +68,7 @@ class UploadifyFile extends CFormModel {
 
 ~~~
 [php]
-class SwfUploadUploadAction extends CAction {
+class SwfUploadAction extends CAction {
     public $folder;
 
     public function run() {

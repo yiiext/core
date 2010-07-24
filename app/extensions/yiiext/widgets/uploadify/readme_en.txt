@@ -23,7 +23,7 @@ Usage
 In a view `views/form.php`:
 ~~~
 [php]
-<?php $this->widget('EUplodifyWidget', array(
+<?php $this->widget('EUploadifyWidget', array(
     // model
     'model' => $model,
     // attribute name
@@ -38,7 +38,7 @@ Widget accepts following parameters:
 
 - `model` — model.
 - `modelAttribute` — attribute name of type `file`.
-- `settings` — [Uplodify options](http://www.uploadify.com/documentation).
+- `settings` — [Uploadify options](http://www.uploadify.com/documentation).
 
 Example
 -------

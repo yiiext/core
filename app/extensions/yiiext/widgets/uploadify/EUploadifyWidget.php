@@ -1,6 +1,6 @@
 <?php
 /**
- * EUplodifyWidget class file.
+ * EUploadifyWidget class file.
  *
  * Uploadify jQuery plugin widget.
  *
@@ -10,7 +10,7 @@
  *
  * @version 1.2
  */
-class EUplodifyWidget extends CWidget  {
+class EUploadifyWidget extends CWidget  {
     /**
      * Default options. For more info read {@link http://www.uploadify.com/documentation/ documents}
      *
