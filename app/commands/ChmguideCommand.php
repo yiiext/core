@@ -125,6 +125,7 @@ class ChmguideCommand extends CConsoleCommand
 		{
 			if(preg_match($expCategory,$line,$matches))
 			{
+				$matches[1]=trim($matches[1]);
 				echo "      Adding section [".iconv("UTF-8","CP866",$matches[1])."]\n";
 				$lastToc=$chm->addTocItem(array(
 					'name'=>$matches[1],
@@ -136,6 +137,8 @@ class ChmguideCommand extends CConsoleCommand
 			}
 			if(preg_match($expItem,$line,$matches))
 			{
+				$matches[1]=trim($matches[1]);
+				$matches[2]=trim($matches[2]);
 				echo "      Adding item [".iconv("UTF-8","CP866",$matches[1])."]\n";
 				$lastToc->addChild(array(
 					'name'=>$matches[1],
