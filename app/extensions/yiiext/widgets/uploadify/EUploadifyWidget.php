@@ -24,7 +24,7 @@ class EUploadifyWidget extends CWidget  {
         // Options from documents
         'uploader' => 'uploadify.swf',
         'script' => 'uploadify.php',
-        'checkScript' => 'check.php',
+        'checkScript' => '',//check.php
         'scriptData' => array(),
         'fileDataName' => 'Filedata',
         'method' => 'POST',
@@ -52,10 +52,10 @@ class EUploadifyWidget extends CWidget  {
         'onCancel' => 'function(){}',
         'onClearQueue' => 'function(){}',
         'onQueueFull' => 'function(){}',
-        'onError' => 'function(){}',
+        'onError' => 'function(event,queueID,fileObj,errorObj){}',
         'onOpen' => 'function(){}',
         'onProgress' => 'function(){}',
-        'onComplete' => 'function(){}',
+        'onComplete' => 'function(event,queueID,fileObj,response,data){}',
         'onAllComplete' => 'function(){}',
         'onCheck' => 'function(){}',
     );

@@ -83,10 +83,10 @@ class EMenuWidget extends CMenu
 			
 			if($items[$i]['active'] && $this->activeCssClass!='')
 			{
-				if(isset($item['itemOptions']['class']))
-					$items[$i]['itemOptions']['class'].=' '.$this->activeCssClass;
+				if(isset($item['htmlOptions']['class']))
+					$items[$i]['htmlOptions']['class'].=' '.$this->activeCssClass;
 				else
-					$items[$i]['itemOptions']['class']=$this->activeCssClass;
+					$items[$i]['htmlOptions']['class']=$this->activeCssClass;
 			}
 		}
 		return array_values($items);

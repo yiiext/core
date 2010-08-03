@@ -3,7 +3,7 @@
  * EFile class file.
  *
  * @author Veaceslav Medvedev <slavcopost@gmail.com>
- * @version 0.1
+ * @version 0.2
  * @package yiiext.filesystem
  */
 class EFile extends CComponent {
@@ -68,6 +68,7 @@ class EFile extends CComponent {
 			$filters = new EFileFilters($filters);
 		
 		$list = new CList;
+		//TODO: $dir = new DirectoryIterator(dirname(__FILE__)); foreach ($dir as $fileinfo) {}
 		$handle = opendir($dir);
 		while (($fileName = readdir($handle)) !== FALSE) {
 			if ($limit > 0 && $list->count >= $limit)

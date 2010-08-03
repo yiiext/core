@@ -11,7 +11,7 @@ return array(
     'import' => array(
         'application.models.*',
         'application.components.*',
-        'ext.yiiext.components.shoppingCart.*',
+        'ext.CShoppingCart.*',
     ),
     'components' => array(
         'fixture' => array(
@@ -21,9 +21,9 @@ return array(
             'class'=>'system.db.CDbConnection',
             'connectionString'=>'mysql:host=localhost;dbname=yiitest',
             'username'=>'root',
-            'password'=>'',
+            'password'=>'hiphop',
             'charset'=>'utf8',
-
+            
             'emulatePrepare'=>true,
             'enableParamLogging' => true,
         ),

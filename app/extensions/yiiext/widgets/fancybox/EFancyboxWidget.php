@@ -6,6 +6,7 @@
  * @version 0.1
  * @package yiiext.widgets.fancybox
  */
+Yii::import('ext.yiiext.widgets.fancybox.*');
 class EFancyboxWidget extends CWidget
 {
 	/**
@@ -26,7 +27,7 @@ class EFancyboxWidget extends CWidget
 		$this->_settings = new EFancyboxConfiguration(
 			NULL,
 			dirname(__FILE__) . '/config/defaults.php',
-			dirname(__FILE__) . '/config /conditions.php'
+			dirname(__FILE__) . '/config/conditions.php'
 		);
 		parent::__construct($owner);
 	}
