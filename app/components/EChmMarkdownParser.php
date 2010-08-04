@@ -1,8 +1,10 @@
 <?php
 class EChmMarkdownParser extends CMarkdownParser {
 	private $_blockquoteType='';
+	protected $_type;
 
-	public function __construct() {
+	public function __construct($type) {
+		$this->_type=$type=='cookbook'?'cookbook':'guide';
 		$this->span_gamut += array(
 			"doApiLinks" => 35,
 			"doGuideLinks" => 0,
@@ -51,7 +53,7 @@ class EChmMarkdownParser extends CMarkdownParser {
 		$bq = preg_replace_callback('/^(\s*<p>\s*)([^:]+):\s*/sxi',
 			array($this, 'doBlockquoteTypes'), $bq);
 		$attr= $this->_blockquoteType ? " class=\"{$this->_blockquoteType}\"" : '';
-		return "\n". $this->hashBlock("<blockquote{$attr}>\n$bq\n</blockquote>")."\n\n";
+		return "\n". $this->hashBlock('<blockquote'.$attr.">\n".$bq."\n</blockquote>")."\n\n";
 	}
 
 	public function doHeaderId($text) {
@@ -89,13 +91,18 @@ class EChmMarkdownParser extends CMarkdownParser {
 	}
 
 	public function doGuideLinks($text) {
-		return preg_replace_callback('~\[(.*?)\]\(/doc/guide/([^/]+)\)~', array($this, 'formatGuideLinks'), $text);
+		return preg_replace_callback('~\[(.*?)\]\((/doc/guide/)?([^/]+)\)~', array($this, 'formatGuideLinks'), $text);
 	}
 
 	public function formatGuideLinks($match) {
 		$text=$match[1];
-		@list($url,$anchor)=explode('#',$match[2],2);
-		$url=$url.'.html'.($anchor ? '#'.$anchor : '');
+		if($this->_type=='cookbook' && $match[2]=='/doc/guide/')
+			$url='http://www.yiiframework.com/doc/guide/'.$match[3];
+		else
+		{
+			@list($url,$anchor)=explode('#',$match[3],2);
+			$url=$url.'.html'.($anchor ? '#'.$anchor : '');
+		}
 		return $this->hashPart("<a href=\"{$url}\">{$text}</a>");
 	}
 }
