@@ -11,17 +11,17 @@ class ChmguideCommand extends CConsoleCommand
 
 	protected $parser;
 	protected $tmpPath;
-	
+
 	public function getHelp()
 	{
 		return "USAGE\n".
-			"php {$this->getCommandRunner()->getScriptName()} {$this->name} <language> [<txt-guides-path>] [<chm-directory>]\n\n".
+			"php {$this->getCommandRunner()->getScriptName()} {$this->name} <language> [<txt-guides-path>] [<output-directory>]\n\n".
 			"DESCRIPTION\n".
-			"This command make guide in chm-format.\n\n".
+			"This command can build chm Yii docs from markdown source.\n\n".
 			"PARAMETERS\n".
 			"<language> - required, the language to convert.\n".
-			"<txt-guide-path> - optional, the path or alias of guides in markdown format. Default \"{$this->guidesPath}\".\n".
-			"<chm-directory> - optional, the path or alias of directory for store .chm. Default \"{$this->chmDir}\".\n";
+			"<txt-guide-path> - optional, the path or alias of directory where markdown source is stored. Default \"{$this->guidesPath}\".\n".
+			"<output-directory> - optional, the path or alias of directory where .chm will be generated. Default \"{$this->chmDir}\".\n";
 	}
 	/**
 	 * Execute the action.
@@ -39,7 +39,7 @@ class ChmguideCommand extends CConsoleCommand
 		// Guides path alias into path
 		if(($guidesPath=Yii::getPathOfAlias($this->guidesPath))!==FALSE)
 			$this->guidesPath=$guidesPath;
-		
+
 		// .chm dir alias into path
 		if(($chmDir=Yii::getPathOfAlias($this->chmDir))!==FALSE)
 			$this->chmDir=$chmDir;
@@ -62,8 +62,8 @@ class ChmguideCommand extends CConsoleCommand
 		$sourcePath=realpath($sourcePath);
 		$chmPath=$this->chmDir.'/yii-guide-'.$this->language.'.chm';
 
-		echo "      Process path: ".$sourcePath."\n";
-		
+		echo "      Processing: ".$sourcePath."\n";
+
 		// save application config
 		$name=Yii::app()->name;
 		Yii::app()->name='The Definite Guide to Yii | Offline ['.$this->language.']';
@@ -77,14 +77,19 @@ class ChmguideCommand extends CConsoleCommand
 
 		if(is_dir($sourcePath.'/images'))
 		{
-			echo "      Found images directory. Coping...\n";
+			echo "      Found source images directory. Copying...\n";
+			CFileHelper::copyDirectory($this->guidesPath.'/source/images',$this->tmpPath,array(
+				'fileTypes'=>array('jpg','jpeg','png','gif'),
+				'level'=>0,
+			));
+			echo "      Found images directory. Copying...\n";
 			CFileHelper::copyDirectory($sourcePath.'/images',$this->tmpPath,array(
 				'fileTypes'=>array('jpg','jpeg','png','gif'),
 				'level'=>0,
 			));
 		}
 
-		echo "      Creating CHM-project\n";
+		echo "      Creating CHM-project.\n";
 		$chm=new EChm(array(
 			'binaryIndex'=>'No',
 			'compatibility'=>'1.1 or later',
@@ -100,8 +105,8 @@ class ChmguideCommand extends CConsoleCommand
 			'indexFile'=>$this->tmpPath.'/guide.hhk',
 			'compiledFile'=>$chmPath,
 		));
-		
-		echo "      Adding a window to project\n";
+
+		echo "      Adding a window to the project.\n";
 		$chm->addWindow(array(
 			'id'=>md5(Yii::app()->name.time()),
 			'title'=>Yii::app()->name,
@@ -163,7 +168,7 @@ class ChmguideCommand extends CConsoleCommand
 		Yii::app()->name=$name;
 		Yii::app()->charset=$charset;
 	}
-	
+
 	protected function makeFile($filePath,$title,$layout)
 	{
 		if(!file_exists($filePath))
