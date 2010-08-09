@@ -1,3 +1,6 @@
+next
+[*] Fixed error views path fallback.
+
 1.0
 [+] Static/dynamic calls in stack trace.
 [+] Stack trace with parameters.

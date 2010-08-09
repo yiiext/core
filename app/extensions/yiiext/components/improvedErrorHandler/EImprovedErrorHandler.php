@@ -126,6 +126,7 @@ class EImprovedErrorHandler extends CErrorHandler
 			Yii::app()->getTheme()===null ? null :  Yii::app()->getTheme()->getSystemViewPath(),
 			Yii::app() instanceof CWebApplication ? Yii::app()->getSystemViewPath() : null,
 			dirname(__FILE__).'/views',
+			YII_PATH.DIRECTORY_SEPARATOR.'views',
 		);
 
 		foreach($viewPaths as $i=>$viewPath)
@@ -169,7 +170,7 @@ class EImprovedErrorHandler extends CErrorHandler
 		return $sourceLines;
 	}
 
-	protected function argumentsToString($args){		
+	protected function argumentsToString($args){
 		foreach($args as $key => $value){
 			if(is_object($value)){
 				if($value instanceof Iterator){
