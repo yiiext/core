@@ -275,3 +275,7 @@ blockquote.info {
 	background-color: #EBFFCE;
 	background-image: url(info.gif);
 }
+
+.revision {
+	display: none;
+}

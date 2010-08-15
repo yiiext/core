@@ -3,7 +3,7 @@
 <head>
 	<meta http-equiv="X-UA-Compatible" content="IE=Edge" />
 	<meta charset="windows-1251" />
-	<title><?php echo $title;?></title>
+	<title><?php echo $title?></title>
 	<link href="style.css" rel="stylesheet" type="text/css" />
 </head>
 <body>

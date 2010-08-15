@@ -4,10 +4,10 @@ class EChmMarkdownParser extends CMarkdownParser {
 	protected $_type;
 
 	public function __construct($type) {
-		$this->_type=$type=='cookbook'?'cookbook':'guide';
+		$this->_type=$type;
 		$this->span_gamut += array(
 			"doApiLinks" => 35,
-			"doGuideLinks" => 0,
+			"doGuideLinks" => 15,
 		);
 
 		parent::__construct();
@@ -79,8 +79,8 @@ class EChmMarkdownParser extends CMarkdownParser {
 		return preg_replace_callback('/(?<!\])\[([^\]]+)\](?!\[)/', array($this, 'formatApiLinks'), $text);
 	}
 
-	public function formatApiLinks($match) {
-		@list($text, $api) = explode('|', $match[1], 2);
+	public function formatApiLinks($matches) {
+		@list($text, $api) = explode('|', $matches[1], 2);
 		$api= $api===null ? $text: $api;
 		$segs=explode('::',rtrim($api,'()'));
 		$class=$segs[0];
@@ -91,16 +91,16 @@ class EChmMarkdownParser extends CMarkdownParser {
 	}
 
 	public function doGuideLinks($text) {
-		return preg_replace_callback('~\[(.*?)\]\((/doc/guide/)?([^/]+)\)~', array($this, 'formatGuideLinks'), $text);
+		return preg_replace_callback('~\[([^]]+)\]\((/doc/[^/]+/)?([^)]+)\)~', array($this, 'formatGuideLinks'), $text);
 	}
 
-	public function formatGuideLinks($match) {
-		$text=$match[1];
-		if($this->_type=='cookbook' && $match[2]=='/doc/guide/')
-			$url='http://www.yiiframework.com/doc/guide/'.$match[3];
+	public function formatGuideLinks($matches) {
+		$text=$matches[1];
+		if($this->_type!='guide' && $matches[2]=='/doc/guide/')
+			$url='http://yiiframework.ru/doc/guide/'.$matches[3];
 		else
 		{
-			@list($url,$anchor)=explode('#',$match[3],2);
+			@list($url,$anchor)=explode('#',$matches[3],2);
 			$url=$url.'.html'.($anchor ? '#'.$anchor : '');
 		}
 		return $this->hashPart("<a href=\"{$url}\">{$text}</a>");

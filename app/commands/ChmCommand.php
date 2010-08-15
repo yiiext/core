@@ -7,23 +7,25 @@ class ChmCommand extends CConsoleCommand
 {
 	protected $type;
 	protected $language;
-	protected $guidesPath='webroot.guide';
-	protected $chmDir='webroot.files';
+	protected $sourcePath='webroot.guide';
+	protected $outputPath='webroot.files';
+	protected $defaultTopic='index';
 
 	protected $parser;
 	protected $tmpPath;
-	
+
 	public function getHelp()
 	{
 		return "USAGE\n".
-			"php {$this->getCommandRunner()->getScriptName()} {$this->name} <type> <language> [<txt-guides-path>] [<output-directory>]\n\n".
+			"php {$this->getCommandRunner()->getScriptName()} {$this->name} <type> <language> [<markdown-sources-path>] [<output-path>] [<default-topic>]\n\n".
 			"DESCRIPTION\n".
 			"This command can build chm Yii docs from markdown source.\n\n".
-			"PARAMETERS\n".
+			"ARGUMENTS\n".
 			"<type> - required, the document type, can be guide or cookbook.\n".
 			"<language> - required, the language to convert.\n".
-			"<txt-guide-path> - optional, the path or alias of directory where markdown source is stored. Default \"{$this->guidesPath}\".\n".
-			"<output-directory> - optional, the path or alias of directory where .chm will be generated. Default \"{$this->chmDir}\".\n";
+			"<markdown-sources-path> - optional, the path or alias of directory where markdown source is stored. Default is \"webroot.guide\".\n".
+			"<output-path> - optional, the path or alias of directory where .chm will be generated. Default is \"webroot.files\".\n".
+			"<default-topic> - optional, index page for the guide. Default is \"index\".\n";
 	}
 	/**
 	 * Execute the action.
@@ -36,46 +38,56 @@ class ChmCommand extends CConsoleCommand
 		// Parse command arguments
 		$this->type=$args[0];
 		$this->language=$args[1];
-		!isset($args[2]) OR $this->guidesPath=$args[2];
-		!isset($args[3]) OR $this->chmDir=$args[3];
+		if(isset($args[2]))
+			$this->sourcePath=$args[2];
 
-		// Check guides path
-		if($this->type!='guide' && $this->type!='cookbook')
+		if(isset($args[3]))
+			$this->outputPath=$args[3];
+
+		if(isset($args[4]))
+			$this->defaultTopic = $args[4];
+
+		// Check type
+		if(empty($this->type))
 			$this->usageError('The type is required.');
 
 		// Guides path alias into path
-		if(($guidesPath=Yii::getPathOfAlias($this->guidesPath))!==FALSE)
-			$this->guidesPath=$guidesPath;
-		
+		if($guidesPath=Yii::getPathOfAlias($this->sourcePath))
+			$this->sourcePath=$guidesPath;
+
 		// .chm dir alias into path
-		if(($chmDir=Yii::getPathOfAlias($this->chmDir))!==FALSE)
-			$this->chmDir=$chmDir;
+		if($outputPath=Yii::getPathOfAlias($this->outputPath))
+			$this->outputPath=$outputPath;
 
 		// Check guides path
-		if(!is_dir($this->guidesPath))
-			$this->usageError('The guides path ['.$this->guidesPath.'] is not avaible.');
+		if(!is_dir($this->sourcePath))
+			$this->usageError('The path ['.$this->sourcePath.'] is not available.');
 
-		$sourcePath=$this->guidesPath.'/'.$this->language;
+		$sourcePath=$this->sourcePath.'/'.$this->language;
 
-		// Check language exists
+		// Check id language exists
 		if(!is_dir($sourcePath))
-			$this->usageError('The translation into "'.$this->language.'" is not found.');
+			$this->usageError('Can\'t find '.$this->language.' translation.');
 
-		// Check .chm dir
-		if(!is_dir($this->chmDir))
-			$this->ensureDirectory($this->chmDir);
+		// Check if output dir exists
+		if(!is_dir($this->outputPath))
+			$this->ensureDirectory($this->outputPath);
 
-		$this->chmDir=realpath($this->chmDir);
+		$this->outputPath=realpath($this->outputPath);
 		$sourcePath=realpath($sourcePath);
-		$chmPath=$this->chmDir.'/yii-'.$this->type.'-'.$this->language.'.chm';
+		$outputPath=$this->outputPath.'/yii-'.$this->type.'-'.$this->language.'.chm';
 
 		echo " Processing: ".$sourcePath."\n";
-		
+
+		//getting doc title
+		$f = fopen($sourcePath.'/'.$this->defaultTopic.'.txt', 'r');
+		$title = trim(fgets($f));
+		fclose($f);
+
 		// save application config
-		$name=Yii::app()->name;
-		Yii::app()->name=($this->type=='guide'?'The Definite Guide to Yii':'The Yii Cookbook').' | Offline ['.$this->language.']';
 		$charset=Yii::app()->charset;
 		Yii::app()->charset='windows-1251';
+		$title .= ' - Yii';
 
 		$this->parser=new EChmMarkdownParser($this->type);
 		$this->tmpPath=Yii::getPathOfAlias('application.runtime.chm'.$this->type);
@@ -86,24 +98,24 @@ class ChmCommand extends CConsoleCommand
 			'binaryIndex'=>'No',
 			'compatibility'=>'1.1 or later',
 			'defaultFont'=>'Tahoma,10,0',
-			'defaultTopic'=>'index.html',
+			'defaultTopic'=>$this->defaultTopic.'.html',
 			'displayCompileProgress'=>'No',
 			'enhancedDecompilation'=>'Yes',
 			'fullTextSearch'=>'Yes',
 			'language'=>'0x419 Russian (Russia)',
-			'title'=>Yii::app()->name,
+			'title'=>$title,
 			'path'=>$this->tmpPath.'/guide.hhp',
 			'contentsFile'=>$this->tmpPath.'/guide.hhc',
 			'indexFile'=>$this->tmpPath.'/guide.hhk',
-			'compiledFile'=>$chmPath,
+			'compiledFile'=>$outputPath,
 		));
-		
+
 		echo " Adding a window to the project.\n";
 		$chm->addWindow(array(
-			'id'=>md5(Yii::app()->name.time()),
-			'title'=>Yii::app()->name,
-			'defaultFile'=>'index.html',
-			'homeFile'=>'index.html',
+			'id'=>md5($title.time()),
+			'title'=>$title,
+			'defaultFile'=>$this->defaultTopic.'.html',
+			'homeFile'=>$this->defaultTopic.'.html',
 			'navigationStyle'=>'0x63420',
 			'position'=>'[50,50,950,700]',
 			'navigationWidth'=>250,
@@ -121,7 +133,7 @@ class ChmCommand extends CConsoleCommand
 			$chm->addFile($this->tmpPath.'/'.basename($file));
 		}
 
-		$this->copyImagesToTmp($this->guidesPath.'/sources/images');
+		$this->copyImagesToTmp($this->sourcePath.'/source/images');
 		$this->copyImagesToTmp($sourcePath.'/images');
 
 		echo " Reading toc.txt\n";
@@ -166,7 +178,7 @@ class ChmCommand extends CConsoleCommand
 			}
 		}
 
-		echo " Saving ".iconv("UTF-8","CP866",$chmPath)."\n";
+		echo " Saving ".iconv("UTF-8","CP866",$outputPath)."\n";
 		$chm->save();
 
 		echo " Deleting temporary files\n";
@@ -175,7 +187,6 @@ class ChmCommand extends CConsoleCommand
 		echo " Process complete!\n";
 
 		// restore application config
-		Yii::app()->name=$name;
 		Yii::app()->charset=$charset;
 	}
 	protected function copyImagesToTmp($path)
@@ -199,7 +210,7 @@ class ChmCommand extends CConsoleCommand
 		$filePath=realpath($filePath);
 
 		echo " Transform file [".iconv("UTF-8","CP866",$filePath)."]\n";
-		$content=$this->parser->transform(file_get_contents($filePath));
+		$content=$this->parser->transform($this->encodeEntities(file_get_contents($filePath)));
 		echo " Render HTML [".iconv("UTF-8","CP866",$filePath)."]\n";
 		$content=$this->renderFile($layout,array('content'=>$content,'title'=>$title),true);
 
@@ -225,5 +236,13 @@ class ChmCommand extends CConsoleCommand
 			echo " Delete directory [".iconv("UTF-8","CP866",$path)."]\n";
 			return rmdir($path);
 		}
+	}
+
+	protected function encodeEntities($text){
+		$replaces = array(
+			'→' => '&rarr;',
+			'←' => '&larr;',
+		);
+		return str_replace(array_keys($replaces), array_values($replaces), $text);
 	}
 }
