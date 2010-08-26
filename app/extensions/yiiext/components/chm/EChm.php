@@ -65,10 +65,10 @@ class EChm extends CComponent
 
 		// generate project
 		$exeFile=dirname(__FILE__).'/vendors/hhc.exe';
-		exec('"'.$exeFile.'" "'.$this->project->path.'"');
+		exec('"'.$exeFile.'" "'.$this->project->path.'"', $output, $return_var);
 
 		if(!file_exists($this->project->compiledFile))
-			throw new CException(Yii::t('yiiext','Cannot save .chm file "{file}".',array('{file}'=>$this->project->compiledFile)));
+			throw new CException(Yii::t('yiiext','Cannot save .chm file "{file}".'."\nReturn: $return_var\nOutput:\n".implode("\n", $output),array('{file}'=>$this->project->compiledFile)));
 
 		return $this->project->compiledFile;
 	}
