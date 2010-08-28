@@ -192,9 +192,9 @@ class ENestedSetBehaviorTest extends CDbTestCase
 		$target=Category::model()->findByPk(2);
 		$this->assertTrue($target instanceof Category);
 		$category=new Category;
-		$this->assertFalse($category->prependTo($target));
+		$this->assertFalse($category->appendTo($target));
 		$category->name='test';
-		$this->assertTrue($category->prependTo($target));
+		$this->assertTrue($category->appendTo($target));
 		$this->assertTrue($this->checkTree());
 	}
 
