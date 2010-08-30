@@ -1,5 +1,7 @@
 <?php
 class ShoppingCartTest extends CDbTestCase {
+    private $testVar;
+
     public $fixtures=array(
         'books'=>'Book',
         'posts'=>'Post',
@@ -11,18 +13,18 @@ class ShoppingCartTest extends CDbTestCase {
         $cart = new EShoppingCart();
 
         $book = Book::model()->findByPk(1);
-        $cart->put($book);		
+        $cart->put($book);
         $this->assertEquals(1, $cart->getItemsCount());
     }
 
     function testGet(){
 		$this->setUp();
-        
+
 		$cart = new EShoppingCart();
-		
+
 		$book = Book::model()->findByPk(1);
         $cart->put($book);
-			
+
 		$this->assertEquals(1, $cart["Book1"]->id);
     }
 
@@ -52,7 +54,7 @@ class ShoppingCartTest extends CDbTestCase {
         $cart->remove("Book1");
         $this->assertEquals(0, $cart->getItemsCount());
     }
-    
+
     function testgetItemsCount(){
         $this->setUp();
         $cart = new EShoppingCart();
@@ -65,7 +67,7 @@ class ShoppingCartTest extends CDbTestCase {
 
         $this->assertEquals(4, $cart->getItemsCount());
     }
-	
+
 	function testGetCount()
 	{
 		$this->setUp();
@@ -79,7 +81,7 @@ class ShoppingCartTest extends CDbTestCase {
 
         $this->assertEquals(2, $cart->count());
 	}
-    
+
     function testGetCost(){
         $this->setUp();
         $cart = new EShoppingCart();
@@ -89,7 +91,7 @@ class ShoppingCartTest extends CDbTestCase {
 
         $book = Book::model()->findByPk(2);
         $cart->put($book, 2);
-        
+
         $this->assertEquals(199.9, $cart->getCost());
     }
 
@@ -101,8 +103,8 @@ class ShoppingCartTest extends CDbTestCase {
         $cart->put($book);
 
         $book = Book::model()->findByPk(2);
-        $cart->put($book, 2);        
-        
+        $cart->put($book, 2);
+
         foreach($cart as $book){
             $this->assertTrue(in_array($book->id, array(1, 2)));
         }
@@ -139,11 +141,11 @@ class ShoppingCartTest extends CDbTestCase {
 
     function testCComponentPut()
     {
-  
+
         $this->setUp();
         $cart = new EShoppingCart();
 
-        $product = new BaseProduct(1,100.00);     
+        $product = new BaseProduct(1,100.00);
 
         try {
         $cart->put($product);
@@ -159,33 +161,25 @@ class ShoppingCartTest extends CDbTestCase {
     {
         $this->setUp();
         $cart = new EShoppingCart();
-        $testVar = false;
+        $this->testVar = false;
 
-        $handler = function($event) use (&$testVar) {
-           $testVar = true;
-        };
-
-        $cart->attachEventHandler('onUpdatePoistion',$handler);
+        $cart->attachEventHandler('onUpdatePoistion', array($this, 'testEventHandler'));
 
         $book = Book::model()->findByPk(1);
         $cart->put($book);
 
         $this->assertTrue($cart->hasEvent('onUpdatePoistion'));
         $this->assertTrue($cart->hasEventHandler('onUpdatePoistion'));
-        $this->assertTrue($testVar);
+        $this->assertTrue($this->testVar);
     }
 
     function testEventOnRemovePosition()
     {
         $this->setUp();
         $cart = new EShoppingCart();
-        $testVar = false;
+        $this->testVar = false;
 
-        $handler = function($event) use (&$testVar) {
-           $testVar = true;
-        };
-
-        $cart->attachEventHandler('onRemovePosition',$handler);
+        $cart->attachEventHandler('onRemovePosition', array($this, 'testEventHandler'));
 
         $book = Book::model()->findByPk(1);
         $cart->put($book);
@@ -193,7 +187,11 @@ class ShoppingCartTest extends CDbTestCase {
 
         $this->assertTrue($cart->hasEvent('onRemovePosition'));
         $this->assertTrue($cart->hasEventHandler('onRemovePosition'));
-        $this->assertTrue($testVar);
+        $this->assertTrue($this->testVar);
+    }
+
+    function testEventHandler(){
+        $this->testVar = true;
     }
 
     function  testSaveState()
@@ -230,7 +228,7 @@ class ShoppingCartTest extends CDbTestCase {
             'class'=>'ext.yiiext.components.shoppingCart.discounts.TestDiscount',
             'rate'=>40)
         );
-        
+
         $book = Book::model()->findByPk(1);
         $cart->put($book,2);
         $this->assertEquals(159.84, $cart->getCost());
