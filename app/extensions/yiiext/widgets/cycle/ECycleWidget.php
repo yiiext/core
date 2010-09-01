@@ -2,7 +2,7 @@
 /**
  * CycleWidget
  *
- * @version 0.01
+ * @version 0.02
  * @author creocoder <creocoder@gmail.com>
  */
 class ECycleWidget extends CWidget
