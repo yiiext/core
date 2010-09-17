@@ -1,7 +1,7 @@
 ActiveForm Validation Filter
 ===================
 
-При использовании (CActiveForm) с включенной AJAX валидацией, в документации предлагают метод
+При использовании [CActiveForm](http://www.yiiframework.com/doc/api/CActiveForm) с включенной AJAX валидацией, в документации предлагают метод
 ~~~
 [php]
 protected function performAjaxValidation($model)
@@ -30,7 +30,7 @@ public function filters()
 			// Название или массив названий классов для проверяемой модели.
 			// Метод {@link getModel()} вернет массив моделей используя эти классы.
 			'modelClass'=>'ModelClassToBeValidate',
-			// Ид {@link CActiveForm} формы.
+			// Ид [CActiveForm](http://www.yiiframework.com/doc/api/CActiveForm) формы.
 			'formId'=>'form',
 			// Имя параметра используемого в AJAX-запросе.
 			'ajaxVar'=>'ajax,
