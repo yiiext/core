@@ -1,7 +1,7 @@
 ActiveForm Validation Filter
 ===================
 
-При использовании [CActiveForm] с включенной AJAX валидацией, в документации предлагают метод
+При использовании (CActiveForm) с включенной AJAX валидацией, в документации предлагают метод
 ~~~
 [php]
 protected function performAjaxValidation($model)
