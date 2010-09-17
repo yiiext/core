@@ -28,9 +28,9 @@ public function filters()
 		array(
 			'EActiveFormValidationFilter[ +|- Action1, Action2, ...]',
 			// Название или массив названий классов для проверяемой модели.
-			// Метод {@link getModel()} вернет массив моделей используя эти классы.
+			// Метод EActiveFormValidationFilter::getModel() вернет массив моделей используя эти классы.
 			'modelClass'=>'ModelClassToBeValidate',
-			// Ид [CActiveForm](http://www.yiiframework.com/doc/api/CActiveForm) формы.
+			// Ид формы.
 			'formId'=>'form',
 			// Имя параметра используемого в AJAX-запросе.
 			'ajaxVar'=>'ajax,
