@@ -19,8 +19,8 @@
  *         array(
  *             'EActiveFormValidationFilter[ +|- Action1, Action2, ...]',
  *             'modelClass'=>'ModelClassToBeValidate',
- *             'ajaxVar'=>'ajax,
  *             'formId'=>'form',
+ *             'ajaxVar'=>'ajax,
  *         ),
  *     );
  * }
@@ -35,14 +35,18 @@ class EActiveFormValidationFilter extends CFilter
 	/**
 	 * @var mixed a single primary CModel class name or array of classes model.
 	 * The {@link getModel()} method will return a models of this classes.
+	 * @see getModel
 	 */
 	public $modelClass;
 	/**
-	 * @var string
+	 * @var string id of the {@link CActiveForm}
+	 * @see CActiveForm::$id
+	 * @see CActiveForm::$htmlOptions
 	 */
 	public $formId;
 	/**
-	 * @var string
+	 * @var string the name of the parameter indicating the request is an AJAX request.
+	 * @see CActiveForm::$htmlOptions
 	 */
 	public $ajaxVar='ajax';
 
