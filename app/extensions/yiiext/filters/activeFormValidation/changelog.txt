@@ -1,2 +1,5 @@
+next
+[*] Fix supporting array of model. 
+
 0.1
 [+] Initial public release.

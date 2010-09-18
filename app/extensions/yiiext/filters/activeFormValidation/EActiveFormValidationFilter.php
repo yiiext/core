@@ -88,7 +88,7 @@ class EActiveFormValidationFilter extends CFilter
 		if(is_string($this->modelClass))
 			$this->modelClass=array($this->modelClass);
 		foreach($this->modelClass as $modelClass)
-			$models=new $modelClass;
+			$models[]=new $modelClass;
 		return $models;
 	}
 }
