@@ -1,9 +1,0 @@
-next
-[+] Add more documentation.
-[*] Rename EModelElementsGenerator to EElementsModelBehavior
-[*] Check owner with beginWidget method exists
-[+] Add EFormGeneratorModelBehavior
-[+] Add $formClass to change CFrom class
-
-0.1
-[+] Initial public release.
