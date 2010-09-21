@@ -1,4 +1,5 @@
 next
+[+] Support to set model instances.  
 [*] Fix supporting array of model. 
 
 0.1

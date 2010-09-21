@@ -37,7 +37,7 @@ class EActiveFormValidationFilter extends CFilter
 	 * The {@link getModel()} method will return a models of this classes.
 	 * @see getModel
 	 */
-	public $modelClass;
+	protected $_models=array();
 	/**
 	 * @var string id of the {@link CActiveForm}
 	 * @see CActiveForm::$id
@@ -56,9 +56,6 @@ class EActiveFormValidationFilter extends CFilter
 	 */
 	public function init()
 	{
-		if($this->modelClass===null)
-			throw new CException(Yii::t('yiiext','The "{property}" property cannot be empty.',array(
-				'{property}'=>'modelClass')));
 		if($this->formId===null)
 			throw new CException(Yii::t('yiiext','The "{property}" property cannot be empty.',array(
 				'{property}'=>'formId')));
@@ -71,24 +68,25 @@ class EActiveFormValidationFilter extends CFilter
 	 */
 	protected function preFilter($filterChain)
 	{
-		if(isset($_POST[$this->ajaxVar]) && $_POST[$this->ajaxVar]===$this->formId)
+		if(!empty($this->_models) && isset($_POST[$this->ajaxVar]) && $_POST[$this->ajaxVar]===$this->formId)
 		{
-			echo CActiveForm::validate($this->getModel());
+			echo CActiveForm::validate($this->_models);
 			Yii::app()->end();
 		}
 		return true;
 	}
 	/**
-	 * Returns the model to be validate.
-	 * @return CModel the list of data items currently available in this data provider.
+	 * Add models for validate.
+	 * @param CModel
 	 */
-	protected function getModel()
+	public function setModels($models)
 	{
-		$models=array();
-		if(is_string($this->modelClass))
-			$this->modelClass=array($this->modelClass);
-		foreach($this->modelClass as $modelClass)
-			$models[]=new $modelClass;
-		return $models;
+		if(is_string($models))
+			$this->_models[]=new $models;
+		else if($models instanceof CModel)
+			$this->_models[]=$models;
+		else if(is_array($models))
+			foreach($models as $model)
+				$this->setModels($model);
 	}
 }
