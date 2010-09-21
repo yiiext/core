@@ -16,7 +16,7 @@ public function filters()
 			'EActiveFormValidationFilter[ +|- Action1, Action2, ...]',
 			// The single primary CModel class name or array of classes model.
 			// The EActiveFormValidationFilter::getModel() method will return a models of this classes.
-			'modelClass'=>'ModelClassToBeValidate',
+			'models'=>array('ModelClassToBeValidate',new OtherModel('update')),
 			// Id of the form
 			'formId'=>'form',
 			// The name of the parameter indicating the request is an AJAX request.

@@ -18,7 +18,7 @@
  *     return array(
  *         array(
  *             'EActiveFormValidationFilter[ +|- Action1, Action2, ...]',
- *             'modelClass'=>'ModelClassToBeValidate',
+ *             'models'=>array('ModelClassToBeValidate',new OtherModel('update')),
  *             'formId'=>'form',
  *             'ajaxVar'=>'ajax,
  *         ),
@@ -27,7 +27,7 @@
  * </pre>
  *
  * @author Veaceslav Medvedev <slavcopost@gmail.com>
- * @version 0.1
+ * @version 0.2
  * @package yiiext.filters.activeFormValidation
  */
 class EActiveFormValidationFilter extends CFilter

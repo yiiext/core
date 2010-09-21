@@ -29,7 +29,7 @@ public function filters()
 			'EActiveFormValidationFilter[ +|- Action1, Action2, ...]',
 			// Название или массив названий классов для проверяемой модели.
 			// Метод EActiveFormValidationFilter::getModel() вернет массив моделей используя эти классы.
-			'modelClass'=>'ModelClassToBeValidate',
+			'models'=>array('ModelClassToBeValidate',new OtherModel('update')),
 			// Ид формы.
 			'formId'=>'form',
 			// Имя параметра используемого в AJAX-запросе.
