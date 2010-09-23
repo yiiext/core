@@ -11,7 +11,7 @@
  *
  * Also add helper to generate array of default text elements based of {@link CModel::getAttributes()}.
  *
- * @author Veaceslav Medvedev <slavcopost@gmail.com>
+ * @author Maxim Furtuna
  * @version 0.1
  * @package yiiext.components.form
  */
