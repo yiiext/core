@@ -18,7 +18,7 @@ return array(
 Используем в представлении `views/photos.php`:
 ~~~
 [php]
-<?php $this->widget('EFancyboxWidget', array(
+$this->widget('EFancyboxWidget', array(
 
 	// Селектор фото
 	//'selector' => 'a[href$=.jpg],a[href$=.png],a[href$=.gif]',
@@ -37,17 +37,16 @@ return array(
 
 	// Свойство плагина, позволяющие задать JavaScript код, вводим с префиксом `js:`
 	// 'onComplete' => 'js:function() {$("#fancybox-wrap").hover(function() {$("#fancybox-title").show();}, function() {$("#fancybox-title").hide();});}',
-)); ?>
+));
 ~~~
 
 Приятное дополнение, чтоб вывести в представлении картинку с ссылкой, можно воспользоватся хелпером
 EFancyboxWidget::image($imageSrc, $imageAlt, $imageHtmlOptions, $linkHtmlOptions);
 ~~~
 [php]
-<?php
 echo EFancyboxWidget::image('/images/photo1.jpg', 'Example 1', array(), array('class' => 'fancy_link'));
 echo EFancyboxWidget::image('/images/photo2.jpg', 'Example 2', array(), array('class' => 'fancy_link'));
-<?php $this->widget('EFancyboxWidget', array(
+$this->widget('EFancyboxWidget', array(
 	'selector' => '.fancy_link', 
-)); ?>
+));
 ~~~

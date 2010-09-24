@@ -130,11 +130,12 @@ class EFancyboxWidget extends CWidget
 	 * @param array HTML options for link tag.
 	 * @return string
 	 */
-	public static function image($src, $alt = '', $htmlOptions = array(), $linkHtmlOptions = array())
+	public static function image($src, $alt = '', $htmlOptions = array(), $linkHtmlOptions = array(),$link='')
 	{
+		!empty($link) OR $link=$src;
 		isset($linkHtmlOptions['title']) OR $linkHtmlOptions['title'] = $alt;
 		isset($htmlOptions['title']) OR $htmlOptions['title'] = $alt;
-		return CHtml::link(CHtml::image($src, $alt, $htmlOptions), $src, $linkHtmlOptions);
+		return CHtml::link(CHtml::image($src, $alt, $htmlOptions), $link, $linkHtmlOptions);
 	}
 	/**
 	 * Shows loading animation.
