@@ -1,7 +1,9 @@
-next
-[*] Fixed error views path fallback.
+1.1
+---
+- Fixed error views path fallback (Sam Dark)
 
 1.0
-[+] Static/dynamic calls in stack trace.
-[+] Stack trace with parameters.
-[*] Cleaner layout.
+---
+- Static/dynamic calls in stack trace (Sam Dark)
+- Stack trace with parameters (Sam Dark)
+- Cleaner layout (Sam Dark)
