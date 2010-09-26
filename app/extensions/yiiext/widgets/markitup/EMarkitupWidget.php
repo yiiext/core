@@ -2,17 +2,55 @@
 /**
  * MarkitupWidget
  *
- * @version 0.02
+ * @version 1.0
  * @author creocoder <creocoder@gmail.com>
  */
 class EMarkitupWidget extends CInputWidget
 {
+    /**
+     * URL where to look for markItUp assets
+     * @var string
+     */
 	public $scriptUrl;
+
+    /**
+     * markItUp script name
+     * jquery.markitup.js by default
+     * @var string
+     */
 	public $scriptFile;
+
+    /**
+     * URL where to look for a skin
+     * @var string
+     */
 	public $themeUrl;
+
+    /**
+     * markItUp skin name
+     * simple and markitup are available by default
+     * @var string
+     */
 	public $theme='simple';
+
+    /**
+     * URL where to look for a tag set
+     * @var string
+     */
 	public $settingsUrl;
+
+    /**
+     * Tag set name
+     * html and markdown are available by default
+     * @var string
+     */
 	public $settings='html';
+
+    /**
+     * markItUp options
+     * @see http://markitup.jaysalvat.com/documentation/
+     * @var array
+     */
 	public $options=array();
 
 	public function init()
@@ -42,7 +80,7 @@ class EMarkitupWidget extends CInputWidget
 		}
 
 		if($this->scriptFile===null)
-			$this->scriptFile=YII_DEBUG ? 'jquery.markitup.js' : 'jquery.markitup.pack.js';
+			$this->scriptFile='jquery.markitup.js';
 
 		$this->registerClientScript();
 
