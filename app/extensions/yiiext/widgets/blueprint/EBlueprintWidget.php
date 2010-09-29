@@ -21,33 +21,50 @@
 class EBlueprintWidget extends CWidget
 {
 	// Url to vendors css-files.
-	public $scriptUrl;
+	private static $scriptUrl;
 	
+	public function setScriptUrl($url)
+	{
+		self::$scriptUrl=$url;
+	}
+	public function getScriptUrl()
+	{
+		return self::$scriptUrl;
+	}
 	public function init()
 	{
-		if($this->scriptUrl===null)
-			$this->scriptUrl=Yii::app()->getAssetManager()->publish(dirname(__FILE__).'/vendors/joshuaclayton-blueprint-css-9be6857/blueprint');
-	}
-	public function run()
-	{
-		if(YII_DEBUG)
+		foreach(self::getCssFiles(YII_DEBUG) as $file)
 		{
-			echo CHtml::cssFile($this->scriptUrl.'/src/reset.css','screen,projection')."\n";
-			echo CHtml::cssFile($this->scriptUrl.'/src/typography.css','screen,projection')."\n";
-			echo CHtml::cssFile($this->scriptUrl.'/src/grid.css','screen,projection')."\n";
-			echo CHtml::cssFile($this->scriptUrl.'/src/forms.css','screen,projection')."\n";
-			echo CHtml::cssFile($this->scriptUrl.'/src/print.css','print')."\n";
-			echo '<!--[if lt IE 8]>'."\n";
-			echo CHtml::cssFile($this->scriptUrl.'/src/ie.css','screen,projection')."\n";
-			echo '<![endif]-->'."\n";
+			if(isset($file[2]))
+				echo '<!--[if lt IE '.$file[2].']>'."\n";
+			echo CHtml::cssFile($file[0],isset($file[1]) ? $file[1] : '')."\n";
+			if(isset($file[2]))
+				echo '<![endif]-->'."\n";
+		}
+	}
+	public static function getCssFiles($getSrc=false)
+	{
+		if(self::$scriptUrl===null)
+			self::$scriptUrl=Yii::app()->getAssetManager()->publish(dirname(__FILE__).'/vendors/joshuaclayton-blueprint-css-9be6857/blueprint');
+		
+		if($getSrc)
+		{
+			return array(
+				array(self::$scriptUrl.'/src/reset.css','screen,projection'),
+				array(self::$scriptUrl.'/src/typography.css','screen,projection'),
+				array(self::$scriptUrl.'/src/grid.css','screen,projection'),
+				array(self::$scriptUrl.'/src/forms.css','screen,projection'),
+				array(self::$scriptUrl.'/src/print.css','print'),
+				array(self::$scriptUrl.'/src/ie.css','screen,projection','8'),
+			);
 		}
 		else
 		{
-			echo CHtml::cssFile($this->scriptUrl.'/screen.css','screen,projection')."\n";
-			echo CHtml::cssFile($this->scriptUrl.'/print.css','print')."\n";
-			echo '<!--[if lt IE 8]>'."\n";
-			echo CHtml::cssFile($this->scriptUrl.'/ie.css','screen,projection')."\n";
-			echo '<![endif]-->'."\n";
+			return array(
+				array(self::$scriptUrl.'/screen.css','screen,projection'),
+				array(self::$scriptUrl.'/print.css','print'),
+				array(self::$scriptUrl.'/ie.css','screen,projection','8'),
+			);
 		}
 	}
 }
