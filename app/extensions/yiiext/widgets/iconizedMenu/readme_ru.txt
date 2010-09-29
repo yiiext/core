@@ -6,8 +6,8 @@ Iconized menu
 ~~~
 [php]
 <?$this->widget('ext.yiiext.widgets.iconizedMenu.EIconizedMenu',array(
-    // Раскомментируйте для использования Яндекс вместо Google
-    //'iconizerBaseUrl' => 'http://favicon.yandex.ru/favicon/',
+    // Отключает использование спрайтов Яндекса и позволяет задать свой iconizerBaseUrl
+    // 'useSprites' => false,
     'items'=>array(
         array('label'=>'Yii Framework', 'url'=> 'http://yiiframework.com/'),
         array('label'=>'RMCreative', 'url'=> 'http://rmcreative.ru/'),

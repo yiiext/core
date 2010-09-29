@@ -6,8 +6,8 @@ Allows you to create a menu with the corresponding favicon on the left of each i
 ~~~
 [php]
 <?$this->widget('ext.yiiext.widgets.iconizedMenu.EIconizedMenu',array(
-    // Uncomment to use Yandex instead of Google
-    //'iconizerBaseUrl' => 'http://favicon.yandex.ru/favicon/',
+    // Turns off Yandex sprites usage and allows to use custom iconizerBaseUrl
+    // 'useSprites' => false,
     'items'=>array(
         array('label'=>'Yii Framework', 'url'=> 'http://yiiframework.com/'),
         array('label'=>'RMCreative', 'url'=> 'http://rmcreative.ru/'),
