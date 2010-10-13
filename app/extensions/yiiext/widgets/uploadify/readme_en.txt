@@ -1,45 +1,29 @@
 Widget for jQuery Uploadify
 ===========================
 
-Installing and configuring
---------------------------
-Unpack to `protected/extensions`.
-
-Configure application (`config/main.php`):
-~~~
-[php]
-return array(
-    'import'=>array(
-        // …
-        'ext.yiiext.widgets.uploadify.*',
-    ),
-    // …
-);
-~~~
-
 Usage
 -----
 
 In a view `views/form.php`:
 ~~~
 [php]
-<?php $this->widget('EUploadifyWidget', array(
-    // model
-    'model' => $model,
-    // attribute name
-    'modelAttribute' => 'fileAttribute',
-    'settings' => array(),
-)); ?>
+$this->widget('ext.yiiext.widgets.uploadify.EUploadifyWidget', array(
+    // you can either use it for model attribute
+    'model'=>new UploadifyFile,
+	'attribute'=>'uploadifyFile',
+	// or just for input field
+	'name'=>'my_input_name',
+    // extension [options](http://www.uploadify.com/documentation/)
+	'options'=>array(
+		'fileExt'=>'*.jpg;*.png;*.gif',
+		'script'=>$this->createUrl('controller/action'),
+		'auto'=>false,
+		'multi'=>true,
+		'buttonText'=>'Upload Images',
+	),
+));
 ~~~
    
-### Settings
-
-Widget accepts following parameters:
-
-- `model` — model.
-- `modelAttribute` — attribute name of type `file`.
-- `settings` — [Uploadify options](http://www.uploadify.com/documentation).
-
 Example
 -------
 

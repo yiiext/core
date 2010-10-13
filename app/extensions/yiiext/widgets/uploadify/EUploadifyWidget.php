@@ -2,154 +2,96 @@
 /**
  * EUploadifyWidget class file.
  *
- * Uploadify jQuery plugin widget.
+ * @author Veaceslav Medvedev <slavcopost@gmail.com>
+ * @link http://code.google.com/p/yiiext/
+ * @license http://www.opensource.org/licenses/bsd-license.php
+ */
+/**
+ * EUploadifyWidget adds {@link http://www.uploadify.com/ uploadify jQuery plugin} as a form field widget.
  *
  * @author Veaceslav Medvedev <slavcopost@gmail.com>
- * @link http://code.google.com/p/yiiext
- * @uses http://www.uploadify.com/
- *
- * @version 1.2
+ * @version 1.5
+ * @package yiiext.widgets.uploadify
+ * @link http://www.uploadify.com/
  */
-class EUploadifyWidget extends CWidget  {
-    /**
-     * Default options. For more info read {@link http://www.uploadify.com/documentation/ documents}
-     *
-     * @var array
-     */
-    private $defaults = array(
-        // Options from source file
-        'id' => 'uploadifyFileId',
-        'expressInstall' => NULL,
-        'displayData' => 'percentage',
-        // Options from documents
-        'uploader' => 'uploadify.swf',
-        'script' => 'uploadify.php',
-        'checkScript' => '',//check.php
-        'scriptData' => array(),
-        'fileDataName' => 'Filedata',
-        'method' => 'POST',
-        'scriptAccess' => 'sameDomain',
-        'folder' => '',
-        'queueID' => FALSE,
-        'queueSizeLimit' => 999,
-        'multi' => FALSE,
-        'auto' => FALSE,
-        'fileDesc' => '',
-        'fileExt' => '',
-        'sizeLimit' => FALSE,
-        'simUploadLimit' => 1,
-        'buttonText' => 'BROWSE',
-        'buttonImg' => FALSE,
-        'hideButton' => FALSE,
-        'rollover' => FALSE,
-        'height' => 30,
-        'width' => 110,
-        'wmode' => 'opaque',
-        'cancelImg' => 'cancel.png',
-        'onInit' => 'function(){}',
-        'onSelect' => 'function(){}',
-        'onSelectOnce' => 'function(){}',
-        'onCancel' => 'function(){}',
-        'onClearQueue' => 'function(){}',
-        'onQueueFull' => 'function(){}',
-        'onError' => 'function(event,queueID,fileObj,errorObj){}',
-        'onOpen' => 'function(){}',
-        'onProgress' => 'function(){}',
-        'onComplete' => 'function(event,queueID,fileObj,response,data){}',
-        'onAllComplete' => 'function(){}',
-        'onCheck' => 'function(){}',
-    );
+class EUploadifyWidget extends CInputWidget  {
+	/**
+	 * @var string URL where to look imperavi redactor assets.
+	 */
+	public $assetsUrl;
+	/**
+	 * @var string imperavi redactor script name.
+	 */
+	public $scriptFile;
+	/**
+	 * @var string imperavi redactor stylesheet.
+	 */
+	public $cssFile;
+	/**
+	 * @var array extension options. For more info read {@link http://www.uploadify.com/documentation/ documentation}
+	 */
+	public $options=array();
 
-    /**
-     * Model with file-attribute.
-     *
-     * @var CFormModel
-     */
-    public $model = NULL;
+	/**
+	 * Init widget.
+	 */
+	public function init()
+	{
+		list($this->name,$this->id)=$this->resolveNameId();
 
-    /**
-     * Model attribute.
-     *
-     * @var string
-     */
-    public $modelAttribute = 'uploadifyFile';
+		if($this->assetsUrl===null)
+			$this->assetsUrl=Yii::app()->getAssetManager()->publish(dirname(__FILE__).'/assets',false,-1,YII_DEBUG);
 
-    /**
-     * Extension settings.
-     *
-     * @var array
-     */
-    private $settings = array();
+		if($this->scriptFile===null)
+			$this->scriptFile=YII_DEBUG ? 'jquery.uploadify.v2.1.0.js' : 'jquery.uploadify.v2.1.0.min.js';
 
-    private $scriptPath = '';
+		if($this->cssFile===null)
+			$this->cssFile='uploadify.css';
 
-    public function __construct() {
-        $this->scriptPath = dirname(__FILE__).'/vendors';
-        // Publish defaults assets
-        $am = Yii::app()->getAssetManager();
-        $this->settings['uploader'] = $am->publish($this->scriptPath.'/uploadify.swf');
-        $this->settings['cancelImg'] = $am->publish($this->scriptPath.'/cancel.png');
-        $this->settings['expressInstall'] = $am->publish($this->scriptPath.'/expressInstall.swf');
-    }
+		if(!isset($this->options['uploader']))
+			$this->options['uploader']=$this->assetsUrl.'/uploadify.swf';
+		
+		if(!isset($this->options['cancelImg']))
+			$this->options['cancelImg']=$this->assetsUrl.'/cancel.png';
 
-    public function __get($var) {
-        if (array_key_exists($var, $this->defaults)) {
-            return isset($this->settings[$var]) ? $this->settings[$var] : $this->defaults[$var];
-        }
-        return parent::__get($var);
-    }
+		if(!isset($this->options['expressInstall']))
+			$this->options['expressInstall']=$this->assetsUrl.'/expressInstall.swf';
 
-    /**
-     * Setter for settings. Check if exists and different in defaults.
-     *
-     * @param array
-     */
-    public function setSettings($settings) {
-        foreach ($settings as $key => $value) {
-            if (array_key_exists($key, $this->defaults) && $this->defaults[$key] != $value) {
-                $this->settings[$key] = $value;
-            }
-        }
-    }
+		if(!isset($this->options['script']))
+			$this->options['script']=$this->assetsUrl.'/uploadify.php';
 
-    /**
-     * Encode settings array into json format.
-     *
-     * @return string
-     */
-    private function getJsonSettings() {
-        $settings = array();
-        foreach ($this->settings as $key => $value) {
-            if (substr($key, 0, 2) == 'on') $settings[] = $key . ':' . $value;
-            else $settings[] = json_encode($key) . ':' . json_encode($value);
-        }
-        return "{\n" . implode(",\n\t", $settings) . '}';
-    }
-    
-    public function init() {
-        // Register scripts and styles files.
-        $am = Yii::app()->getAssetManager();
-        $cs = Yii::app()->clientScript;
-        $cs->registerCoreScript('jquery');
-        $cs->registerScriptFile($am->publish($this->scriptPath.'/jquery.uploadify.v2.1.0.min.js'));
-        $cs->registerScriptFile($am->publish($this->scriptPath.'/swfobject.js'));
-        $cs->registerCssFile($am->publish($this->scriptPath.'/uploadify.css'));
+		//if(!isset($this->options['checkScript']))
+			//$this->options['checkScript']=$this->assetsUrl.'/check.php';
 
-        // fileDesc is required if fileExt set.
-        if (!empty($this->settings['fileExt']) && empty($this->settings['fileDesc'])) {
-            $this->settings['fileDesc'] = 'Supported files (' . $this->settings['fileExt'] . ')';
-        }
+		// fileDesc is required if fileExt set.
+		if(!empty($this->options['fileExt']) && empty($this->options['fileDesc']))
+			$this->options['fileDesc']=Yii::t('yiiext','Supported files ({extensions})',array('{extensions}',$this->options['fileExt']));
 
-        // Generate fileDataName for linked with model attribute.
-        $this->settings['fileDataName'] = get_class($this->model) . '[' . $this->modelAttribute . ']';
-    }
+		// Generate fileDataName for linked with model attribute.
+		$this->options['fileDataName']=$this->name;
 
-    public function run() {
-        echo CHtml::activeFileField($this->model, $this->modelAttribute, array('id' => $this->id))."\n";
-
-        $cs = Yii::app()->clientScript;
-        $cs->registerScript('loadUploadify',
-            'jQuery("#' . $this->id . '").uploadify(' . $this->getJsonSettings() . ');',
-            CClientScript::POS_READY);
-    }
+		$this->registerClientScript();
+	}
+	/**
+	 * Run widget.
+	 */
+	public function run()
+	{
+		if($this->hasModel())
+			echo CHtml::activeFileField($this->model,$this->attribute,$this->htmlOptions);
+		else
+			echo CHtml::textArea($this->name,$this->value,$this->htmlOptions);
+	}
+	/**
+	 * Register CSS and Script.
+	 */
+	protected function registerClientScript()
+	{
+		$cs=Yii::app()->getClientScript();
+		$cs->registerCssFile($this->assetsUrl.'/'.$this->cssFile);
+		$cs->registerCoreScript('jquery');
+		$cs->registerScriptFile($this->assetsUrl.'/'.$this->scriptFile);
+		$cs->registerScriptFile($this->assetsUrl.'/swfobject.js');
+		$cs->registerScript(__CLASS__.'#'.$this->id,'jQuery("#'.$this->id.'").uploadify('.CJavaScript::encode($this->options).');',CClientScript::POS_READY);
+	}
 }

@@ -1,40 +1,26 @@
 Обёртка для плагина jQuery Uploadify
 ====================================
 
-Установка и настройка
----------------------
-Настраиваем наше приложение (`config/main.php`):
-~~~
-[php]
-return array(
-    'import'=>array(
-        // …
-        'ext.yiiext.widgets.uploadify.*',
-    ),
-    // …
-);
-~~~
-
 Используем в представлении `views/form.php`:
 ~~~
 [php]
-<?php $this->widget('EUploadifyWidget', array(
-    // модель
-    'model' => $model,
-    // имя поля модели
-    'modelAttribute' => 'fileAttribute',
-    'settings' => array(),
-)); ?>
+$this->widget('ext.yiiext.widgets.uploadify.EUploadifyWidget', array(
+    // можно использовать как для поля модели
+    'model'=>new UploadifyFile,
+	'attribute'=>'uploadifyFile',
+	// так и просто для элемента формы
+	'name'=>'my_input_name',
+    // [настройки](http://www.uploadify.com/documentation/) плагина
+	'options'=>array(
+		'fileExt'=>'*.jpg;*.png;*.gif',
+		'script'=>$this->createUrl('controller/action'),
+		'auto'=>false,
+		'multi'=>true,
+		'buttonText'=>'Upload Images',
+	),
+));
 ~~~
    
-### Настройки
-
-Виджет принимает три параметра:
-
-- `model` — модель.
-- `modelAttribute` — имя атрибута модели типа `file`.
-- `settings` — [Настройки uploadify](http://www.uploadify.com/documentation).
-
 Пример использования
 --------------------
 
