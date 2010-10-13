@@ -1,3 +1,7 @@
+1.1
+---
+- Add minified js. 
+
 1.0
 ---
 - Updated markItUp to 1.1.8 (Sam Dark)

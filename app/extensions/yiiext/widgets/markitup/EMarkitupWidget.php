@@ -1,111 +1,110 @@
 <?php
 /**
- * MarkitupWidget
+ * EMarkitupWidget class file.
  *
- * @version 1.0
  * @author creocoder <creocoder@gmail.com>
+ * @link http://code.google.com/p/yiiext/
+ * @license http://www.opensource.org/licenses/mit-license.php
+ */
+/**
+ * EMarkitupWidget adds {@link http://markitup.jaysalvat.com/ markitup redactor} as a form field widget.
+ *
+ * Usage:
+ * <pre>
+ * $this->widget('ext.yiiext.widgets.markitup.EMarkitupWidget',array(
+ *     // you can either use it for model attribute
+ *     'model'=>$my_model,
+ *     'attribute'=>'my_field',
+ *     // or just for input field
+ *     'name'=>'my_input_name',
+ *     // {@link http://markitup.jaysalvat.com/documentation/ redactor options}
+ *     'options'=>array(
+ *         //...
+ *     ),
+ * ));
+ * </pre>
+ *
+ * @author creocoder <creocoder@gmail.com>
+ * @version 1.1
+ * @package yiiext.widgets.markitup
+ * @link http://markitup.jaysalvat.com/
  */
 class EMarkitupWidget extends CInputWidget
 {
-    /**
-     * URL where to look for markItUp assets
-     * @var string
-     */
+	/**
+	 * @var string URL where to look for markItUp assets.
+	 */
 	public $scriptUrl;
-
-    /**
-     * markItUp script name
-     * jquery.markitup.js by default
-     * @var string
-     */
+	/**
+	 * @var string markItUp script name.
+	 * Defaults to jquery.markitup.js or jquery.markitup.min.js depend by YII_DEGUG.
+	 */
 	public $scriptFile;
-
-    /**
-     * URL where to look for a skin
-     * @var string
-     */
+	/**
+	 * @var string URL where to look for a skin.
+	 */
 	public $themeUrl;
-
-    /**
-     * markItUp skin name
-     * simple and markitup are available by default
-     * @var string
-     */
+	/**
+	 * @var string markItUp skin name. Defaults to simple.
+	 */
 	public $theme='simple';
-
-    /**
-     * URL where to look for a tag set
-     * @var string
-     */
+	/**
+	 * @var string URL where to look for a tag set.
+	 */
 	public $settingsUrl;
-
-    /**
-     * Tag set name
-     * html and markdown are available by default
-     * @var string
-     */
+	/**
+	 * @var string tag set name. Defaults to html.
+	 */
 	public $settings='html';
-
-    /**
-     * markItUp options
-     * @see http://markitup.jaysalvat.com/documentation/
-     * @var array
-     */
+	/**
+	 * @var array {@link http://markitup.jaysalvat.com/documentation/ redactor options}.
+	 */
 	public $options=array();
 
+	/**
+	 * Init widget.
+	 */
 	public function init()
 	{
-		list($name,$id)=$this->resolveNameId();
+		list($this->name,$this->id)=$this->resolveNameId();
 
-		if(isset($this->htmlOptions['id']))
-			$id=$this->htmlOptions['id'];
-		else
-			$this->htmlOptions['id']=$id;
+		if($this->scriptUrl===null)
+			$this->scriptUrl=Yii::app()->getAssetManager()->publish(dirname(__FILE__).'/assets',false,-1,YII_DEBUG);
 
-		if(isset($this->htmlOptions['name']))
-			$name=$this->htmlOptions['name'];
-		else
-			$this->htmlOptions['name']=$name;
+		if($this->themeUrl===null)
+			$this->themeUrl=$this->scriptUrl.'/skins';
 
-		if($this->scriptUrl===null || $this->themeUrl===null || $this->settingsUrl===null)
-		{
-			if($this->scriptUrl===null)
-				$this->scriptUrl=Yii::app()->getAssetManager()->publish(dirname(__FILE__).'/assets');
-
-			if($this->themeUrl===null)
-				$this->themeUrl=$this->scriptUrl.'/skins';
-
-			if($this->settingsUrl===null)
-				$this->settingsUrl=$this->scriptUrl.'/sets';
-		}
+		if($this->settingsUrl===null)
+			$this->settingsUrl=$this->scriptUrl.'/sets';
 
 		if($this->scriptFile===null)
-			$this->scriptFile='jquery.markitup.js';
+			$this->scriptFile=YII_DEBUG ? 'jquery.markitup.js' : 'jquery.markitup.min.js';
 
 		$this->registerClientScript();
-
+	}
+	/**
+	 * Run widget.
+	 */
+	public function run()
+	{
 		if($this->hasModel())
 			echo CHtml::activeTextArea($this->model,$this->attribute,$this->htmlOptions);
 		else
-			echo CHtml::textArea($name,$this->value,$this->htmlOptions);
+			echo CHtml::textArea($this->name,$this->value,$this->htmlOptions);
 	}
-
-	public function registerClientScript()
+	/**
+	 * Register CSS and Scripts.
+	 */
+	protected function registerClientScript()
 	{
-		$id=$this->htmlOptions['id'];
-
+		$id=$this->id;
 		$cs=Yii::app()->getClientScript();
 		$cs->registerCoreScript('jquery');
 		$cs->registerScriptFile($this->scriptUrl.'/'.$this->scriptFile);
 		$cs->registerScriptFile($this->settingsUrl.'/'.$this->settings.'/set.js');
 
-		if(empty($this->options))
-			$cs->registerScript(__CLASS__.'#'.$id, "jQuery('#$id').markItUp(mySettings);");
-		else
-		{
-			$options=CJavaScript::encode($this->options);
-			$cs->registerScript(__CLASS__.'#'.$id, "jQuery('#$id').markItUp(mySettings,$options);");
-		}
+		$options=CJavaScript::encode($this->options);
+		$cs->registerScript(__CLASS__.'#'.$id, "jQuery('#$id').markItUp(mySettings,$options);");
 
 		$cs->registerCssFile($this->themeUrl.'/'.$this->theme.'/style.css');
 		$cs->registerCssFile($this->settingsUrl.'/'.$this->settings.'/style.css');
