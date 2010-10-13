@@ -1,6 +1,6 @@
 1.1
 ---
-- Add minified js. 
+- Add minified js (Veaceslav Medvedev) 
 
 1.0
 ---

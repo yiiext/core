@@ -1,32 +1,12 @@
 <?php
 /**
- * EMarkitupWidget class file.
+ * EMarkitupWidget adds {@link http://markitup.jaysalvat.com/ markitup} as a form field widget.
  *
  * @author creocoder <creocoder@gmail.com>
- * @link http://code.google.com/p/yiiext/
- * @license http://www.opensource.org/licenses/mit-license.php
- */
-/**
- * EMarkitupWidget adds {@link http://markitup.jaysalvat.com/ markitup redactor} as a form field widget.
- *
- * Usage:
- * <pre>
- * $this->widget('ext.yiiext.widgets.markitup.EMarkitupWidget',array(
- *     // you can either use it for model attribute
- *     'model'=>$my_model,
- *     'attribute'=>'my_field',
- *     // or just for input field
- *     'name'=>'my_input_name',
- *     // {@link http://markitup.jaysalvat.com/documentation/ redactor options}
- *     'options'=>array(
- *         //...
- *     ),
- * ));
- * </pre>
- *
- * @author creocoder <creocoder@gmail.com>
+ * @license http://www.opensource.org/licenses/bsd-license.php
  * @version 1.1
  * @package yiiext.widgets.markitup
+ * @link http://code.google.com/p/yiiext/
  * @link http://markitup.jaysalvat.com/
  */
 class EMarkitupWidget extends CInputWidget
@@ -37,7 +17,7 @@ class EMarkitupWidget extends CInputWidget
 	public $scriptUrl;
 	/**
 	 * @var string markItUp script name.
-	 * Defaults to jquery.markitup.js or jquery.markitup.min.js depend by YII_DEGUG.
+	 * Defaults to jquery.markitup.js or jquery.markitup.min.js depending on YII_DEGUG.
 	 */
 	public $scriptFile;
 	/**
@@ -45,7 +25,7 @@ class EMarkitupWidget extends CInputWidget
 	 */
 	public $themeUrl;
 	/**
-	 * @var string markItUp skin name. Defaults to simple.
+	 * @var string markItUp skin name. Simple and markitup are available by default. Defaults to simple.
 	 */
 	public $theme='simple';
 	/**
@@ -53,11 +33,11 @@ class EMarkitupWidget extends CInputWidget
 	 */
 	public $settingsUrl;
 	/**
-	 * @var string tag set name. Defaults to html.
+	 * @var string tag set name. Html and markdown are available by default. Defaults to html.
 	 */
 	public $settings='html';
 	/**
-	 * @var array {@link http://markitup.jaysalvat.com/documentation/ redactor options}.
+	 * @var array {@link http://markitup.jaysalvat.com/documentation/ markitup options}.
 	 */
 	public $options=array();
 
