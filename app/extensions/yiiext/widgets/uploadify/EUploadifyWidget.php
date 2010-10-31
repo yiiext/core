@@ -16,15 +16,15 @@
  */
 class EUploadifyWidget extends CInputWidget  {
 	/**
-	 * @var string URL where to look imperavi redactor assets.
+	 * @var string URL where to look uploadify assets.
 	 */
 	public $assetsUrl;
 	/**
-	 * @var string imperavi redactor script name.
+	 * @var string uploadify script name.
 	 */
 	public $scriptFile;
 	/**
-	 * @var string imperavi redactor stylesheet.
+	 * @var string uploadify stylesheet.
 	 */
 	public $cssFile;
 	/**
@@ -83,6 +83,7 @@ class EUploadifyWidget extends CInputWidget  {
 			echo CHtml::textArea($this->name,$this->value,$this->htmlOptions);
 	}
 	/**
+	 * @return void
 	 * Register CSS and Script.
 	 */
 	protected function registerClientScript()
