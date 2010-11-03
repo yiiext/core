@@ -12,12 +12,12 @@ return array(
 	// ...
 	'behaviors'=>array(
 		'home'=>array(
-			'class'=>'ext.yiiext.components.getUrl.EGetUrlBehavior',
+			'class'=>'ext.yiiext.behaviors.getUrl.EGetUrlBehavior',
 			// whether returned url be absolute. Defaults to false.
 			'useAbsolute'=>true,
 		),
 		'publicFilesUrl'=>array(
-			'class'=>'ext.yiiext.components.getUrl.EGetUrlBehavior',
+			'class'=>'ext.yiiext.behaviors.getUrl.EGetUrlBehavior',
 			'useAbsolute'=>true,
 			// the base url for files (without slashes)
 			'baseUrl'=>'public',

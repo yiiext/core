@@ -12,12 +12,12 @@ return array(
 	// ...
 	'behaviors'=>array(
 		'home'=>array(
-			'class'=>'ext.yiiext.components.getUrl.EGetUrlBehavior',
+			'class'=>'ext.yiiext.behaviors.getUrl.EGetUrlBehavior',
 			// хотим получать абсолютные пути. По умолчанию false.
 			'useAbsolute'=>true,
 		),
 		'publicFilesUrl'=>array(
-			'class'=>'ext.yiiext.components.getUrl.EGetUrlBehavior',
+			'class'=>'ext.yiiext.behaviors.getUrl.EGetUrlBehavior',
 			'useAbsolute'=>true,
 			// устанавливаем базовый относительный путь (без крайних слешей)
 			'baseUrl'=>'public',
