@@ -1,9 +1,9 @@
 <?php
 /*
-Uploadify v2.1.0
-Release Date: August 24, 2009
+Uploadify v2.1.1
+Release Date: November 1, 2010
 
-Copyright (c) 2009 Ronnie Garcia, Travis Nickels
+Copyright (c) 2010 Ronnie Garcia, Travis Nickels
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal

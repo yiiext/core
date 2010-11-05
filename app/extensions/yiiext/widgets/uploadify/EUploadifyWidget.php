@@ -10,7 +10,7 @@
  * EUploadifyWidget adds {@link http://www.uploadify.com/ uploadify jQuery plugin} as a form field widget.
  *
  * @author Veaceslav Medvedev <slavcopost@gmail.com>
- * @version 1.5
+ * @version 1.6
  * @package yiiext.widgets.uploadify
  * @link http://www.uploadify.com/
  */
@@ -28,6 +28,13 @@ class EUploadifyWidget extends CInputWidget  {
 	 */
 	public $cssFile;
 	/**
+	 * @var string|null the name of the POST parameter where save session id.
+	 * Or null to disable sending session id. Use EForgerySessionFilter to load session by id from POST.
+	 * Defaults to null.
+	 * @see EForgerySessionFilter
+	 */
+	public $sessionParam;
+	/**
 	 * @var array extension options. For more info read {@link http://www.uploadify.com/documentation/ documentation}
 	 */
 	public $options=array();
@@ -43,7 +50,7 @@ class EUploadifyWidget extends CInputWidget  {
 			$this->assetsUrl=Yii::app()->getAssetManager()->publish(dirname(__FILE__).'/assets',false,-1,YII_DEBUG);
 
 		if($this->scriptFile===null)
-			$this->scriptFile=YII_DEBUG ? 'jquery.uploadify.v2.1.0.js' : 'jquery.uploadify.v2.1.0.min.js';
+			$this->scriptFile=YII_DEBUG ? 'jquery.uploadify.v2.1.1.js' : 'jquery.uploadify.v2.1.1.min.js';
 
 		if($this->cssFile===null)
 			$this->cssFile='uploadify.css';
@@ -60,12 +67,21 @@ class EUploadifyWidget extends CInputWidget  {
 		if(!isset($this->options['script']))
 			$this->options['script']=$this->assetsUrl.'/uploadify.php';
 
-		//if(!isset($this->options['checkScript']))
-			//$this->options['checkScript']=$this->assetsUrl.'/check.php';
+		// send session id with post
+		if($this->sessionParam!==null && !isset($this->options['scriptData'][$this->sessionParam]))
+			$this->options['scriptData'][$this->sessionParam]=Yii::app()->getSession()->getSessionId();
+
+		// TODO: Csrf Validation
+		// С этим пока проблема. Т.к. flash upload не посылает куки из-за политики безопасности.
+		// if(Yii::app()->getRequest()->enableCsrfValidation && (!isset($this->options['method']) || $this->options['method']=='POST'))
+		//  	$this->options['scriptData'][Yii::app()->getRequest()->csrfTokenName]=Yii::app()->getRequest()->getCsrfToken();
+
+		// if(!isset($this->options['checkScript']))
+		//  	$this->options['checkScript']=$this->assetsUrl.'/check.php';
 
 		// fileDesc is required if fileExt set.
 		if(!empty($this->options['fileExt']) && empty($this->options['fileDesc']))
-			$this->options['fileDesc']=Yii::t('yiiext','Supported files ({extensions})',array('{extensions}',$this->options['fileExt']));
+			$this->options['fileDesc']=Yii::t('yiiext','Supported files ({fileExt})',array('{fileExt}'=>$this->options['fileExt']));
 
 		// Generate fileDataName for linked with model attribute.
 		$this->options['fileDataName']=$this->name;

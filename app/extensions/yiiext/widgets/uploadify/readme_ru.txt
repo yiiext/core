@@ -5,12 +5,14 @@
 ~~~
 [php]
 $this->widget('ext.yiiext.widgets.uploadify.EUploadifyWidget', array(
-    // можно использовать как для поля модели
-    'model'=>new UploadifyFile,
+	// можно использовать как для поля модели
+	'model'=>new UploadifyFile,
 	'attribute'=>'uploadifyFile',
 	// так и просто для элемента формы
 	'name'=>'my_input_name',
-    // [настройки](http://www.uploadify.com/documentation/) плагина
+	// Имя POST-параметра, через который будет посылаться ИД сессии
+	'sessionParam'=>'PHP_SESSION_ID',
+	// [настройки](http://www.uploadify.com/documentation/) плагина
 	'options'=>array(
 		'fileExt'=>'*.jpg;*.png;*.gif',
 		'script'=>$this->createUrl('controller/action'),
@@ -20,7 +22,7 @@ $this->widget('ext.yiiext.widgets.uploadify.EUploadifyWidget', array(
 	),
 ));
 ~~~
-   
+
 Пример использования
 --------------------
 
@@ -35,15 +37,15 @@ $this->widget('ext.yiiext.widgets.uploadify.EUploadifyWidget', array(
 ~~~
 [php]
 class UploadifyFile extends CFormModel {
-    public $uploadifyFile;
+	public $uploadifyFile;
 
-    public function rules() {
-        return array(
-            array('uploadifyFile', 'file',
-                  'maxSize' => 1024*1024*1024,
-                  'types' => 'jpg, png, gif, txt'),
-        );
-    }
+	public function rules() {
+		return array(
+			array('uploadifyFile', 'file',
+				'maxSize' => 1024*1024*1024,
+				'types' => 'jpg, png, gif, txt'),
+		);
+	}
 }
 ~~~
 
@@ -55,31 +57,31 @@ class UploadifyFile extends CFormModel {
 ~~~
 [php]
 class SwfUploadAction extends CAction {
-    public $folder;
+	public $folder;
 
-    public function run() {
-        $folder = $this->folder;
-        if ($folder === FALSE) {
-            throw new CException(Yii::t(__CLASS__, "Folder does not exists.", array()));
-        }
-        if (isset($_FILES['UploadifyFile']) === TRUE) {
-            $model = new UploadifyFile;
-            $model->attributes = array ('uploadifyFile' => '');
-            $model->uploadifyFile = CUploadedFile::getInstance($model, 'uploadifyFile');
-            if ($model->validate() === FALSE) {
-                throw new CException(Yii::t(__CLASS__, "Invalid file.", array()));
-            }
-            if (!$model->uploadifyFile->saveAs($folder.'/'.$model->uploadifyFile->getName())){
-                throw new CException(Yii::t(__CLASS__, "Upload error.", array()));
-            }
-            else {
-                die("Upload success");
-            }
-        }
-        else {
-            throw new CException(Yii::t(__CLASS__, "File not sent.", array()));
-        }
-        throw new CException(Yii::t(__CLASS__, 'Unknown error.', array()));
-    }
+	public function run() {
+		$folder = $this->folder;
+		if ($folder === FALSE) {
+			throw new CException(Yii::t(__CLASS__, "Folder does not exists.", array()));
+		}
+		if (isset($_FILES['UploadifyFile']) === TRUE) {
+			$model = new UploadifyFile;
+			$model->attributes = array ('uploadifyFile' => '');
+			$model->uploadifyFile = CUploadedFile::getInstance($model, 'uploadifyFile');
+			if ($model->validate() === FALSE) {
+				throw new CException(Yii::t(__CLASS__, "Invalid file.", array()));
+			}
+			if (!$model->uploadifyFile->saveAs($folder.'/'.$model->uploadifyFile->getName())){
+				throw new CException(Yii::t(__CLASS__, "Upload error.", array()));
+			}
+			else {
+				die("Upload success");
+			}
+		}
+		else {
+			throw new CException(Yii::t(__CLASS__, "File not sent.", array()));
+		}
+		throw new CException(Yii::t(__CLASS__, 'Unknown error.', array()));
+	}
 }
 ~~~

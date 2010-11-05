@@ -1,0 +1,12 @@
+Version 2.1.1
+onSWFReady event handler added
+removeCompleted option added
+Fixed issues with being unable to remove queue items if the file was canceled
+Fixed issues with the check script not working correctly when using a folder relative path
+cancel.png updated
+Styling of Uploadify queue updated
+Default text on button changed to ‘SELECT FILES’
+Animation added to progress bar
+
+Version 2.1.0
+Added new onOpen event to get details of a file when it is first opened by Flash for upload.
