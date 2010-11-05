@@ -10,10 +10,9 @@ Installing and configuring your controller
 [php]
 public function filters()
 {
-	Yii::import('ext.yiiext.filters.activeFormValidation.EActiveFormValidationFilter');
 	return array(
 		array(
-			'EActiveFormValidationFilter[ +|- Action1, Action2, ...]',
+			'ext.yiiext.filters.activeFormValidation.EActiveFormValidationFilter[ +|- Action1, Action2, ...]',
 			// The single primary CModel class name or array of classes model.
 			// The EActiveFormValidationFilter::getModel() method will return a models of this classes.
 			'models'=>array('ModelClassToBeValidate',new OtherModel('update')),
