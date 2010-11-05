@@ -1,6 +1,6 @@
 1.6
 [+] Add property $sessionParam to sending session id by post.  
-[*] JS updated to version 2.1.1.
+[*] JS updated to version 2.1.3.
 [*] Fix error with `fileDesc` option. 
 
 1.5

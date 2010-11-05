@@ -1,7 +1,7 @@
 <?php
 /*
-Uploadify v2.1.1
-Release Date: November 1, 2010
+Uploadify v2.1.3
+Release Date: November 5, 2010
 
 Copyright (c) 2010 Ronnie Garcia, Travis Nickels
 

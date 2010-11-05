@@ -50,7 +50,7 @@ class EUploadifyWidget extends CInputWidget  {
 			$this->assetsUrl=Yii::app()->getAssetManager()->publish(dirname(__FILE__).'/assets',false,-1,YII_DEBUG);
 
 		if($this->scriptFile===null)
-			$this->scriptFile=YII_DEBUG ? 'jquery.uploadify.v2.1.1.js' : 'jquery.uploadify.v2.1.1.min.js';
+			$this->scriptFile=YII_DEBUG ? 'jquery.uploadify.v2.1.3.js' : 'jquery.uploadify.v2.1.3.min.js';
 
 		if($this->cssFile===null)
 			$this->cssFile='uploadify.css';

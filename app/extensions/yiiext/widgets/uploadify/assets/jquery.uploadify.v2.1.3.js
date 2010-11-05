@@ -1,6 +1,6 @@
 /*
-Uploadify v2.1.1
-Release Date: November 1, 2010
+Uploadify v2.1.3
+Release Date: November 5, 2010
 
 Copyright (c) 2010 Ronnie Garcia, Travis Nickels
 
@@ -182,11 +182,12 @@ if(jQuery)(
 					}
 				});
 				jQuery(this).bind("uploadifyClearQueue", {'action': settings.onClearQueue}, function(event, clearFast) {
+					var queueID = (settings.queueID) ? settings.queueID : jQuery(this).attr('id') + 'Queue';
 					if (clearFast) {
-						jQuery("#" + jQuery(this).attr('id') + 'Queue').find('.uploadifyQueueItem').remove();
+						jQuery("#" + queueID).find('.uploadifyQueueItem').remove();
 					}
 					if (event.data.action(event, clearFast) !== false) {
-						jQuery("#" + jQuery(this).attr('id') + 'Queue').find('.uploadifyQueueItem').each(function() {
+						jQuery("#" + queueID).find('.uploadifyQueueItem').each(function() {
 							var index = jQuery('.uploadifyQueueItem').index(this);
 							jQuery(this).delay(index * 100).fadeOut(250, function() { jQuery(this).remove() });
 						});
@@ -208,7 +209,7 @@ if(jQuery)(
 					if (event.data.action(event, ID, fileObj, data) !== false) {
 						jQuery("#" + jQuery(this).attr('id') + ID + "ProgressBar").animate({'width': data.percentage + '%'},250,function() {
 							if (data.percentage == 100) {
-								jQuery(this).closest('.uploadifyProgress').fadeOut(250,function() {	jQuery(this).remove(); });
+								jQuery(this).closest('.uploadifyProgress').fadeOut(250,function() {jQuery(this).remove()});
 							}
 						});
 						if (event.data.toDisplay == 'percentage') displayData = ' - ' + data.percentage + '%';
@@ -221,10 +222,9 @@ if(jQuery)(
 					if (event.data.action(event, ID, fileObj, unescape(response), data) !== false) {
 						jQuery("#" + jQuery(this).attr('id') + ID).find('.percentage').text(' - Completed');
 						if (settings.removeCompleted) {
-							jQuery("#" + jQuery(event.target).attr('id') + ID).fadeOut(250,function() { jQuery(this).remove() });
-						} else {
-							jQuery("#" + jQuery(event.target).attr('id') + ID).addClass('completed');
+							jQuery("#" + jQuery(event.target).attr('id') + ID).fadeOut(250,function() {jQuery(this).remove()});
 						}
+						jQuery("#" + jQuery(event.target).attr('id') + ID).addClass('completed');
 					}
 				});
 				if (typeof(settings.onAllComplete) == 'function') {
