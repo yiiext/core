@@ -96,7 +96,7 @@ class EUploadifyWidget extends CInputWidget  {
 		if($this->hasModel())
 			echo CHtml::activeFileField($this->model,$this->attribute,$this->htmlOptions);
 		else
-			echo CHtml::textArea($this->name,$this->value,$this->htmlOptions);
+			echo CHtml::fileField($this->name,$this->value,$this->htmlOptions);
 	}
 	/**
 	 * @return void
