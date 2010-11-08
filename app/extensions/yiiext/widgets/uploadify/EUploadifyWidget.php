@@ -14,17 +14,18 @@
  * @package yiiext.widgets.uploadify
  * @link http://www.uploadify.com/
  */
-class EUploadifyWidget extends CInputWidget  {
+class EUploadifyWidget extends CInputWidget
+{
 	/**
-	 * @var string URL where to look uploadify assets.
+	 * @var string URL where to look assets.
 	 */
 	public $assetsUrl;
 	/**
-	 * @var string uploadify script name.
+	 * @var string script name.
 	 */
 	public $scriptFile;
 	/**
-	 * @var string uploadify stylesheet.
+	 * @var string stylesheet.
 	 */
 	public $cssFile;
 	/**

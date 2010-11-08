@@ -70,7 +70,6 @@ class ESimpleModalWidget extends CWidget
 	 */
 	protected function registerClientScript()
 	{
-
 		$cs=Yii::app()->getClientScript();
 		if($this->cssFile!==false)
 			$cs->registerCssFile($this->assetsUrl.'/'.$this->cssFile);
