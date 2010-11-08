@@ -76,9 +76,12 @@ class EFancyboxWidget extends CWidget
 			$cs->registerCssFile($this->assetsUrl.'/'.$this->cssFile);
 		$cs->registerCoreScript('jquery');
 		$cs->registerScriptFile($this->assetsUrl.'/'.$this->scriptFile);
-		if ($this->options['transitionIn']=='elastic' || $this->options['transitionOut']=='elastic')
+		// Registry easing script for elastic transition.
+		if((isset($this->options['transitionIn']) && $this->options['transitionIn']=='elastic')
+			|| (isset($this->options['transitionOut']) && $this->options['transitionOut']=='elastic'))
 			$cs->registerScriptFile($this->assetsUrl.'/jquery.easing-1.3.pack.js');
-		if ($this->enableMouseWheel)
+		// Registry mouse-wheel script if mouse-wheel enabled.  
+		if($this->enableMouseWheel)
 			$cs->registerScriptFile($this->assetsUrl.'/jquery.mousewheel-3.0.4.pack.js');
 		$cs->registerScript($this->getId(),'$("'.$this->selector.'").fancybox('.CJavaScript::encode($this->options).');',CClientScript::POS_READY);
 	}
