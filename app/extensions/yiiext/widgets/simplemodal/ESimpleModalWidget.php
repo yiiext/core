@@ -75,6 +75,6 @@ class ESimpleModalWidget extends CWidget
 			$cs->registerCssFile($this->assetsUrl.'/'.$this->cssFile);
 		$cs->registerCoreScript('jquery');
 		$cs->registerScriptFile($this->assetsUrl.'/'.$this->scriptFile);
-		$cs->registerScript($this->getId(),'$("'.$this->selector.'").click(function(){$("#'.$this->getId().'").modal('.CJavaScript::encode($this->options).');});');
+		$cs->registerScript($this->getId(),'$("'.$this->selector.'").click(function(e){e.preventDefault(); $("#'.$this->getId().'").modal('.CJavaScript::encode($this->options).');});');
 	}
 }
