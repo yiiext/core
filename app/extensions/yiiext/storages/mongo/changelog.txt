@@ -1,2 +1,0 @@
-pre-alpha 1
-[*] Initial public alpha.
