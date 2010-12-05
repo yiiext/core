@@ -46,7 +46,7 @@ class ESimpleModalWidget extends CWidget
 			$this->assetsUrl=Yii::app()->getAssetManager()->publish(dirname(__FILE__).'/assets',false,-1,YII_DEBUG);
 
 		if($this->scriptFile===null)
-			$this->scriptFile=YII_DEBUG ? 'jquery.simplemodal-1.3.5.js' : 'jquery.simplemodal-1.3.5.min.js';
+			$this->scriptFile=YII_DEBUG ? 'jquery.simplemodal-1.4.1.js' : 'jquery.simplemodal-1.4.1.min.js';
 
 		if($this->cssFile===null)
 			$this->cssFile='simplemodal.css';

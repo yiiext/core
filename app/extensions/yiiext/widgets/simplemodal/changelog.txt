@@ -1,6 +1,7 @@
 next
 ----
-- Added e.preventDefault() to prevent screen scrolling (Sam Dark)
+[*] Update js to version 1.4.1. (Veaceslav Medvedev)
+[*] Added e.preventDefault() to prevent screen scrolling (Sam Dark)
 
 1.2
 ---
