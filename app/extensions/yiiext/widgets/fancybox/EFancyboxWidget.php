@@ -52,10 +52,10 @@ class EFancyboxWidget extends CWidget
 			$this->assetsUrl=Yii::app()->getAssetManager()->publish(dirname(__FILE__).'/assets',false,-1,YII_DEBUG);
 
 		if($this->scriptFile===null)
-			$this->scriptFile=YII_DEBUG ? 'jquery.fancybox-1.3.3.js' : 'jquery.fancybox-1.3.3.pack.js';
+			$this->scriptFile=YII_DEBUG ? 'jquery.fancybox-1.3.4.js' : 'jquery.fancybox-1.3.4.pack.js';
 
 		if($this->cssFile===null)
-			$this->cssFile='jquery.fancybox-1.3.3.css';
+			$this->cssFile='jquery.fancybox-1.3.4.css';
 
 		$this->registerClientScript();
 	}
