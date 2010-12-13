@@ -1,9 +1,15 @@
+next
+----
+- Fixed renderFile method (Sam Dark)
+
 0.9.1
-[*] Changed translation category to 'yiiext'.
-[*] New naming conventions.
-[+] readme_ru.
-[+] Added Yii varialbe.
-[+] Added TIME and MEMORY variables.
+-----
+- Changed translation category to 'yiiext'.
+- New naming conventions.
+- readme_ru.
+- Added Yii varialbe.
+- Added TIME and MEMORY variables.
 
 0.9
-[+] Initial public release.
+---
+- Initial public release (Sam Dark)

@@ -1,9 +1,15 @@
+next
+----
+- Fixed renderFile method (Sam Dark)
+
 0.9.1
-[*] Changed translation category to 'yiiext'.
-[*] New naming conventions.
-[+] readme_ru.
-[*] Fixed TIME and MEMORY variables.
-[+] Added $Yii variable. 
+-----
+- Changed translation category to 'yiiext'.
+- New naming conventions.
+- readme_ru.
+- Fixed TIME and MEMORY variables.
+- Added $Yii variable.
 
 0.9
-[+] Initial public release.
+---
+- Initial public release (Sam Dark)

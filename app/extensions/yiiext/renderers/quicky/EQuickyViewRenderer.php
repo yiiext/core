@@ -1,6 +1,6 @@
 <?php
 /**
- * Quicky view renderer 
+ * Quicky view renderer
  *
  * @author Alexander Makarov <sam@rmcreative.ru>
  * @link http://code.google.com/p/yiiext/
@@ -24,27 +24,27 @@ class EQuickyViewRenderer extends CApplicationComponent implements IViewRenderer
         require_once('Quicky/Quicky.class.php');
 
         $this->quicky = new Quicky();
-        
+
         $this->quicky->template_dir = '';
         $compileDir = Yii::app()->getRuntimePath().'/quicky/compiled/';
-        
+
         // create compiled directory if not exists
         if(!file_exists($compileDir)){
             mkdir($compileDir, $this->filePermission, true);
         }
-                
+
         $this->quicky->compile_dir = $compileDir;
-        
-        
+
+
         $this->quicky->plugins_dir[] = Yii::getPathOfAlias('application.extensions.Quicky.plugins');
         if(!empty($this->pluginsDir)){
             $this->quicky->plugins_dir[] = Yii::getPathOfAlias($this->pluginsDir);
         }
-        
+
         if(!empty($this->configDir)){
             $this->quicky->config_dir = Yii::getPathOfAlias($this->configDir);
         }
-        
+
         $this->quicky->assign("TIME",sprintf('%0.5f',Yii::getLogger()->getExecutionTime()));
         $this->quicky->assign("MEMORY",round(Yii::getLogger()->getMemoryUsage()/(1024*1024),2)." MB");
         $this->quicky->assign('Yii', Yii::app());
@@ -66,13 +66,16 @@ class EQuickyViewRenderer extends CApplicationComponent implements IViewRenderer
         // check if view file exists
         if(!is_file($sourceFile) || ($file=realpath($sourceFile))===false)
             throw new CException(Yii::t('yiiext','View file "{file}" does not exist.', array('{file}'=>$sourceFile)));
-            
+
         //assign data
         foreach($data as $name => $value){
             $this->quicky->assign($name, $value);
-        }        
-        
-        //render
-        return $this->quicky->fetch($sourceFile);
+        }
+
+        //render or return
+		if($return)
+        	return $this->quicky->fetch($sourceFile);
+		else
+			$this->quicky->display($sourceFile);
 	}
 }

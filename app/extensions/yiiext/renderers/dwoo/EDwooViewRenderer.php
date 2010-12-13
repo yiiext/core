@@ -47,7 +47,7 @@ class EDwooViewRenderer extends CApplicationComponent implements IViewRenderer {
         // create compiled directory if not exists
         if(!file_exists($cacheDir)){
             mkdir($cacheDir, $this->filePermission, true);
-        }        
+        }
 
         $this->dwoo = new Dwoo($compileDir, $cacheDir);
 
@@ -81,8 +81,11 @@ class EDwooViewRenderer extends CApplicationComponent implements IViewRenderer {
         // check if view file exists
         if(!is_file($sourceFile) || ($file=realpath($sourceFile))===false)
             throw new CException(Yii::t('yiiext','View file "{file}" does not exist.', array('{file}'=>$sourceFile)));
-        
-        //render
-        return $this->dwoo->get($sourceFile, $data);
+
+        //render or return
+		if($return)
+        	return $this->dwoo->get($sourceFile, $data);
+		else
+			$this->dwoo->get($sourceFile, $data, null, true);
 	}
 }
