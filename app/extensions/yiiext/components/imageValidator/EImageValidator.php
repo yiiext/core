@@ -6,31 +6,31 @@ class EImageValidator extends CFileValidator{
 	 * если NULL проверка не производится
 	 * @var string or array
 	 */
-	public $mime = null;
+	public $mime;
 	
 	/**
-	 * Минимальная ширина картинки в пикселях, по стандарту 0
+	 * Минимальная ширина картинки в пикселях
 	 * @var unsigned int
 	 */
-	public $minWidth = 0;
+	public $minWidth;
 	
 	/**
-	 * Максимальная ширина картинки в пикселях, по стандарту 500000
+	 * Максимальная ширина картинки в пикселях
 	 * @var unsigned int
 	 */
-	public $maxWidth = 500000;
+	public $maxWidth;
 	
 	/**
-	 * Минимальная высота картинки в пикселях, по стандарту 0
+	 * Минимальная высота картинки в пикселях
 	 * @var unsigned int
 	 */
-	public $minHeight = 0;
+	public $minHeight;
 	
 	/**
-	 * Максимальная высота картинки в пикселях, по стандарту 500000
+	 * Максимальная высота картинки в пикселях
 	 * @var unsigned int
 	 */
-	public $maxHeight = 500000;
+	public $maxHeight;
 	
 	/**
 	 * Текст ошибки при слишком большой ширине картинки
@@ -107,34 +107,34 @@ class EImageValidator extends CFileValidator{
 		$size = getimagesize($file->getTempName());
 		
 		if($size === false){
-			$message=$this->message ? $this->message : Yii::t('yii','This is not a picture');
+			$message=$this->notImage ? $this->notImage : Yii::t('yii','This is not a picture');
 			$this->addError($object,$attribute,$message,array('{mime}'=>(is_array($this->mime) ? implode(', ', $this->mime) : $this->mime)));
 			return;
 		}
-		
+	
 		if(!$this->checkMime($attribute, $file)){
 			$message=$this->wrongMime ? $this->wrongMime : Yii::t('yii','This mime type of the photo is not allowed, mime types: {mime}');
 			$this->addError($object,$attribute,$message,array('{mime}'=>(is_array($this->mime) ? implode(', ', $this->mime) : $this->mime)));
 		}
-		
-		if($size[0] < $this->minWidth){
+	
+		if($this->minWidth !== null && $size[0] < $this->minWidth){
 			$message=$this->tooSmallWidth ? $this->tooSmallWidth : Yii::t('yii','Photo should be at least {width}px in width');
 			$this->addError($object,$attribute,$message,array('{width}'=>$this->minWidth));
 		}
 		
-		if($size[0] > $this->maxWidth){
+		if($this->maxWidth !== null && $size[0] > $this->maxWidth){
 			$message=$this->tooLargWidth ? $this->tooLargWidth : Yii::t('yii','Photo should be at max {width}px in width');
 			$this->addError($object,$attribute,$message,array('{width}'=>$this->maxWidth));
 		}
 		
-		if($size[1] < $this->minHeight){
+		if($this->minHeight !== null && $size[1] < $this->minHeight){
 			$message=$this->tooSmallHeight ? $this->tooSmallHeight : Yii::t('yii','Photo should be at least {height}px in height');
-			$this->addError($object,$attribute,$message,array('{width}'=>$this->minHeight));
+			$this->addError($object,$attribute,$message,array('{height}'=>$this->minHeight));
 		}
 		
-		if($size[1] > $this->maxHeight){
+		if($this->maxHeight !== null && $size[1] > $this->maxHeight){
 			$message=$this->tooLargHeight ? $this->tooLargHeight : Yii::t('yii','Photo should be at max {height}px in height');
-			$this->addError($object,$attribute,$message,array('{width}'=>$this->maxHeight));
+			$this->addError($object,$attribute,$message,array('{height}'=>$this->maxHeight));
 		}
 	}
 }
