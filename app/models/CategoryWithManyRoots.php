@@ -1,5 +1,5 @@
 <?php
-class Category extends CActiveRecord
+class CategoryWithManyRoots extends CActiveRecord
 {
 	public static function model($className=__CLASS__)
 	{
@@ -11,7 +11,7 @@ class Category extends CActiveRecord
 		return array(
 			'tree'=>array(
 				'class'=>'ext.yiiext.behaviors.model.trees.ENestedSetBehavior',
-				'hasManyRoots'=>false,
+				'hasManyRoots'=>true,
 			),
 		);
 	}

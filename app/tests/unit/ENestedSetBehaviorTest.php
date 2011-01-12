@@ -48,18 +48,17 @@ class ENestedSetBehaviorTest extends CDbTestCase
 	public function testRoots()
 	{
 		$roots=Category::model()->roots()->findAll();
-		$this->assertEquals(count($roots),2);
+		$this->assertEquals(count($roots),1);
 		foreach($roots as $root)
 			$this->assertTrue($root instanceof Category);
 		$this->assertEquals($roots[0]->primaryKey,1);
-		$this->assertEquals($roots[1]->primaryKey,8);
 	}
 
-	public function testParent()
+	public function testGetParent()
 	{
 		$category=Category::model()->findByPk(4);
 		$this->assertTrue($category instanceof Category);
-		$parent=$category->parent();
+		$parent=$category->getParent();
 		$this->assertTrue($parent instanceof Category);
 		$this->assertEquals($parent->primaryKey,2);
 	}
@@ -105,7 +104,7 @@ class ENestedSetBehaviorTest extends CDbTestCase
 	public function testIsRoot()
 	{
 		$roots=Category::model()->roots()->findAll();
-		$this->assertEquals(count($roots),2);
+		$this->assertEquals(count($roots),1);
 		foreach($roots as $root)
 		{
 			$this->assertTrue($root instanceof Category);
@@ -130,25 +129,13 @@ class ENestedSetBehaviorTest extends CDbTestCase
 		}
 	}
 
-	public function testSave()
-	{
-		$category=new Category;
-		$this->assertFalse($category->tree->save());
-		$category->name='test';
-		$this->assertTrue($category->tree->save());
-		$this->assertEquals($category->root,$category->primaryKey);
-		$this->assertEquals($category->lft,1);
-		$this->assertEquals($category->rgt,2);
-		$this->assertEquals($category->level,1);
-	}
-
 	public function testDelete()
 	{
 		$category=Category::model()->findByPk(4);
 		$this->assertTrue($category instanceof Category);
 		$this->assertTrue($category->tree->delete());
 		$this->assertTrue($this->checkTree());
-		$category=Category::model()->findByPk(9);
+		$category=Category::model()->findByPk(5);
 		$this->assertTrue($category instanceof Category);
 		$this->assertTrue($category->tree->delete());
 		$this->assertTrue($this->checkTree());
@@ -218,26 +205,6 @@ class ENestedSetBehaviorTest extends CDbTestCase
 		$this->assertTrue($this->checkTree());
 	}
 
-	public function testMoveBefore3()
-	{
-		$category=Category::model()->findByPk(6);
-		$this->assertTrue($category instanceof Category);
-		$target=Category::model()->findByPk(9);
-		$this->assertTrue($target instanceof Category);
-		$this->assertTrue($category->moveBefore($target));
-		$this->assertTrue($this->checkTree());
-	}
-
-	public function testMoveBefore4()
-	{
-		$category=Category::model()->findByPk(5);
-		$this->assertTrue($category instanceof Category);
-		$target=Category::model()->findByPk(9);
-		$this->assertTrue($target instanceof Category);
-		$this->assertTrue($category->moveBefore($target));
-		$this->assertTrue($this->checkTree());
-	}
-
 	public function testMoveAfter()
 	{
 		$category=Category::model()->findByPk(3);
@@ -253,26 +220,6 @@ class ENestedSetBehaviorTest extends CDbTestCase
 		$category=Category::model()->findByPk(2);
 		$this->assertTrue($category instanceof Category);
 		$target=Category::model()->findByPk(5);
-		$this->assertTrue($target instanceof Category);
-		$this->assertTrue($category->moveAfter($target));
-		$this->assertTrue($this->checkTree());
-	}
-
-	public function testMoveAfter3()
-	{
-		$category=Category::model()->findByPk(3);
-		$this->assertTrue($category instanceof Category);
-		$target=Category::model()->findByPk(12);
-		$this->assertTrue($target instanceof Category);
-		$this->assertTrue($category->moveAfter($target));
-		$this->assertTrue($this->checkTree());
-	}
-
-	public function testMoveAfter4()
-	{
-		$category=Category::model()->findByPk(2);
-		$this->assertTrue($category instanceof Category);
-		$target=Category::model()->findByPk(12);
 		$this->assertTrue($target instanceof Category);
 		$this->assertTrue($category->moveAfter($target));
 		$this->assertTrue($this->checkTree());
@@ -298,26 +245,6 @@ class ENestedSetBehaviorTest extends CDbTestCase
 		$this->assertTrue($this->checkTree());
 	}
 
-	public function testMoveAsFirst3()
-	{
-		$category=Category::model()->findByPk(6);
-		$this->assertTrue($category instanceof Category);
-		$target=Category::model()->findByPk(9);
-		$this->assertTrue($target instanceof Category);
-		$this->assertTrue($category->moveBefore($target));
-		$this->assertTrue($this->checkTree());
-	}
-
-	public function testMoveAsFirst4()
-	{
-		$category=Category::model()->findByPk(5);
-		$this->assertTrue($category instanceof Category);
-		$target=Category::model()->findByPk(9);
-		$this->assertTrue($target instanceof Category);
-		$this->assertTrue($category->moveBefore($target));
-		$this->assertTrue($this->checkTree());
-	}
-
 	public function testMoveAsLast()
 	{
 		$category=Category::model()->findByPk(3);
@@ -338,26 +265,6 @@ class ENestedSetBehaviorTest extends CDbTestCase
 		$this->assertTrue($this->checkTree());
 	}
 
-	public function testMoveAsLast3()
-	{
-		$category=Category::model()->findByPk(3);
-		$this->assertTrue($category instanceof Category);
-		$target=Category::model()->findByPk(12);
-		$this->assertTrue($target instanceof Category);
-		$this->assertTrue($category->moveAfter($target));
-		$this->assertTrue($this->checkTree());
-	}
-
-	public function testMoveAsLast4()
-	{
-		$category=Category::model()->findByPk(2);
-		$this->assertTrue($category instanceof Category);
-		$target=Category::model()->findByPk(12);
-		$this->assertTrue($target instanceof Category);
-		$this->assertTrue($category->moveAfter($target));
-		$this->assertTrue($this->checkTree());
-	}
-
 	private function checkTree()
 	{
 		return $this->checkIntegrity1()
@@ -368,31 +275,27 @@ class ENestedSetBehaviorTest extends CDbTestCase
 
 	private function checkIntegrity1()
 	{
-		return !Yii::app()->db->createCommand('SELECT COUNT(`id`) FROM `category` WHERE `lft`>=`rgt` GROUP BY `root`;')->query()->getRowCount();
+		return !Yii::app()->db->createCommand('SELECT COUNT(`id`) FROM `Category` WHERE `lft`>=`rgt`;')->queryScalar();
 	}
 
 	private function checkIntegrity2()
 	{
-		return !Yii::app()->db->createCommand('SELECT COUNT(`id`) FROM `category` WHERE NOT MOD(`rgt`-`lft`,2) GROUP BY `root`;')->query()->getRowCount();
+		return !Yii::app()->db->createCommand('SELECT COUNT(`id`) FROM `Category` WHERE NOT MOD(`rgt`-`lft`,2);')->queryScalar();
 	}
 
 	private function checkIntegrity3()
 	{
-		return !Yii::app()->db->createCommand('SELECT COUNT(`id`) FROM `category` WHERE MOD(`lft`-`level`,2) GROUP BY `root`;')->query()->getRowCount();
+		return !Yii::app()->db->createCommand('SELECT COUNT(`id`) FROM `Category` WHERE MOD(`lft`-`level`,2);')->queryScalar();
 	}
 
 	private function checkIntegrity4()
 	{
 		$result=true;
-		$rows=Yii::app()->db->createCommand('SELECT MIN(`lft`),MAX(`rgt`),COUNT(`id`) FROM `category` GROUP BY `root`;')->queryAll(false);
-		foreach($rows as $row)
-		{
-			if($row[0]!=1 || $row[1]!=$row[2]*2)
-			{
-				$result=false;
-				break;
-			}
-		}
+		$row=Yii::app()->db->createCommand('SELECT MIN(`lft`),MAX(`rgt`),COUNT(`id`) FROM `Category`;')->queryRow(false);
+
+		if($row[0]!=1 || $row[1]!=$row[2]*2)
+			$result=false;
+
 		return $result;
 	}
 }

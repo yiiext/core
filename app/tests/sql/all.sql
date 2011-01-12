@@ -95,15 +95,29 @@ CREATE TABLE `contactattr` (
   KEY `ikEntity` (`entity`)
 );
 
-/* Category table */
-DROP TABLE IF EXISTS `category`;
-CREATE TABLE `category` (
-  `id` int(10) unsigned NOT NULL AUTO_INCREMENT,
-  `root` int(10) unsigned NOT NULL,
-  `lft` int(10) unsigned NOT NULL,
-  `rgt` int(10) unsigned NOT NULL,
-  `level` smallint(5) unsigned NOT NULL,
-  `name` varchar(50) NOT NULL,
+/* Categories table */
+DROP TABLE IF EXISTS `Category`;
+CREATE TABLE `Category` (
+  `id` INT(10) UNSIGNED NOT NULL AUTO_INCREMENT,
+  `lft` INT(10) UNSIGNED NOT NULL,
+  `rgt` INT(10) UNSIGNED NOT NULL,
+  `level` SMALLINT(5) UNSIGNED NOT NULL,
+  `name` VARCHAR(50) NOT NULL,
+  PRIMARY KEY (`id`),
+  KEY `lft` (`lft`),
+  KEY `rgt` (`rgt`),
+  KEY `level` (`level`)
+);
+
+/* Categories with many roots table */
+DROP TABLE IF EXISTS `CategoryWithManyRoots`;
+CREATE TABLE `CategoryWithManyRoots` (
+  `id` INT(10) UNSIGNED NOT NULL AUTO_INCREMENT,
+  `root` INT(10) UNSIGNED NOT NULL,
+  `lft` INT(10) UNSIGNED NOT NULL,
+  `rgt` INT(10) UNSIGNED NOT NULL,
+  `level` SMALLINT(5) UNSIGNED NOT NULL,
+  `name` VARCHAR(50) NOT NULL,
   PRIMARY KEY (`id`),
   KEY `root` (`root`),
   KEY `lft` (`lft`),
