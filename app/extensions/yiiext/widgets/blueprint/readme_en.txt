@@ -1,7 +1,7 @@
-EBlueprintWidget widget.
-===================
+EBlueprintWidget widget
+=======================
 
-Widget insert a Blueprint CSS Framework in your layout.
+Widget injects a Blueprint CSS Framework into layout.
 Insert widget in your layout, after head-tag.
 ~~~
 [php]

@@ -1,11 +1,12 @@
-ETranslitFilter.
+ETranslitFilter
 ===============
 
-Translit the specified attribute value from cyrillic to latin letters.
-Example, can use for generate alias of models from title.
+Transliterates specified attribute value from cyrillic into latin.
+Can be used to generate alias of a model from title.
 
 Usage
--------------
+-----
+
 Add validator to model rules:
 ~~~
 [php]

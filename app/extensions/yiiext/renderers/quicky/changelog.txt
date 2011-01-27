@@ -1,5 +1,5 @@
-next
-----
+0.9.2
+-----
 - Fixed renderFile method (Sam Dark)
 
 0.9.1

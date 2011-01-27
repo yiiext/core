@@ -6,7 +6,7 @@
  * @link http://code.google.com/p/yiiext/
  * @link http://dwoo.org/
  *
- * @version next
+ * @version 0.9.2
  */
 class EDwooViewRenderer extends CApplicationComponent implements IViewRenderer {
     public $fileExtension='.tpl';

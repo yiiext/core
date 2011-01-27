@@ -1,22 +1,28 @@
 1.6
-[+] Add property $sessionParam to sending session id by post.  
-[*] JS updated to version 2.1.3.
-[*] Fix error with `fileDesc` option. 
+---
+- Added property $sessionParam that can be used to send session id via POST.
+- JS updated to version 2.1.3.
+- Fixed error with `fileDesc` option.
 
 1.5
-[*] Code optimization.
+---
+- Code optimization.
 
 1.4
-[*] Rename class to EUploadifyWidget
+---
+- Rename class to EUploadifyWidget
 
 1.3
-[+] readme_ru, readme_en.
-[*] Code style fixes.
-[*] Compatible with Yii 1.1.
-[*] New naming conventions.
+---
+- readme_ru, readme_en.
+- Code style fixes.
+- Compatible with Yii 1.1.
+- New naming conventions.
 
 1.2
-[*] Transformed module into widget extension.
+---
+- Transformed module into widget extension.
 
 1.1
-[+] Initial public release.
+---
+- Initial public release.

@@ -6,7 +6,7 @@
  * @link http://code.google.com/p/yiiext/
  * @link http://code.google.com/p/quicky/
  *
- * @version next
+ * @version 0.9.2
  */
 class EQuickyViewRenderer extends CApplicationComponent implements IViewRenderer {
     public $fileExtension='.tpl';

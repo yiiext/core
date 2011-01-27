@@ -1,6 +1,8 @@
 0.2
-[+] Support to set model instances.  
-[*] Fix supporting array of model. 
+---
+- Added support to set model instances.
+- Fixed array of models support.
 
 0.1
-[+] Initial public release.
+---
+- Initial public release.

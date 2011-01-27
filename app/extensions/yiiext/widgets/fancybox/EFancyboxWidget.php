@@ -10,7 +10,7 @@
  * EFancyboxWidget {@link http://fancybox.net/ fancybox jQuery plugin} widget.
  *
  * @author Veaceslav Medvedev <slavcopost@gmail.com>
- * @version 0.2
+ * @version 0.3
  * @package yiiext.widgets.fancybox
  * @link http://fancybox.net/
  */
@@ -80,7 +80,7 @@ class EFancyboxWidget extends CWidget
 		if((isset($this->options['transitionIn']) && $this->options['transitionIn']=='elastic')
 			|| (isset($this->options['transitionOut']) && $this->options['transitionOut']=='elastic'))
 			$cs->registerScriptFile($this->assetsUrl.'/jquery.easing-1.3.pack.js');
-		// Registry mouse-wheel script if mouse-wheel enabled.  
+		// Registry mouse-wheel script if mouse-wheel enabled.
 		if($this->enableMouseWheel)
 			$cs->registerScriptFile($this->assetsUrl.'/jquery.mousewheel-3.0.4.pack.js');
 		$cs->registerScript($this->getId(),'$("'.$this->selector.'").fancybox('.CJavaScript::encode($this->options).');',CClientScript::POS_READY);

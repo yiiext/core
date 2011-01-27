@@ -1,8 +1,9 @@
 ActiveForm Validation Filter
-===================
+============================
 
 EActiveFormValidationFilter performs validation of active form.
-To AJAX validation with [CActiveForm](http://www.yiiframework.com/doc/api/CActiveForm), we can use this filter.
+To AJAX validation with [CActiveForm](http://www.yiiframework.com/doc/api/CActiveForm),
+we can use this filter.
 
 Installing and configuring your controller
 --------------------------

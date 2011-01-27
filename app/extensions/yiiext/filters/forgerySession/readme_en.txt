@@ -1,10 +1,10 @@
 Forgery Session Filter
-===========================
+======================
 
 EForgerySessionFilter performs load session with id which sent with POST or GET parameter.
 
 Installing and configuring your controller
---------------------------
+------------------------------------------
 ~~~
 [php]
 public function filters()
@@ -22,5 +22,5 @@ public function filters()
 ~~~
 
 Notes
---------------------------
+-----
 This filter should be run before accessControl filter.

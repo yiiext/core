@@ -1,10 +1,11 @@
 GetUrl Behavior
 ===============
 
-Application behavior for generate url.
+Application behavior for generating URLs.
 
-Install
--------------
+Installation
+------------
+
 ~~~
 [php]
 // Install behavior into application config (/config/main.php)
@@ -28,7 +29,8 @@ return array(
 ~~~
 
 Usage
--------------
+-----
+
 ~~~
 [php]
 echo '1. '.Yii::app()->home;
@@ -40,7 +42,8 @@ echo '6. '.Yii::app()->publicFilesUrl->getUrl('logo.png');
 ~~~
 
 Result
--------------
+------
+
 1. http://localhost/
 2. http://localhost/favicon.ico
 3. http://localhost/favicon.ico

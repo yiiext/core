@@ -1,8 +1,8 @@
 ActiveForm Validation Filter
-===================
+============================
 
-При использовании [CActiveForm](http://www.yiiframework.com/doc/api/CActiveForm) с включенной AJAX валидацией,
-в документации предлагают метод
+При использовании [CActiveForm](http://www.yiiframework.com/doc/api/CActiveForm)
+с включенной AJAX валидацией, в документации предлагают метод
 ~~~
 [php]
 protected function performAjaxValidation($model)
@@ -19,7 +19,7 @@ protected function performAjaxValidation($model)
 можно воспользоваться этим фильтром для нужных действий.
 
 Установка и настройка
---------------------------
+---------------------
 ~~~
 [php]
 public function filters()
