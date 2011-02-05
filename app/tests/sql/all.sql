@@ -95,7 +95,7 @@ CREATE TABLE `contactattr` (
   KEY `ikEntity` (`entity`)
 );
 
-/* Categories table */
+/* Nested set table */
 DROP TABLE IF EXISTS `NestedSet`;
 CREATE TABLE `NestedSet` (
   `id` INT(10) UNSIGNED NOT NULL AUTO_INCREMENT,
@@ -109,7 +109,7 @@ CREATE TABLE `NestedSet` (
   KEY `level` (`level`)
 );
 
-/* Categories with many roots table */
+/* Nested set with many roots table */
 DROP TABLE IF EXISTS `NestedSetWithManyRoots`;
 CREATE TABLE `NestedSetWithManyRoots` (
   `id` INT(10) UNSIGNED NOT NULL AUTO_INCREMENT,
@@ -123,4 +123,14 @@ CREATE TABLE `NestedSetWithManyRoots` (
   KEY `lft` (`lft`),
   KEY `rgt` (`rgt`),
   KEY `level` (`level`)
+);
+
+/* Ajacency list table */
+DROP TABLE IF EXISTS `AjacencyList`;
+CREATE TABLE `AjacencyList` (
+  `id` INT(10) UNSIGNED NOT NULL AUTO_INCREMENT,
+  `parent_id` INT(10) UNSIGNED NOT NULL,
+  `name` VARCHAR(50) NOT NULL,
+  PRIMARY KEY (`id`),
+  KEY `parent_id` (`parent_id`),
 );
