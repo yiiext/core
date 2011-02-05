@@ -96,8 +96,8 @@ CREATE TABLE `contactattr` (
 );
 
 /* Categories table */
-DROP TABLE IF EXISTS `Category`;
-CREATE TABLE `Category` (
+DROP TABLE IF EXISTS `NestedSet`;
+CREATE TABLE `NestedSet` (
   `id` INT(10) UNSIGNED NOT NULL AUTO_INCREMENT,
   `lft` INT(10) UNSIGNED NOT NULL,
   `rgt` INT(10) UNSIGNED NOT NULL,
@@ -110,8 +110,8 @@ CREATE TABLE `Category` (
 );
 
 /* Categories with many roots table */
-DROP TABLE IF EXISTS `CategoryWithManyRoots`;
-CREATE TABLE `CategoryWithManyRoots` (
+DROP TABLE IF EXISTS `NestedSetWithManyRoots`;
+CREATE TABLE `NestedSetWithManyRoots` (
   `id` INT(10) UNSIGNED NOT NULL AUTO_INCREMENT,
   `root` INT(10) UNSIGNED NOT NULL,
   `lft` INT(10) UNSIGNED NOT NULL,

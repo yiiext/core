@@ -1,5 +1,5 @@
 <?php
-class Category extends CActiveRecord
+class NestedSet extends CActiveRecord
 {
 	public static function model($className=__CLASS__)
 	{

@@ -1,5 +1,5 @@
 <?php
-class CategoryWithManyRoots extends CActiveRecord
+class NestedSetWithManyRoots extends CActiveRecord
 {
 	public static function model($className=__CLASS__)
 	{
