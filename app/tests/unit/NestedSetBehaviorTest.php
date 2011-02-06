@@ -1,5 +1,5 @@
 <?php
-class ENestedSetBehaviorTest extends CDbTestCase
+class NestedSetBehaviorTest extends CDbTestCase
 {
 	public $fixtures=array(
 		'NestedSet',
@@ -9,9 +9,9 @@ class ENestedSetBehaviorTest extends CDbTestCase
 	public function testDescendants()
 	{
 		// single root
-		$NestedSet=NestedSet::model()->findByPk(1);
-		$this->assertTrue($NestedSet instanceof NestedSet);
-		$descendants=$NestedSet->descendants()->findAll();
+		$nestedSet=NestedSet::model()->findByPk(1);
+		$this->assertTrue($nestedSet instanceof NestedSet);
+		$descendants=$nestedSet->descendants()->findAll();
 		$this->assertEquals(count($descendants),6);
 		foreach($descendants as $descendant)
 			$this->assertTrue($descendant instanceof NestedSet);
@@ -23,9 +23,9 @@ class ENestedSetBehaviorTest extends CDbTestCase
 		$this->assertEquals($descendants[5]->primaryKey,7);
 
 		// many roots
-		$NestedSet=NestedSetWithManyRoots::model()->findByPk(1);
-		$this->assertTrue($NestedSet instanceof NestedSetWithManyRoots);
-		$descendants=$NestedSet->descendants()->findAll();
+		$nestedSet=NestedSetWithManyRoots::model()->findByPk(1);
+		$this->assertTrue($nestedSet instanceof NestedSetWithManyRoots);
+		$descendants=$nestedSet->descendants()->findAll();
 		$this->assertEquals(count($descendants),6);
 		foreach($descendants as $descendant)
 			$this->assertTrue($descendant instanceof NestedSetWithManyRoots);
@@ -40,9 +40,9 @@ class ENestedSetBehaviorTest extends CDbTestCase
 	public function testChildren()
 	{
 		// single root
-		$NestedSet=NestedSet::model()->findByPk(1);
-		$this->assertTrue($NestedSet instanceof NestedSet);
-		$children=$NestedSet->children()->findAll();
+		$nestedSet=NestedSet::model()->findByPk(1);
+		$this->assertTrue($nestedSet instanceof NestedSet);
+		$children=$nestedSet->children()->findAll();
 		$this->assertEquals(count($children),2);
 		foreach($children as $child)
 			$this->assertTrue($child instanceof NestedSet);
@@ -50,9 +50,9 @@ class ENestedSetBehaviorTest extends CDbTestCase
 		$this->assertEquals($children[1]->primaryKey,5);
 
 		// many roots
-		$NestedSet=NestedSetWithManyRoots::model()->findByPk(1);
-		$this->assertTrue($NestedSet instanceof NestedSetWithManyRoots);
-		$children=$NestedSet->children()->findAll();
+		$nestedSet=NestedSetWithManyRoots::model()->findByPk(1);
+		$this->assertTrue($nestedSet instanceof NestedSetWithManyRoots);
+		$children=$nestedSet->children()->findAll();
 		$this->assertEquals(count($children),2);
 		foreach($children as $child)
 			$this->assertTrue($child instanceof NestedSetWithManyRoots);
@@ -63,9 +63,9 @@ class ENestedSetBehaviorTest extends CDbTestCase
 	public function testAncestors()
 	{
 		// single root
-		$NestedSet=NestedSet::model()->findByPk(7);
-		$this->assertTrue($NestedSet instanceof NestedSet);
-		$ancestors=$NestedSet->ancestors()->findAll();
+		$nestedSet=NestedSet::model()->findByPk(7);
+		$this->assertTrue($nestedSet instanceof NestedSet);
+		$ancestors=$nestedSet->ancestors()->findAll();
 		$this->assertEquals(count($ancestors),2);
 		foreach($ancestors as $ancestor)
 			$this->assertTrue($ancestor instanceof NestedSet);
@@ -73,9 +73,9 @@ class ENestedSetBehaviorTest extends CDbTestCase
 		$this->assertEquals($ancestors[1]->primaryKey,5);
 
 		// many roots
-		$NestedSet=NestedSetWithManyRoots::model()->findByPk(7);
-		$this->assertTrue($NestedSet instanceof NestedSetWithManyRoots);
-		$ancestors=$NestedSet->ancestors()->findAll();
+		$nestedSet=NestedSetWithManyRoots::model()->findByPk(7);
+		$this->assertTrue($nestedSet instanceof NestedSetWithManyRoots);
+		$ancestors=$nestedSet->ancestors()->findAll();
 		$this->assertEquals(count($ancestors),2);
 		foreach($ancestors as $ancestor)
 			$this->assertTrue($ancestor instanceof NestedSetWithManyRoots);
@@ -104,16 +104,16 @@ class ENestedSetBehaviorTest extends CDbTestCase
 	public function testGetParent()
 	{
 		// single root
-		$NestedSet=NestedSet::model()->findByPk(4);
-		$this->assertTrue($NestedSet instanceof NestedSet);
-		$parent=$NestedSet->getParent();
+		$nestedSet=NestedSet::model()->findByPk(4);
+		$this->assertTrue($nestedSet instanceof NestedSet);
+		$parent=$nestedSet->getParent();
 		$this->assertTrue($parent instanceof NestedSet);
 		$this->assertEquals($parent->primaryKey,2);
 
 		// many roots
-		$NestedSet=NestedSetWithManyRoots::model()->findByPk(4);
-		$this->assertTrue($NestedSet instanceof NestedSetWithManyRoots);
-		$parent=$NestedSet->getParent();
+		$nestedSet=NestedSetWithManyRoots::model()->findByPk(4);
+		$this->assertTrue($nestedSet instanceof NestedSetWithManyRoots);
+		$parent=$nestedSet->getParent();
 		$this->assertTrue($parent instanceof NestedSetWithManyRoots);
 		$this->assertEquals($parent->primaryKey,2);
 	}
@@ -121,18 +121,18 @@ class ENestedSetBehaviorTest extends CDbTestCase
 	public function testGetPrevSibling()
 	{
 		// single root
-		$NestedSet=NestedSet::model()->findByPk(7);
-		$this->assertTrue($NestedSet instanceof NestedSet);
-		$sibling=$NestedSet->getPrevSibling();
+		$nestedSet=NestedSet::model()->findByPk(7);
+		$this->assertTrue($nestedSet instanceof NestedSet);
+		$sibling=$nestedSet->getPrevSibling();
 		$this->assertTrue($sibling instanceof NestedSet);
 		$this->assertEquals($sibling->primaryKey,6);
 		$sibling=$sibling->getPrevSibling();
 		$this->assertNull($sibling);
 
 		// many roots
-		$NestedSet=NestedSetWithManyRoots::model()->findByPk(7);
-		$this->assertTrue($NestedSet instanceof NestedSetWithManyRoots);
-		$sibling=$NestedSet->getPrevSibling();
+		$nestedSet=NestedSetWithManyRoots::model()->findByPk(7);
+		$this->assertTrue($nestedSet instanceof NestedSetWithManyRoots);
+		$sibling=$nestedSet->getPrevSibling();
 		$this->assertTrue($sibling instanceof NestedSetWithManyRoots);
 		$this->assertEquals($sibling->primaryKey,6);
 		$sibling=$sibling->getPrevSibling();
@@ -142,18 +142,18 @@ class ENestedSetBehaviorTest extends CDbTestCase
 	public function testGetNextSibling()
 	{
 		// single root
-		$NestedSet=NestedSet::model()->findByPk(6);
-		$this->assertTrue($NestedSet instanceof NestedSet);
-		$sibling=$NestedSet->getNextSibling();
+		$nestedSet=NestedSet::model()->findByPk(6);
+		$this->assertTrue($nestedSet instanceof NestedSet);
+		$sibling=$nestedSet->getNextSibling();
 		$this->assertTrue($sibling instanceof NestedSet);
 		$this->assertEquals($sibling->primaryKey,7);
 		$sibling=$sibling->getNextSibling();
 		$this->assertNull($sibling);
 
 		// many roots
-		$NestedSet=NestedSetWithManyRoots::model()->findByPk(6);
-		$this->assertTrue($NestedSet instanceof NestedSetWithManyRoots);
-		$sibling=$NestedSet->getNextSibling();
+		$nestedSet=NestedSetWithManyRoots::model()->findByPk(6);
+		$this->assertTrue($nestedSet instanceof NestedSetWithManyRoots);
+		$sibling=$nestedSet->getNextSibling();
 		$this->assertTrue($sibling instanceof NestedSetWithManyRoots);
 		$this->assertEquals($sibling->primaryKey,7);
 		$sibling=$sibling->getNextSibling();
@@ -166,24 +166,24 @@ class ENestedSetBehaviorTest extends CDbTestCase
 	public function testIsDescendantOf()
 	{
 		// single root
-		$NestedSet=NestedSet::model()->findByPk(1);
-		$this->assertTrue($NestedSet instanceof NestedSet);
-		$descendants=$NestedSet->descendants()->findAll();
+		$nestedSet=NestedSet::model()->findByPk(1);
+		$this->assertTrue($nestedSet instanceof NestedSet);
+		$descendants=$nestedSet->descendants()->findAll();
 		foreach($descendants as $descendant)
-			$this->assertTrue($descendant->isDescendantOf($NestedSet));
+			$this->assertTrue($descendant->isDescendantOf($nestedSet));
 		$descendant=NestedSet::model()->findByPk(4);
 		$this->assertTrue($descendant instanceof NestedSet);
-		$this->assertFalse($NestedSet->isDescendantOf($descendant));
+		$this->assertFalse($nestedSet->isDescendantOf($descendant));
 
 		// many roots
-		$NestedSet=NestedSetWithManyRoots::model()->findByPk(1);
-		$this->assertTrue($NestedSet instanceof NestedSetWithManyRoots);
-		$descendants=$NestedSet->descendants()->findAll();
+		$nestedSet=NestedSetWithManyRoots::model()->findByPk(1);
+		$this->assertTrue($nestedSet instanceof NestedSetWithManyRoots);
+		$descendants=$nestedSet->descendants()->findAll();
 		foreach($descendants as $descendant)
-			$this->assertTrue($descendant->isDescendantOf($NestedSet));
+			$this->assertTrue($descendant->isDescendantOf($nestedSet));
 		$descendant=NestedSetWithManyRoots::model()->findByPk(4);
 		$this->assertTrue($descendant instanceof NestedSetWithManyRoots);
-		$this->assertFalse($NestedSet->isDescendantOf($descendant));
+		$this->assertFalse($nestedSet->isDescendantOf($descendant));
 	}
 
 	public function testIsRoot()
@@ -216,10 +216,10 @@ class ENestedSetBehaviorTest extends CDbTestCase
 	public function testIsLeaf()
 	{
 		// single root
-		$NestedSet=NestedSet::model()->findByPk(5);
-		$this->assertTrue($NestedSet instanceof NestedSet);
-		$this->assertFalse($NestedSet->isLeaf());
-		$descendants=$NestedSet->descendants()->findAll();
+		$nestedSet=NestedSet::model()->findByPk(5);
+		$this->assertTrue($nestedSet instanceof NestedSet);
+		$this->assertFalse($nestedSet->isLeaf());
+		$descendants=$nestedSet->descendants()->findAll();
 		$this->assertEquals(count($descendants),2);
 		foreach($descendants as $descendant)
 		{
@@ -228,10 +228,10 @@ class ENestedSetBehaviorTest extends CDbTestCase
 		}
 
 		// many roots
-		$NestedSet=NestedSetWithManyRoots::model()->findByPk(5);
-		$this->assertTrue($NestedSet instanceof NestedSetWithManyRoots);
-		$this->assertFalse($NestedSet->isLeaf());
-		$descendants=$NestedSet->descendants()->findAll();
+		$nestedSet=NestedSetWithManyRoots::model()->findByPk(5);
+		$this->assertTrue($nestedSet instanceof NestedSetWithManyRoots);
+		$this->assertFalse($nestedSet->isLeaf());
+		$descendants=$nestedSet->descendants()->findAll();
 		$this->assertEquals(count($descendants),2);
 		foreach($descendants as $descendant)
 		{
@@ -245,31 +245,31 @@ class ENestedSetBehaviorTest extends CDbTestCase
 		// single root
 
 		// many roots
-		$NestedSet=new NestedSetWithManyRoots;
-		$this->assertFalse($NestedSet->saveNode());
-		$NestedSet->name='test';
-		$this->assertTrue($NestedSet->saveNode());
-		$this->assertEquals($NestedSet->root,$NestedSet->primaryKey);
-		$this->assertEquals($NestedSet->lft,1);
-		$this->assertEquals($NestedSet->rgt,2);
-		$this->assertEquals($NestedSet->level,1);
+		$nestedSet=new NestedSetWithManyRoots;
+		$this->assertFalse($nestedSet->saveNode());
+		$nestedSet->name='test';
+		$this->assertTrue($nestedSet->saveNode());
+		$this->assertEquals($nestedSet->root,$nestedSet->primaryKey);
+		$this->assertEquals($nestedSet->lft,1);
+		$this->assertEquals($nestedSet->rgt,2);
+		$this->assertEquals($nestedSet->level,1);
 	}
 
 	public function testDeleteNode()
 	{
 		// single root
 		$array=NestedSet::model()->findAll();
-		$NestedSet=NestedSet::model()->findByPk(4);
-		$this->assertTrue($NestedSet instanceof NestedSet);
-		$this->assertTrue($NestedSet->deleteNode());
+		$nestedSet=NestedSet::model()->findByPk(4);
+		$this->assertTrue($nestedSet instanceof NestedSet);
+		$this->assertTrue($nestedSet->deleteNode());
 		$this->assertTrue($this->checkTree());
-		$this->assertTrue($NestedSet->getIsDeletedRecord());
+		$this->assertTrue($nestedSet->getIsDeletedRecord());
 		$this->assertTrue($this->checkArray($array));
-		$NestedSet=NestedSet::model()->findByPk(5);
-		$this->assertTrue($NestedSet instanceof NestedSet);
-		$this->assertTrue($NestedSet->deleteNode());
+		$nestedSet=NestedSet::model()->findByPk(5);
+		$this->assertTrue($nestedSet instanceof NestedSet);
+		$this->assertTrue($nestedSet->deleteNode());
 		$this->assertTrue($this->checkTree());
-		$this->assertTrue($NestedSet->getIsDeletedRecord());
+		$this->assertTrue($nestedSet->getIsDeletedRecord());
 		$this->assertTrue($this->checkArray($array));
 		foreach($array as $item)
 		{
@@ -281,17 +281,17 @@ class ENestedSetBehaviorTest extends CDbTestCase
 
 		// many roots
 		$array=NestedSetWithManyRoots::model()->findAll();
-		$NestedSet=NestedSetWithManyRoots::model()->findByPk(4);
-		$this->assertTrue($NestedSet instanceof NestedSetWithManyRoots);
-		$this->assertTrue($NestedSet->deleteNode());
+		$nestedSet=NestedSetWithManyRoots::model()->findByPk(4);
+		$this->assertTrue($nestedSet instanceof NestedSetWithManyRoots);
+		$this->assertTrue($nestedSet->deleteNode());
 		$this->assertTrue($this->checkTreeWithManyRoots());
-		$this->assertTrue($NestedSet->getIsDeletedRecord());
+		$this->assertTrue($nestedSet->getIsDeletedRecord());
 		$this->assertTrue($this->checkArrayWithManyRoots($array));
-		$NestedSet=NestedSetWithManyRoots::model()->findByPk(9);
-		$this->assertTrue($NestedSet instanceof NestedSetWithManyRoots);
-		$this->assertTrue($NestedSet->deleteNode());
+		$nestedSet=NestedSetWithManyRoots::model()->findByPk(9);
+		$this->assertTrue($nestedSet instanceof NestedSetWithManyRoots);
+		$this->assertTrue($nestedSet->deleteNode());
 		$this->assertTrue($this->checkTreeWithManyRoots());
-		$this->assertTrue($NestedSet->getIsDeletedRecord());
+		$this->assertTrue($nestedSet->getIsDeletedRecord());
 		$this->assertTrue($this->checkArrayWithManyRoots($array));
 		foreach($array as $item)
 		{
@@ -308,34 +308,34 @@ class ENestedSetBehaviorTest extends CDbTestCase
 		$array=NestedSet::model()->findAll();
 		$target=NestedSet::model()->findByPk(5);
 		$this->assertTrue($target instanceof NestedSet);
-		$NestedSet1=new NestedSet;
-		$this->assertFalse($NestedSet1->prependTo($target));
-		$NestedSet1->name='test';
-		$this->assertTrue($NestedSet1->prependTo($target));
+		$nestedSet1=new NestedSet;
+		$this->assertFalse($nestedSet1->prependTo($target));
+		$nestedSet1->name='test';
+		$this->assertTrue($nestedSet1->prependTo($target));
 		$this->assertTrue($this->checkTree());
-		$array[]=$NestedSet1;
-		$NestedSet2=new NestedSet;
-		$NestedSet2->name='test';
-		$this->assertTrue($NestedSet2->prependTo($target));
+		$array[]=$nestedSet1;
+		$nestedSet2=new NestedSet;
+		$nestedSet2->name='test';
+		$this->assertTrue($nestedSet2->prependTo($target));
 		$this->assertTrue($this->checkTree());
-		$array[]=$NestedSet2;
+		$array[]=$nestedSet2;
 		$this->assertTrue($this->checkArray($array));
 
 		// many roots
 		$array=NestedSetWithManyRoots::model()->findAll();
 		$target=NestedSetWithManyRoots::model()->findByPk(5);
 		$this->assertTrue($target instanceof NestedSetWithManyRoots);
-		$NestedSet1=new NestedSetWithManyRoots;
-		$this->assertFalse($NestedSet1->prependTo($target));
-		$NestedSet1->name='test';
-		$this->assertTrue($NestedSet1->prependTo($target));
+		$nestedSet1=new NestedSetWithManyRoots;
+		$this->assertFalse($nestedSet1->prependTo($target));
+		$nestedSet1->name='test';
+		$this->assertTrue($nestedSet1->prependTo($target));
 		$this->assertTrue($this->checkTreeWithManyRoots());
-		$array[]=$NestedSet1;
-		$NestedSet2=new NestedSetWithManyRoots;
-		$NestedSet2->name='test';
-		$this->assertTrue($NestedSet2->prependTo($target));
+		$array[]=$nestedSet1;
+		$nestedSet2=new NestedSetWithManyRoots;
+		$nestedSet2->name='test';
+		$this->assertTrue($nestedSet2->prependTo($target));
 		$this->assertTrue($this->checkTreeWithManyRoots());
-		$array[]=$NestedSet2;
+		$array[]=$nestedSet2;
 		$this->assertTrue($this->checkArrayWithManyRoots($array));
 	}
 
@@ -345,34 +345,34 @@ class ENestedSetBehaviorTest extends CDbTestCase
 		$array=NestedSet::model()->findAll();
 		$target=NestedSet::model()->findByPk(2);
 		$this->assertTrue($target instanceof NestedSet);
-		$NestedSet1=new NestedSet;
-		$this->assertFalse($NestedSet1->appendTo($target));
-		$NestedSet1->name='test';
-		$this->assertTrue($NestedSet1->appendTo($target));
+		$nestedSet1=new NestedSet;
+		$this->assertFalse($nestedSet1->appendTo($target));
+		$nestedSet1->name='test';
+		$this->assertTrue($nestedSet1->appendTo($target));
 		$this->assertTrue($this->checkTree());
-		$array[]=$NestedSet1;
-		$NestedSet2=new NestedSet;
-		$NestedSet2->name='test';
-		$this->assertTrue($NestedSet2->appendTo($target));
+		$array[]=$nestedSet1;
+		$nestedSet2=new NestedSet;
+		$nestedSet2->name='test';
+		$this->assertTrue($nestedSet2->appendTo($target));
 		$this->assertTrue($this->checkTree());
-		$array[]=$NestedSet2;
+		$array[]=$nestedSet2;
 		$this->assertTrue($this->checkArray($array));
 
 		// many roots
 		$array=NestedSetWithManyRoots::model()->findAll();
 		$target=NestedSetWithManyRoots::model()->findByPk(2);
 		$this->assertTrue($target instanceof NestedSetWithManyRoots);
-		$NestedSet1=new NestedSetWithManyRoots;
-		$this->assertFalse($NestedSet1->appendTo($target));
-		$NestedSet1->name='test';
-		$this->assertTrue($NestedSet1->appendTo($target));
+		$nestedSet1=new NestedSetWithManyRoots;
+		$this->assertFalse($nestedSet1->appendTo($target));
+		$nestedSet1->name='test';
+		$this->assertTrue($nestedSet1->appendTo($target));
 		$this->assertTrue($this->checkTreeWithManyRoots());
-		$array[]=$NestedSet1;
-		$NestedSet2=new NestedSetWithManyRoots;
-		$NestedSet2->name='test';
-		$this->assertTrue($NestedSet2->appendTo($target));
+		$array[]=$nestedSet1;
+		$nestedSet2=new NestedSetWithManyRoots;
+		$nestedSet2->name='test';
+		$this->assertTrue($nestedSet2->appendTo($target));
 		$this->assertTrue($this->checkTreeWithManyRoots());
-		$array[]=$NestedSet2;
+		$array[]=$nestedSet2;
 		$this->assertTrue($this->checkArrayWithManyRoots($array));
 	}
 
@@ -382,34 +382,34 @@ class ENestedSetBehaviorTest extends CDbTestCase
 		$array=NestedSet::model()->findAll();
 		$target=NestedSet::model()->findByPk(5);
 		$this->assertTrue($target instanceof NestedSet);
-		$NestedSet1=new NestedSet;
-		$this->assertFalse($NestedSet1->insertBefore($target));
-		$NestedSet1->name='test';
-		$this->assertTrue($NestedSet1->insertBefore($target));
+		$nestedSet1=new NestedSet;
+		$this->assertFalse($nestedSet1->insertBefore($target));
+		$nestedSet1->name='test';
+		$this->assertTrue($nestedSet1->insertBefore($target));
 		$this->assertTrue($this->checkTree());
-		$array[]=$NestedSet1;
-		$NestedSet2=new NestedSet;
-		$NestedSet2->name='test';
-		$this->assertTrue($NestedSet2->insertBefore($target));
+		$array[]=$nestedSet1;
+		$nestedSet2=new NestedSet;
+		$nestedSet2->name='test';
+		$this->assertTrue($nestedSet2->insertBefore($target));
 		$this->assertTrue($this->checkTree());
-		$array[]=$NestedSet2;
+		$array[]=$nestedSet2;
 		$this->assertTrue($this->checkArray($array));
 
 		// many roots
 		$array=NestedSetWithManyRoots::model()->findAll();
 		$target=NestedSetWithManyRoots::model()->findByPk(5);
 		$this->assertTrue($target instanceof NestedSetWithManyRoots);
-		$NestedSet1=new NestedSetWithManyRoots;
-		$this->assertFalse($NestedSet1->insertBefore($target));
-		$NestedSet1->name='test';
-		$this->assertTrue($NestedSet1->insertBefore($target));
+		$nestedSet1=new NestedSetWithManyRoots;
+		$this->assertFalse($nestedSet1->insertBefore($target));
+		$nestedSet1->name='test';
+		$this->assertTrue($nestedSet1->insertBefore($target));
 		$this->assertTrue($this->checkTreeWithManyRoots());
-		$array[]=$NestedSet1;
-		$NestedSet2=new NestedSetWithManyRoots;
-		$NestedSet2->name='test';
-		$this->assertTrue($NestedSet2->insertBefore($target));
+		$array[]=$nestedSet1;
+		$nestedSet2=new NestedSetWithManyRoots;
+		$nestedSet2->name='test';
+		$this->assertTrue($nestedSet2->insertBefore($target));
 		$this->assertTrue($this->checkTreeWithManyRoots());
-		$array[]=$NestedSet2;
+		$array[]=$nestedSet2;
 		$this->assertTrue($this->checkArrayWithManyRoots($array));
 	}
 
@@ -419,34 +419,34 @@ class ENestedSetBehaviorTest extends CDbTestCase
 		$array=NestedSet::model()->findAll();
 		$target=NestedSet::model()->findByPk(2);
 		$this->assertTrue($target instanceof NestedSet);
-		$NestedSet1=new NestedSet;
-		$this->assertFalse($NestedSet1->insertAfter($target));
-		$NestedSet1->name='test';
-		$this->assertTrue($NestedSet1->insertAfter($target));
+		$nestedSet1=new NestedSet;
+		$this->assertFalse($nestedSet1->insertAfter($target));
+		$nestedSet1->name='test';
+		$this->assertTrue($nestedSet1->insertAfter($target));
 		$this->assertTrue($this->checkTree());
-		$array[]=$NestedSet1;
-		$NestedSet2=new NestedSet;
-		$NestedSet2->name='test';
-		$this->assertTrue($NestedSet2->insertAfter($target));
+		$array[]=$nestedSet1;
+		$nestedSet2=new NestedSet;
+		$nestedSet2->name='test';
+		$this->assertTrue($nestedSet2->insertAfter($target));
 		$this->assertTrue($this->checkTree());
-		$array[]=$NestedSet2;
+		$array[]=$nestedSet2;
 		$this->assertTrue($this->checkArray($array));
 
 		// many roots
 		$array=NestedSetWithManyRoots::model()->findAll();
 		$target=NestedSetWithManyRoots::model()->findByPk(2);
 		$this->assertTrue($target instanceof NestedSetWithManyRoots);
-		$NestedSet1=new NestedSetWithManyRoots;
-		$this->assertFalse($NestedSet1->insertAfter($target));
-		$NestedSet1->name='test';
-		$this->assertTrue($NestedSet1->insertAfter($target));
+		$nestedSet1=new NestedSetWithManyRoots;
+		$this->assertFalse($nestedSet1->insertAfter($target));
+		$nestedSet1->name='test';
+		$this->assertTrue($nestedSet1->insertAfter($target));
 		$this->assertTrue($this->checkTreeWithManyRoots());
-		$array[]=$NestedSet1;
-		$NestedSet2=new NestedSetWithManyRoots;
-		$NestedSet2->name='test';
-		$this->assertTrue($NestedSet2->insertAfter($target));
+		$array[]=$nestedSet1;
+		$nestedSet2=new NestedSetWithManyRoots;
+		$nestedSet2->name='test';
+		$this->assertTrue($nestedSet2->insertAfter($target));
 		$this->assertTrue($this->checkTreeWithManyRoots());
-		$array[]=$NestedSet2;
+		$array[]=$nestedSet2;
 		$this->assertTrue($this->checkArrayWithManyRoots($array));
 	}
 
@@ -455,18 +455,18 @@ class ENestedSetBehaviorTest extends CDbTestCase
 		// single root
 		$array=NestedSet::model()->findAll();
 
-		$NestedSet=NestedSet::model()->findByPk(6);
-		$this->assertTrue($NestedSet instanceof NestedSet);
+		$nestedSet=NestedSet::model()->findByPk(6);
+		$this->assertTrue($nestedSet instanceof NestedSet);
 		$target=NestedSet::model()->findByPk(2);
 		$this->assertTrue($target instanceof NestedSet);
-		$this->assertTrue($NestedSet->moveBefore($target));
+		$this->assertTrue($nestedSet->moveBefore($target));
 		$this->assertTrue($this->checkTree());
 
 		$this->assertTrue($this->checkArray($array));
 
-		$NestedSet=NestedSet::model()->findByPk(5);
-		$this->assertTrue($NestedSet instanceof NestedSet);
-		$this->assertTrue($NestedSet->moveBefore($target));
+		$nestedSet=NestedSet::model()->findByPk(5);
+		$this->assertTrue($nestedSet instanceof NestedSet);
+		$this->assertTrue($nestedSet->moveBefore($target));
 		$this->assertTrue($this->checkTree());
 
 		$this->assertTrue($this->checkArray($array));
@@ -474,34 +474,34 @@ class ENestedSetBehaviorTest extends CDbTestCase
 		// many roots
 		$array=NestedSetWithManyRoots::model()->findAll();
 
-		$NestedSet=NestedSetWithManyRoots::model()->findByPk(6);
-		$this->assertTrue($NestedSet instanceof NestedSetWithManyRoots);
+		$nestedSet=NestedSetWithManyRoots::model()->findByPk(6);
+		$this->assertTrue($nestedSet instanceof NestedSetWithManyRoots);
 		$target=NestedSetWithManyRoots::model()->findByPk(2);
 		$this->assertTrue($target instanceof NestedSetWithManyRoots);
-		$this->assertTrue($NestedSet->moveBefore($target));
+		$this->assertTrue($nestedSet->moveBefore($target));
 		$this->assertTrue($this->checkTreeWithManyRoots());
 
 		$this->assertTrue($this->checkArrayWithManyRoots($array));
 
-		$NestedSet=NestedSetWithManyRoots::model()->findByPk(5);
-		$this->assertTrue($NestedSet instanceof NestedSetWithManyRoots);
-		$this->assertTrue($NestedSet->moveBefore($target));
+		$nestedSet=NestedSetWithManyRoots::model()->findByPk(5);
+		$this->assertTrue($nestedSet instanceof NestedSetWithManyRoots);
+		$this->assertTrue($nestedSet->moveBefore($target));
 		$this->assertTrue($this->checkTreeWithManyRoots());
 
 		$this->assertTrue($this->checkArrayWithManyRoots($array));
 
-		$NestedSet=NestedSetWithManyRoots::model()->findByPk(6);
-		$this->assertTrue($NestedSet instanceof NestedSetWithManyRoots);
+		$nestedSet=NestedSetWithManyRoots::model()->findByPk(6);
+		$this->assertTrue($nestedSet instanceof NestedSetWithManyRoots);
 		$target=NestedSetWithManyRoots::model()->findByPk(9);
 		$this->assertTrue($target instanceof NestedSetWithManyRoots);
-		$this->assertTrue($NestedSet->moveBefore($target));
+		$this->assertTrue($nestedSet->moveBefore($target));
 		$this->assertTrue($this->checkTreeWithManyRoots());
 
 		$this->assertTrue($this->checkArrayWithManyRoots($array));
 
-		$NestedSet=NestedSetWithManyRoots::model()->findByPk(5);
-		$this->assertTrue($NestedSet instanceof NestedSetWithManyRoots);
-		$this->assertTrue($NestedSet->moveBefore($target));
+		$nestedSet=NestedSetWithManyRoots::model()->findByPk(5);
+		$this->assertTrue($nestedSet instanceof NestedSetWithManyRoots);
+		$this->assertTrue($nestedSet->moveBefore($target));
 		$this->assertTrue($this->checkTreeWithManyRoots());
 
 		$this->assertTrue($this->checkArrayWithManyRoots($array));
@@ -512,18 +512,18 @@ class ENestedSetBehaviorTest extends CDbTestCase
 		// single root
 		$array=NestedSet::model()->findAll();
 
-		$NestedSet=NestedSet::model()->findByPk(3);
-		$this->assertTrue($NestedSet instanceof NestedSet);
+		$nestedSet=NestedSet::model()->findByPk(3);
+		$this->assertTrue($nestedSet instanceof NestedSet);
 		$target=NestedSet::model()->findByPk(5);
 		$this->assertTrue($target instanceof NestedSet);
-		$this->assertTrue($NestedSet->moveAfter($target));
+		$this->assertTrue($nestedSet->moveAfter($target));
 		$this->assertTrue($this->checkTree());
 
 		$this->assertTrue($this->checkArray($array));
 
-		$NestedSet=NestedSet::model()->findByPk(2);
-		$this->assertTrue($NestedSet instanceof NestedSet);
-		$this->assertTrue($NestedSet->moveAfter($target));
+		$nestedSet=NestedSet::model()->findByPk(2);
+		$this->assertTrue($nestedSet instanceof NestedSet);
+		$this->assertTrue($nestedSet->moveAfter($target));
 		$this->assertTrue($this->checkTree());
 
 		$this->assertTrue($this->checkArray($array));
@@ -531,34 +531,34 @@ class ENestedSetBehaviorTest extends CDbTestCase
 		// many roots
 		$array=NestedSetWithManyRoots::model()->findAll();
 
-		$NestedSet=NestedSetWithManyRoots::model()->findByPk(3);
-		$this->assertTrue($NestedSet instanceof NestedSetWithManyRoots);
+		$nestedSet=NestedSetWithManyRoots::model()->findByPk(3);
+		$this->assertTrue($nestedSet instanceof NestedSetWithManyRoots);
 		$target=NestedSetWithManyRoots::model()->findByPk(5);
 		$this->assertTrue($target instanceof NestedSetWithManyRoots);
-		$this->assertTrue($NestedSet->moveAfter($target));
+		$this->assertTrue($nestedSet->moveAfter($target));
 		$this->assertTrue($this->checkTreeWithManyRoots());
 
 		$this->assertTrue($this->checkArrayWithManyRoots($array));
 
-		$NestedSet=NestedSetWithManyRoots::model()->findByPk(2);
-		$this->assertTrue($NestedSet instanceof NestedSetWithManyRoots);
-		$this->assertTrue($NestedSet->moveAfter($target));
+		$nestedSet=NestedSetWithManyRoots::model()->findByPk(2);
+		$this->assertTrue($nestedSet instanceof NestedSetWithManyRoots);
+		$this->assertTrue($nestedSet->moveAfter($target));
 		$this->assertTrue($this->checkTreeWithManyRoots());
 
 		$this->assertTrue($this->checkArrayWithManyRoots($array));
 
-		$NestedSet=NestedSetWithManyRoots::model()->findByPk(3);
-		$this->assertTrue($NestedSet instanceof NestedSetWithManyRoots);
+		$nestedSet=NestedSetWithManyRoots::model()->findByPk(3);
+		$this->assertTrue($nestedSet instanceof NestedSetWithManyRoots);
 		$target=NestedSetWithManyRoots::model()->findByPk(12);
 		$this->assertTrue($target instanceof NestedSetWithManyRoots);
-		$this->assertTrue($NestedSet->moveAfter($target));
+		$this->assertTrue($nestedSet->moveAfter($target));
 		$this->assertTrue($this->checkTreeWithManyRoots());
 
 		$this->assertTrue($this->checkArrayWithManyRoots($array));
 
-		$NestedSet=NestedSetWithManyRoots::model()->findByPk(2);
-		$this->assertTrue($NestedSet instanceof NestedSetWithManyRoots);
-		$this->assertTrue($NestedSet->moveAfter($target));
+		$nestedSet=NestedSetWithManyRoots::model()->findByPk(2);
+		$this->assertTrue($nestedSet instanceof NestedSetWithManyRoots);
+		$this->assertTrue($nestedSet->moveAfter($target));
 		$this->assertTrue($this->checkTreeWithManyRoots());
 
 		$this->assertTrue($this->checkArrayWithManyRoots($array));
@@ -569,18 +569,18 @@ class ENestedSetBehaviorTest extends CDbTestCase
 		// single root
 		$array=NestedSet::model()->findAll();
 
-		$NestedSet=NestedSet::model()->findByPk(6);
-		$this->assertTrue($NestedSet instanceof NestedSet);
+		$nestedSet=NestedSet::model()->findByPk(6);
+		$this->assertTrue($nestedSet instanceof NestedSet);
 		$target=NestedSet::model()->findByPk(2);
 		$this->assertTrue($target instanceof NestedSet);
-		$this->assertTrue($NestedSet->moveAsFirst($target));
+		$this->assertTrue($nestedSet->moveAsFirst($target));
 		$this->assertTrue($this->checkTree());
 
 		$this->assertTrue($this->checkArray($array));
 
-		$NestedSet=NestedSet::model()->findByPk(5);
-		$this->assertTrue($NestedSet instanceof NestedSet);
-		$this->assertTrue($NestedSet->moveAsFirst($target));
+		$nestedSet=NestedSet::model()->findByPk(5);
+		$this->assertTrue($nestedSet instanceof NestedSet);
+		$this->assertTrue($nestedSet->moveAsFirst($target));
 		$this->assertTrue($this->checkTree());
 
 		$this->assertTrue($this->checkArray($array));
@@ -588,34 +588,34 @@ class ENestedSetBehaviorTest extends CDbTestCase
 		// many roots
 		$array=NestedSetWithManyRoots::model()->findAll();
 
-		$NestedSet=NestedSetWithManyRoots::model()->findByPk(6);
-		$this->assertTrue($NestedSet instanceof NestedSetWithManyRoots);
+		$nestedSet=NestedSetWithManyRoots::model()->findByPk(6);
+		$this->assertTrue($nestedSet instanceof NestedSetWithManyRoots);
 		$target=NestedSetWithManyRoots::model()->findByPk(2);
 		$this->assertTrue($target instanceof NestedSetWithManyRoots);
-		$this->assertTrue($NestedSet->moveAsFirst($target));
+		$this->assertTrue($nestedSet->moveAsFirst($target));
 		$this->assertTrue($this->checkTreeWithManyRoots());
 
 		$this->assertTrue($this->checkArrayWithManyRoots($array));
 
-		$NestedSet=NestedSetWithManyRoots::model()->findByPk(5);
-		$this->assertTrue($NestedSet instanceof NestedSetWithManyRoots);
-		$this->assertTrue($NestedSet->moveAsFirst($target));
+		$nestedSet=NestedSetWithManyRoots::model()->findByPk(5);
+		$this->assertTrue($nestedSet instanceof NestedSetWithManyRoots);
+		$this->assertTrue($nestedSet->moveAsFirst($target));
 		$this->assertTrue($this->checkTreeWithManyRoots());
 
 		$this->assertTrue($this->checkArrayWithManyRoots($array));
 
-		$NestedSet=NestedSetWithManyRoots::model()->findByPk(6);
-		$this->assertTrue($NestedSet instanceof NestedSetWithManyRoots);
+		$nestedSet=NestedSetWithManyRoots::model()->findByPk(6);
+		$this->assertTrue($nestedSet instanceof NestedSetWithManyRoots);
 		$target=NestedSetWithManyRoots::model()->findByPk(9);
 		$this->assertTrue($target instanceof NestedSetWithManyRoots);
-		$this->assertTrue($NestedSet->moveAsFirst($target));
+		$this->assertTrue($nestedSet->moveAsFirst($target));
 		$this->assertTrue($this->checkTreeWithManyRoots());
 
 		$this->assertTrue($this->checkArrayWithManyRoots($array));
 
-		$NestedSet=NestedSetWithManyRoots::model()->findByPk(5);
-		$this->assertTrue($NestedSet instanceof NestedSetWithManyRoots);
-		$this->assertTrue($NestedSet->moveAsFirst($target));
+		$nestedSet=NestedSetWithManyRoots::model()->findByPk(5);
+		$this->assertTrue($nestedSet instanceof NestedSetWithManyRoots);
+		$this->assertTrue($nestedSet->moveAsFirst($target));
 		$this->assertTrue($this->checkTreeWithManyRoots());
 
 		$this->assertTrue($this->checkArrayWithManyRoots($array));
@@ -626,18 +626,18 @@ class ENestedSetBehaviorTest extends CDbTestCase
 		// single root
 		$array=NestedSet::model()->findAll();
 
-		$NestedSet=NestedSet::model()->findByPk(3);
-		$this->assertTrue($NestedSet instanceof NestedSet);
+		$nestedSet=NestedSet::model()->findByPk(3);
+		$this->assertTrue($nestedSet instanceof NestedSet);
 		$target=NestedSet::model()->findByPk(5);
 		$this->assertTrue($target instanceof NestedSet);
-		$this->assertTrue($NestedSet->moveAsLast($target));
+		$this->assertTrue($nestedSet->moveAsLast($target));
 		$this->assertTrue($this->checkTree());
 
 		$this->assertTrue($this->checkArray($array));
 
-		$NestedSet=NestedSet::model()->findByPk(2);
-		$this->assertTrue($NestedSet instanceof NestedSet);
-		$this->assertTrue($NestedSet->moveAsLast($target));
+		$nestedSet=NestedSet::model()->findByPk(2);
+		$this->assertTrue($nestedSet instanceof NestedSet);
+		$this->assertTrue($nestedSet->moveAsLast($target));
 		$this->assertTrue($this->checkTree());
 
 		$this->assertTrue($this->checkArray($array));
@@ -645,34 +645,34 @@ class ENestedSetBehaviorTest extends CDbTestCase
 		// many roots
 		$array=NestedSetWithManyRoots::model()->findAll();
 
-		$NestedSet=NestedSetWithManyRoots::model()->findByPk(3);
-		$this->assertTrue($NestedSet instanceof NestedSetWithManyRoots);
+		$nestedSet=NestedSetWithManyRoots::model()->findByPk(3);
+		$this->assertTrue($nestedSet instanceof NestedSetWithManyRoots);
 		$target=NestedSetWithManyRoots::model()->findByPk(5);
 		$this->assertTrue($target instanceof NestedSetWithManyRoots);
-		$this->assertTrue($NestedSet->moveAsLast($target));
+		$this->assertTrue($nestedSet->moveAsLast($target));
 		$this->assertTrue($this->checkTreeWithManyRoots());
 
 		$this->assertTrue($this->checkArrayWithManyRoots($array));
 
-		$NestedSet=NestedSetWithManyRoots::model()->findByPk(2);
-		$this->assertTrue($NestedSet instanceof NestedSetWithManyRoots);
-		$this->assertTrue($NestedSet->moveAsLast($target));
+		$nestedSet=NestedSetWithManyRoots::model()->findByPk(2);
+		$this->assertTrue($nestedSet instanceof NestedSetWithManyRoots);
+		$this->assertTrue($nestedSet->moveAsLast($target));
 		$this->assertTrue($this->checkTreeWithManyRoots());
 
 		$this->assertTrue($this->checkArrayWithManyRoots($array));
 
-		$NestedSet=NestedSetWithManyRoots::model()->findByPk(3);
-		$this->assertTrue($NestedSet instanceof NestedSetWithManyRoots);
+		$nestedSet=NestedSetWithManyRoots::model()->findByPk(3);
+		$this->assertTrue($nestedSet instanceof NestedSetWithManyRoots);
 		$target=NestedSetWithManyRoots::model()->findByPk(12);
 		$this->assertTrue($target instanceof NestedSetWithManyRoots);
-		$this->assertTrue($NestedSet->moveAsLast($target));
+		$this->assertTrue($nestedSet->moveAsLast($target));
 		$this->assertTrue($this->checkTreeWithManyRoots());
 
 		$this->assertTrue($this->checkArrayWithManyRoots($array));
 
-		$NestedSet=NestedSetWithManyRoots::model()->findByPk(2);
-		$this->assertTrue($NestedSet instanceof NestedSetWithManyRoots);
-		$this->assertTrue($NestedSet->moveAsLast($target));
+		$nestedSet=NestedSetWithManyRoots::model()->findByPk(2);
+		$this->assertTrue($nestedSet instanceof NestedSetWithManyRoots);
+		$this->assertTrue($nestedSet->moveAsLast($target));
 		$this->assertTrue($this->checkTreeWithManyRoots());
 
 		$this->assertTrue($this->checkArrayWithManyRoots($array));

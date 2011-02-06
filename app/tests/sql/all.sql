@@ -126,10 +126,10 @@ CREATE TABLE `NestedSetWithManyRoots` (
 );
 
 /* Ajacency list table */
-DROP TABLE IF EXISTS `AjacencyList`;
-CREATE TABLE `AjacencyList` (
+DROP TABLE IF EXISTS `AdjacencyList`;
+CREATE TABLE `AdjacencyList` (
   `id` INT(10) UNSIGNED NOT NULL AUTO_INCREMENT,
-  `parent_id` INT(10) UNSIGNED NOT NULL,
+  `parent_id` INT(10) UNSIGNED,
   `name` VARCHAR(50) NOT NULL,
   PRIMARY KEY (`id`),
   KEY `parent_id` (`parent_id`),
