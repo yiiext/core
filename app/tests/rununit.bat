@@ -1,1 +1,1 @@
-phpunit --verbose unit/NestedSetBehaviorTest
+phpunit --verbose unit
