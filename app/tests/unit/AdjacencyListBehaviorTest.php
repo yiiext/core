@@ -8,7 +8,7 @@ class AdjacencyListBehaviorTest extends CDbTestCase
 	public function testGetRoot()
 	{
 		$root=AdjacencyList::model()->getRoot();
-		$this->assertTrue($nestedSet instanceof AdjacencyList);
+		$this->assertTrue($root instanceof AdjacencyList);
 		$this->assertEquals($root->primaryKey,1);
 	}
 
