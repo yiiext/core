@@ -1,17 +1,16 @@
 0.3
----
-- JS updated to version 1.3.4
+[*] Fixed css.
+[*] JS updated to version 1.3.4.
 
 0.2
 ---
 Warning: this version is not backwards compatible to 0.1.
 
-- Remove all static helper methods.
-- Remove EFancyboxWidget::$gallery. Galleries are created from elements who have the same "rel" tag.
-- JS updated to version 1.3.3
-- Fix default selector.
-- Introduce EFancyboxWidget::$options for plugin options.
+[-] Remove all static helper methods.
+[-] Remove EFancyboxWidget::$gallery. Galleries are created from elements who have the same "rel" tag.
+[*] JS updated to version 1.3.3.
+[*] Fix default selector.
+[*] Introduce EFancyboxWidget::$options for plugin options.
 
 0.1
----
-- Initial public release.
+[+] Initial public release.
