@@ -27,17 +27,17 @@
  * </pre>
  *
  * @author Veaceslav Medvedev <slavcopost@gmail.com>
- * @version 0.2
+ * @version 0.3
  * @package yiiext.filters.activeFormValidation
  */
 class EActiveFormValidationFilter extends CFilter
 {
 	/**
 	 * @var mixed a single primary CModel class name or array of classes model.
-	 * The {@link getModel()} method will return a models of this classes.
-	 * @see getModel
+	 * The {@link getModelsInternal()} method will return a models of this classes.
+	 * @see getModelsInternal
 	 */
-	protected $_models=array();
+	public $models=array();
 	/**
 	 * @var string id of the {@link CActiveForm}
 	 * @see CActiveForm::$id
@@ -68,25 +68,44 @@ class EActiveFormValidationFilter extends CFilter
 	 */
 	protected function preFilter($filterChain)
 	{
-		if(!empty($this->_models) && isset($_POST[$this->ajaxVar]) && $_POST[$this->ajaxVar]===$this->formId)
+		if(isset($_POST[$this->ajaxVar])&&$_POST[$this->ajaxVar]===$this->formId)
 		{
-			echo CActiveForm::validate($this->_models);
-			Yii::app()->end();
+			$models=$this->getModelsInternal();
+			if(!empty($models))
+			{
+				//Yii::debug(Yii::ds($this->_models[0]->getScenario(),1,false));
+				echo CActiveForm::validate($models);
+				Yii::app()->end();
+			}
 		}
 		return true;
+	}
+	protected function createModel($modelClass,$scenario=NULL,$isNewRecord=true)
+	{
+		if($isNewRecord)
+			return new $modelClass($scenario);
+		$model=CActiveRecord::model($modelClass);
+		$model->setScenario($scenario);
+		return $model;
 	}
 	/**
 	 * Add models for validate.
 	 * @param CModel
 	 */
-	public function setModels($models)
+	protected function getModelsInternal()
 	{
-		if(is_string($models))
-			$this->_models[]=new $models;
-		else if($models instanceof CModel)
-			$this->_models[]=$models;
-		else if(is_array($models))
-			foreach($models as $model)
-				$this->setModels($model);
+		$models=array();
+		if(!is_array($this->models))
+			$this->models=array($this->models);
+		foreach($this->models as $model)
+		{
+			if($model instanceof CModel)
+				$models[]=$model;
+			else if(is_string($model))
+				$models[]=$this->createModel($model);
+			else if(is_array($model))
+				$models[]=$this->createModel($model['modelClass'],$model['scenario'],$model['isNewRecord']);
+		}
+		return $models;
 	}
 }

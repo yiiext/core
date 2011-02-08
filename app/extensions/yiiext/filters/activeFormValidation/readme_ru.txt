@@ -1,8 +1,8 @@
 ActiveForm Validation Filter
-============================
+===================
 
-При использовании [CActiveForm](http://www.yiiframework.com/doc/api/CActiveForm)
-с включенной AJAX валидацией, в документации предлагают метод
+При использовании [CActiveForm](http://www.yiiframework.com/doc/api/CActiveForm) с включенной AJAX валидацией,
+в документации предлагают метод
 ~~~
 [php]
 protected function performAjaxValidation($model)
@@ -19,7 +19,7 @@ protected function performAjaxValidation($model)
 можно воспользоваться этим фильтром для нужных действий.
 
 Установка и настройка
----------------------
+--------------------------
 ~~~
 [php]
 public function filters()
@@ -28,8 +28,12 @@ public function filters()
 		array(
 			'ext.yiiext.filters.activeFormValidation.EActiveFormValidationFilter[ +|- Action1, Action2, ...]',
 			// Название или массив названий классов для проверяемой модели.
-			// Метод EActiveFormValidationFilter::getModel() вернет массив моделей используя эти классы.
-			'models'=>array('ModelClassToBeValidate',new OtherModel('update')),
+			// Метод EActiveFormValidationFilter::getModelsInternal() вернет массив моделей используя эти классы.
+			'models'=>array(
+				'ModelClassToBeValidate', // Передаем имя модели
+				SecondModel:model()->findByPk(1), // Передаем объект модели
+				array('modelClass'=>'ThirdModel','scenario'=>'update','isNewRecord'=>true), // Передаем имя модели а также сценарий
+			),
 			// Ид формы.
 			'formId'=>'form',
 			// Имя параметра используемого в AJAX-запросе.
