@@ -15,21 +15,21 @@
  * </pre>
  *
  * @author Veaceslav Medvedev <slavcopost@gmail.com>
- * @version 0.1
+ * @version 0.2
  * @package yiiext.widgets.blueprint
  */
 class EBlueprintWidget extends CWidget
 {
 	// Url to vendors css-files.
-	private static $scriptUrl;
-	
-	public function setScriptUrl($url)
+	private static $baseUrl;
+
+	public function setBaseUrl($url)
 	{
-		self::$scriptUrl=$url;
+		self::$baseUrl=$url;
 	}
-	public function getScriptUrl()
+	public function getBaseUrl()
 	{
-		return self::$scriptUrl;
+		return self::$baseUrl;
 	}
 	public function init()
 	{
@@ -42,28 +42,28 @@ class EBlueprintWidget extends CWidget
 				echo '<![endif]-->'."\n";
 		}
 	}
-	public static function getCssFiles($getSrc=false)
+	public static function getCssFiles($debug=false)
 	{
-		if(self::$scriptUrl===null)
-			self::$scriptUrl=Yii::app()->getAssetManager()->publish(dirname(__FILE__).'/vendors/joshuaclayton-blueprint-css-9be6857/blueprint');
-		
-		if($getSrc)
+		if(self::$baseUrl===null)
+			self::$baseUrl=Yii::app()->getAssetManager()->publish(dirname(__FILE__).'/vendors/joshuaclayton-blueprint-css-5d113e9/blueprint');
+
+		if($debug)
 		{
 			return array(
-				array(self::$scriptUrl.'/src/reset.css','screen,projection'),
-				array(self::$scriptUrl.'/src/typography.css','screen,projection'),
-				array(self::$scriptUrl.'/src/grid.css','screen,projection'),
-				array(self::$scriptUrl.'/src/forms.css','screen,projection'),
-				array(self::$scriptUrl.'/src/print.css','print'),
-				array(self::$scriptUrl.'/src/ie.css','screen,projection','8'),
+				array(self::$baseUrl.'/src/reset.css','screen,projection'),
+				array(self::$baseUrl.'/src/typography.css','screen,projection'),
+				array(self::$baseUrl.'/src/grid.css','screen,projection'),
+				array(self::$baseUrl.'/src/forms.css','screen,projection'),
+				array(self::$baseUrl.'/src/print.css','print'),
+				array(self::$baseUrl.'/src/ie.css','screen,projection','8'),
 			);
 		}
 		else
 		{
 			return array(
-				array(self::$scriptUrl.'/screen.css','screen,projection'),
-				array(self::$scriptUrl.'/print.css','print'),
-				array(self::$scriptUrl.'/ie.css','screen,projection','8'),
+				array(self::$baseUrl.'/screen.css','screen,projection'),
+				array(self::$baseUrl.'/print.css','print'),
+				array(self::$baseUrl.'/ie.css','screen,projection','8'),
 			);
 		}
 	}
