@@ -4,9 +4,11 @@
  *
  * @author Veaceslav Medvedev <slavcopost@gmail.com>
  * @link http://code.google.com/p/yiiext/
- * @license http://www.opensource.org/licenses/mit-license.php
+ * @license http://www.opensource.org/licenses/bsd-license.php
  */
 /**
+ * Blueprint Widget
+ *
  * EBlueprintWidget widget insert a Blueprint CSS Framework in your layout.
  *
  * Insert widget in your layout, after head-tag.
