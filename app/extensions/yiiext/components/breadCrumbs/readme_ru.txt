@@ -25,8 +25,13 @@ BreadCrumbs компонент создающий навигационную ц�
 Добавляем "крошки", например в представлении:
 ~~~
 [php]
-Yii::app()->breadCrumbs['Sample Post']=array('post/view', 'id'=>12),
+Yii::app()->breadCrumbs['Sample Post']=array('post/view','id'=>12),
 Yii::app()->breadCrumbs[]='Edit',
+// или
+Yii::app()->breadCrumbs->mergeWith(array(
+    'Sample Post'=>array('post/view','id'=>12),
+    'Edit',
+));
 ~~~
 
 И наконец показываем цепочку:

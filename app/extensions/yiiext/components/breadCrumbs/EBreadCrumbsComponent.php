@@ -30,8 +30,13 @@
  * After component configured, add the links. For example,
  *
  * <pre>
- * Yii::app()->breadCrumbs['Sample Post']=array('post/view', 'id'=>12),
- * Yii::app()->breadCrumbs[]='Edit',
+ * Yii::app()->breadCrumbs['Sample Post']=array('post/view','id'=>12);
+ * Yii::app()->breadCrumbs[]='Edit';
+ * // or
+ * Yii::app()->breadCrumbs->mergeWith(array(
+ *     'Sample Post'=>array('post/view','id'=>12),
+ *     'Edit',
+ * ));
  * </pre>
  *
  * And finally, render breadcrumbs. Is better to be placed in a layout view.
