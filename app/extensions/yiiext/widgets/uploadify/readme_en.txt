@@ -7,7 +7,7 @@ Usage
 In a view `views/form.php`:
 ~~~
 [php]
-$this->widget('ext.yiiext.widgets.uploadify.EUploadifyWidget', array(
+$this->widget('ext.yiiext.widgets.uploadify.EUploadifyWidget',array(
 	// you can either use it for model attribute
 	'model'=>new UploadifyFile,
 	'attribute'=>'uploadifyFile',
@@ -26,6 +26,26 @@ $this->widget('ext.yiiext.widgets.uploadify.EUploadifyWidget', array(
 ));
 ~~~
 
+Use beta version 3.0.0
+~~~
+[php]
+$this->widget('ext.yiiext.widgets.uploadify.EUploadifyWidget',array(
+	'package'=>array(
+		'basePath'=>Yii::getPathOfAlias('ext.yiiext.widgets.uploadify').'/vendors/jquery.uploadify-v3.0.0',
+		'js'=>array(
+			'jquery.uploadify'.(YII_DEBUG?'':'.min').'.js',
+			'swfobject.js',
+		),
+		'css'=>array(
+			'uploadify.css',
+		),
+		'depends'=>array(
+			'jquery',
+		),
+	),
+));
+~~~
+
 Example
 -------
 
@@ -39,14 +59,19 @@ We will need:
 `UploadifyFile.php`:
 ~~~
 [php]
-class UploadifyFile extends CFormModel {
+class UploadifyFile extends CFormModel
+{
 	public $uploadifyFile;
 
-	public function rules() {
+	public function rules()
+	{
 		return array(
-			array('uploadifyFile', 'file',
-				'maxSize' => 1024*1024*1024,
-				'types' => 'jpg, png, gif, txt'),
+			array(
+				'uploadifyFile',
+				'file',
+				'maxSize'=>1024*1024*1024,
+				'types'=>'jpg, png, gif, txt',
+			),
 		);
 	}
 }
@@ -54,37 +79,46 @@ class UploadifyFile extends CFormModel {
 
 ### Action
 
-You can use standard action, or following implementation of
-[CAction, described in the guide](http://yiiframework.ru/doc/guide/en/basics.controller).
+You can use standard action, or following implementation of [CAction, described in the guide](http://yiiframework.ru/doc/guide/en/basics.controller).
 
 ~~~
 [php]
-class SwfUploadUploadAction extends CAction {
+class SwfUploadUploadAction extends CAction
+{
 	public $folder;
 
-	public function run() {
-		$folder = $this->folder;
-		if ($folder === FALSE) {
-			throw new CException(Yii::t(__CLASS__, "Folder does not exists.", array()));
+	public function run()
+	{
+		$folder=$this->folder;
+		if($folder===false)
+		{
+			throw new CException(Yii::t(__CLASS__,"Folder does not exists.",array()));
 		}
-		if (isset($_FILES['UploadifyFile']) === TRUE) {
-			$model = new UploadifyFile;
-			$model->attributes = array ('uploadifyFile' => '');
-			$model->uploadifyFile = CUploadedFile::getInstance($model, 'uploadifyFile');
-			if ($model->validate() === FALSE) {
-				throw new CException(Yii::t(__CLASS__, "Invalid file.", array()));
+		if(isset($_FILES['UploadifyFile'])===true)
+		{
+			$model=new UploadifyFile;
+			$model->attributes=array('uploadifyFile'=>'');
+			$model->uploadifyFile=CUploadedFile::getInstance($model,'uploadifyFile');
+			if($model->validate()===false)
+			{
+				throw new CException(Yii::t(__CLASS__,"Invalid file.",array()));
 			}
-			if (!$model->uploadifyFile->saveAs($folder.'/'.$model->uploadifyFile->getName())){
-				throw new CException(Yii::t(__CLASS__, "Upload error.", array()));
+			if(!$model->uploadifyFile->saveAs($folder.'/'.$model->uploadifyFile->getName()))
+			{
+				throw new CException(Yii::t(__CLASS__,"Upload error.",array()));
 			}
-			else {
+			else
+			{
 				die("Upload success");
 			}
 		}
-		else {
-			throw new CException(Yii::t(__CLASS__, "File not sent.", array()));
+		else
+		{
+			throw new CException(Yii::t(__CLASS__,"File not sent.",array()));
 		}
-		throw new CException(Yii::t(__CLASS__, 'Unknown error.', array()));
+		throw new CException(Yii::t(__CLASS__,'Unknown error.',array()));
 	}
 }
 ~~~
+
+*You can use [EFileUploadAction] from yiiext.*

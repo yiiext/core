@@ -10,27 +10,27 @@
  * EUploadifyWidget adds {@link http://www.uploadify.com/ uploadify jQuery plugin} as a form field widget.
  *
  * @author Veaceslav Medvedev <slavcopost@gmail.com>
- * @version 1.6
+ * @version 1.7
  * @package yiiext.widgets.uploadify
  * @link http://www.uploadify.com/
  */
 class EUploadifyWidget extends CInputWidget
 {
 	/**
-	 * @var string URL where to look assets.
+	 * @var array the uploadify package.
+	 * Defaults to array(
+	 *     'basePath'=>dirname(__FILE__).'/vendors/jquery.uploadify-v2.1.4',
+	 *     'js'=>array('jquery.uploadify'.(YII_DEBUG?'':'.min').'.js','swfobject.js'),
+	 *     'css'=>array('uploadify.css'),
+	 *     'depends'=>array('jquery'),
+	 * )
+	 * @see CClientScript::$packages
+	 * @since 1.7
 	 */
-	public $assetsUrl;
-	/**
-	 * @var string script name.
-	 */
-	public $scriptFile;
-	/**
-	 * @var string stylesheet.
-	 */
-	public $cssFile;
+	public $package=array();
 	/**
 	 * @var string|null the name of the POST parameter where save session id.
-	 * Or null to disable sending session id. Use EForgerySessionFilter to load session by id from POST.
+	 * Or null to disable sending session id. Use {@link EForgerySessionFilter} to load session by id from POST.
 	 * Defaults to null.
 	 * @see EForgerySessionFilter
 	 */
@@ -46,43 +46,75 @@ class EUploadifyWidget extends CInputWidget
 	public function init()
 	{
 		list($this->name,$this->id)=$this->resolveNameId();
+		// Set defaults package.
+		if($this->package==array())
+		{
+			$this->package=array(
+				'basePath'=>dirname(__FILE__).'/vendors/jquery.uploadify-v2.1.4',
+				'js'=>array(
+					'jquery.uploadify'.(YII_DEBUG?'':'.min').'.js',
+					'swfobject.js',
+				),
+				'css'=>array(
+					'uploadify.css',
+				),
+				'depends'=>array(
+					'jquery',
+				),
+			);
+		}
+		// Publish package assets. Force copy assets in debug mode.
+		if(!isset($this->package['baseUrl']))
+		{
+			$this->package['baseUrl']=Yii::app()->getAssetManager()->publish($this->package['basePath'],false,-1,YII_DEBUG);
+		}
 
-		if($this->assetsUrl===null)
-			$this->assetsUrl=Yii::app()->getAssetManager()->publish(dirname(__FILE__).'/assets',false,-1,YII_DEBUG);
-
-		if($this->scriptFile===null)
-			$this->scriptFile=YII_DEBUG ? 'jquery.uploadify.v2.1.3.js' : 'jquery.uploadify.v2.1.3.min.js';
-
-		if($this->cssFile===null)
-			$this->cssFile='uploadify.css';
+		$baseUrl=$this->package['baseUrl'];
 
 		if(!isset($this->options['uploader']))
-			$this->options['uploader']=$this->assetsUrl.'/uploadify.swf';
-		
+		{
+			$this->options['uploader']=$baseUrl.'/uploadify.swf';
+		}
+
 		if(!isset($this->options['cancelImg']))
-			$this->options['cancelImg']=$this->assetsUrl.'/cancel.png';
+		{
+			$this->options['cancelImg']=$baseUrl.'/cancel.png';
+		}
 
 		if(!isset($this->options['expressInstall']))
-			$this->options['expressInstall']=$this->assetsUrl.'/expressInstall.swf';
+		{
+			$this->options['expressInstall']=$baseUrl.'/expressInstall.swf';
+		}
 
 		if(!isset($this->options['script']))
-			$this->options['script']=$this->assetsUrl.'/uploadify.php';
+		{
+			$this->options['script']=$baseUrl.'/uploadify.php';
+		}
 
-		// send session id with post
-		if($this->sessionParam!==null && !isset($this->options['scriptData'][$this->sessionParam]))
+		// TODO: Decide what to do with checkScript.
+		// if(!isset($this->options['checkScript']))
+		// {
+		//  	$this->options['checkScript']=$this->assetsUrl.'/check.php';
+		// }
+
+		// Send session id with via POST.
+		if($this->sessionParam!==null&&isset($this->options['scriptData'][$this->sessionParam]))
+		{
 			$this->options['scriptData'][$this->sessionParam]=Yii::app()->getSession()->getSessionId();
+		}
 
 		// TODO: Csrf Validation
 		// С этим пока проблема. Т.к. flash upload не посылает куки из-за политики безопасности.
 		// if(Yii::app()->getRequest()->enableCsrfValidation && (!isset($this->options['method']) || $this->options['method']=='POST'))
+		// {
 		//  	$this->options['scriptData'][Yii::app()->getRequest()->csrfTokenName]=Yii::app()->getRequest()->getCsrfToken();
-
-		// if(!isset($this->options['checkScript']))
-		//  	$this->options['checkScript']=$this->assetsUrl.'/check.php';
+		// }
 
 		// fileDesc is required if fileExt set.
-		if(!empty($this->options['fileExt']) && empty($this->options['fileDesc']))
+		if(!empty($this->options['fileExt'])&&empty($this->options['fileDesc']))
+		{
 			$this->options['fileDesc']=Yii::t('yiiext','Supported files ({fileExt})',array('{fileExt}'=>$this->options['fileExt']));
+		}
 
 		// Generate fileDataName for linked with model attribute.
 		$this->options['fileDataName']=$this->name;
@@ -95,9 +127,13 @@ class EUploadifyWidget extends CInputWidget
 	public function run()
 	{
 		if($this->hasModel())
+		{
 			echo CHtml::activeFileField($this->model,$this->attribute,$this->htmlOptions);
+		}
 		else
+		{
 			echo CHtml::fileField($this->name,$this->value,$this->htmlOptions);
+		}
 	}
 	/**
 	 * @return void
@@ -106,10 +142,8 @@ class EUploadifyWidget extends CInputWidget
 	protected function registerClientScript()
 	{
 		$cs=Yii::app()->getClientScript();
-		$cs->registerCssFile($this->assetsUrl.'/'.$this->cssFile);
-		$cs->registerCoreScript('jquery');
-		$cs->registerScriptFile($this->assetsUrl.'/'.$this->scriptFile);
-		$cs->registerScriptFile($this->assetsUrl.'/swfobject.js');
+		$cs->packages['uploadify']=$this->package;
+		$cs->registerPackage('uploadify');
 		$cs->registerScript(__CLASS__.'#'.$this->id,'jQuery("#'.$this->id.'").uploadify('.CJavaScript::encode($this->options).');',CClientScript::POS_READY);
 	}
 }
