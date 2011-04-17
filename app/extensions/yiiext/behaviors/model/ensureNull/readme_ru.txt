@@ -15,7 +15,7 @@ Ensure NULL behavior
 function behaviors() {
     return array(
         'ensureNull' => array(
-            'class' => 'ext.yiiext.behaviors.ensureNull.EEnsureNullBehavior',
+            'class' => 'ext.yiiext.behaviors.model.ensureNull.EEnsureNullBehavior',
             // Использовать ли при обновлении записи
             // 'useOnUpdate' => false,
         )

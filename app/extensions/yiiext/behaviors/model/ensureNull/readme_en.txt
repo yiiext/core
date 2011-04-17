@@ -14,7 +14,7 @@ Define `behaviors()` method in your ActiveRecord mode as follows:
 function behaviors() {
     return array(
         'ensureNull' => array(
-            'class' => 'ext.yiiext.behaviors.ensureNull.EEnsureNullBehavior',
+            'class' => 'ext.yiiext.behaviors.model.ensureNull.EEnsureNullBehavior',
             // Uncomment if you don't want to ensure nulls on update
             // 'useOnUpdate' => false,
         )
