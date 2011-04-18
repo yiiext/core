@@ -678,6 +678,25 @@ class NestedSetBehaviorTest extends CDbTestCase
 		$this->assertTrue($this->checkArrayWithManyRoots($array));
 	}
 
+	public function testMoveAsRoot()
+	{
+		$array=NestedSetWithManyRoots::model()->findAll();
+
+		$nestedSet=NestedSetWithManyRoots::model()->findByPk(2);
+		$this->assertTrue($nestedSet instanceof NestedSetWithManyRoots);
+		$this->assertTrue($nestedSet->moveAsRoot());
+		$this->assertTrue($this->checkTreeWithManyRoots());
+
+		$this->assertTrue($this->checkArrayWithManyRoots($array));
+
+		$nestedSet=NestedSetWithManyRoots::model()->findByPk(10);
+		$this->assertTrue($nestedSet instanceof NestedSetWithManyRoots);
+		$this->assertTrue($nestedSet->moveAsRoot());
+		$this->assertTrue($this->checkTreeWithManyRoots());
+
+		$this->assertTrue($this->checkArrayWithManyRoots($array));
+	}
+
 	private function checkTree()
 	{
 		return $this->checkTree1()
