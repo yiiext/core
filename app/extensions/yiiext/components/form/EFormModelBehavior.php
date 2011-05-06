@@ -21,25 +21,7 @@ class EFormModelBehavior extends CModelBehavior
 	/**
 	 * @var array initial configuration for form.
 	 */
-	public $config=array(
-        'buttons'=>array(
-            'submit'=>array(
-                'type'=>'submit',
-                'label'=>'Сохранить',
-                'on'=>'insert,update',
-            ),
-            'reset'=>array(
-                'type'=>'reset',
-                'label'=>'Отменить',
-                'on'=>'insert,update',
-            ),
-            'search'=>array(
-                'type'=>'submit',
-                'label'=>'Искать',
-                'on'=>'search'
-            ),
-        )
-    );
+	public $config;
 	/**
 	 * @var EForm main object
 	 */
@@ -57,6 +39,27 @@ class EFormModelBehavior extends CModelBehavior
 		{
 			if(!($owner instanceof CBaseController))
 				$owner=Yii::app()->getController();
+            if(empty($this->config)||!is_array($this->config)){
+                $this->config=array(
+                    'buttons'=>array(
+                        'submit'=>array(
+                            'type'=>'submit',
+                            'label'=>Yii::t('yiiext','Save'),
+                            'on'=>'insert,update',
+                        ),
+                        'reset'=>array(
+                            'type'=>'reset',
+                            'label'=>Yii::t('yiiext','Reset'),
+                            'on'=>'insert,update',
+                        ),
+                        'search'=>array(
+                            'type'=>'submit',
+                            'label'=>Yii::t('yiiext','Search'),
+                            'on'=>'search'
+                        ),
+                    )
+                );
+            }
 			$this->_form=new EForm($this->config,$this->getOwner(),null);
 			$this->_form->setElements($this->getFormElements());
             if(!isset($this->id))
