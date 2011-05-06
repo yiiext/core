@@ -116,6 +116,7 @@ class EFormModelBehavior extends CModelBehavior
         $ajaxVar=strcasecmp($this->getForm()->method,'get') ? $_POST['ajax'] : $_GET['ajax'];
         if($this->getAjaxValidation()&&isset($ajaxVar)&&$ajaxVar===$this->getForm()->activeForm['id']){
             $this->getForm()->loadData();
+		// because of renderPartial method needs to clean output buffer
             ob_get_clean();
             echo CActiveForm::validate($this->getOwner(),null,false);
             Yii::app()->end();
