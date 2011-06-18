@@ -12,7 +12,7 @@
  * Also add helper to generate array of default text elements based of {@link CModel::getAttributes()}.
  *
  * @author Maxim Furtuna (Ekstazi)
- * @version 0.3 
+ * @version 0.4
  * @package yiiext.components.form
  */
 require_once(dirname(__FILE__).'/EForm.php');
@@ -28,7 +28,7 @@ class EFormModelBehavior extends CModelBehavior
 	protected $_form;
     public $id;
     public $ajaxValidation=true;
-	
+
 	/**
 	 * Get main form.
 	 * @return EForm
@@ -37,31 +37,36 @@ class EFormModelBehavior extends CModelBehavior
 	{
 		if($this->_form===null)
 		{
+            $o=$this->getOwner();
             if(empty($this->config)||!is_array($this->config)){
+                $isBaseAr=($o instanceof CActiveRecord && in_array($o->scenario,array('insert','update','search')));
                 $this->config=array(
                     'buttons'=>array(
                         'submit'=>array(
                             'type'=>'submit',
-                            'label'=>Yii::t('yiiext','Save'),
-                            'on'=>'insert,update',
+                            'label'=>Yii::t('yiiext',$isBaseAr ? 'Save' : 'Submit'),
+                            'on'=>$isBaseAr ? 'insert,update' : null,
                         ),
                         'reset'=>array(
                             'type'=>'reset',
-                            'label'=>Yii::t('yiiext','Reset'),
-                            'on'=>'insert,update',
-                        ),
-                        'search'=>array(
-                            'type'=>'submit',
-                            'label'=>Yii::t('yiiext','Search'),
-                            'on'=>'search'
+                            'label'=>Yii::t('yiiext','Clear'),
+                            'on'=>$isBaseAr ? 'insert,update' : null,
                         ),
                     )
                 );
+                if($isBaseAr)
+                {
+                    $this->config['buttons']['search']=array(
+                        'type'=>'submit',
+                        'label'=>Yii::t('yiiext','Search'),
+                        'on'=>'search'
+                    );
+                }
             }
-			$this->_form=new EForm($this->config,$this->getOwner(),null);
+			$this->_form=new EForm($this->config,$o,null);
 			$this->_form->setElements($this->getFormElements());
             if(!isset($this->id))
-                $this->id=sprintf('%x',crc32(serialize(array_keys($this->_form->getElements()->toArray())).$this->getOwner()->scenario));
+                $this->id=sprintf('%x',crc32(serialize(array_keys($this->_form->getElements()->toArray())).$o->scenario));
             $this->_form->id=$this->id;
             $this->_form->activeForm=array_merge($this->_form->activeForm,array(
                 'enableAjaxValidation'=>$this->ajaxValidation,
@@ -75,7 +80,7 @@ class EFormModelBehavior extends CModelBehavior
 	 */
 	public function render()
 	{
-		return $this->getform()->render();
+		return $this->getForm()->render();
 	}
 	/**
 	 * Get array elements based of {@link CModel::getAttributes()}.
