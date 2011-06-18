@@ -1,3 +1,11 @@
 0.1
 ---
 - Initial public release.
+0.2
+---
+- Added support for ajax validation
+- Added helper methods submitted, validated, saved
+- Added default config if no config specified
+0.3
+---
+- Added support for the multiple forms with different scenario.

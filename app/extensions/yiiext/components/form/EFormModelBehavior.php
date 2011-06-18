@@ -12,7 +12,7 @@
  * Also add helper to generate array of default text elements based of {@link CModel::getAttributes()}.
  *
  * @author Maxim Furtuna (Ekstazi)
- * @version 0.2
+ * @version 0.3 
  * @package yiiext.components.form
  */
 require_once(dirname(__FILE__).'/EForm.php');
@@ -37,8 +37,6 @@ class EFormModelBehavior extends CModelBehavior
 	{
 		if($this->_form===null)
 		{
-			if(!($owner instanceof CBaseController))
-				$owner=Yii::app()->getController();
             if(empty($this->config)||!is_array($this->config)){
                 $this->config=array(
                     'buttons'=>array(
@@ -63,7 +61,7 @@ class EFormModelBehavior extends CModelBehavior
 			$this->_form=new EForm($this->config,$this->getOwner(),null);
 			$this->_form->setElements($this->getFormElements());
             if(!isset($this->id))
-                $this->id=sprintf('%x',crc32(serialize(array_keys($this->_form->getElements()->toArray()))));
+                $this->id=sprintf('%x',crc32(serialize(array_keys($this->_form->getElements()->toArray())).$this->getOwner()->scenario));
             $this->_form->id=$this->id;
             $this->_form->activeForm=array_merge($this->_form->activeForm,array(
                 'enableAjaxValidation'=>$this->ajaxValidation,
