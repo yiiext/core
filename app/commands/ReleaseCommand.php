@@ -15,7 +15,7 @@ class ReleaseCommand extends CConsoleCommand {
         echo "Preparing $path release.\n";
 
         require dirname(__FILE__).'/GenerateDocsCommand.php';
-        
+
         $docProcessor = new GenerateDocsCommand($this->getName(), $this->getCommandRunner());
         $outFiles = $docProcessor->processDocuments($path);
 
@@ -44,11 +44,12 @@ class ReleaseCommand extends CConsoleCommand {
         foreach($outFiles as $file){
             copy($file, $copiedExtPath.'/'.basename($file));
         }
-        
-        $zipName = end(explode('/', $path)).'_'.$version.'.zip';
+
+		$pathExp = explode('/', $path);
+        $zipName = end($pathExp).'_'.$version.'.zip';
         $releasePath = Yii::getPathOfAlias('application.releases');
         if(!file_exists($releasePath)) mkdir($releasePath, 777, true);
-        
+
         $zipPath = "$releasePath/$zipName";
         if(file_exists($zipPath)) unlink($zipPath);
         //touch($zipPath);
@@ -61,7 +62,7 @@ class ReleaseCommand extends CConsoleCommand {
             die("Failed to open Zip $zipPath.\n");
         }
 
-        if(!$zip->addDir($copiedExtRoot, $path)){
+        if(!$zip->addDir($copiedExtRoot)){
             die("Failed adding $copiedExtRoot to Zip.\n");
         }
 
@@ -71,7 +72,7 @@ class ReleaseCommand extends CConsoleCommand {
         else {
             die("Failed to write Zip $zipPath.\n");
         }
-    }    
+    }
 
     function getHelp(){
         return 'Usage: '.$this->getCommandRunner()->getScriptName().' '.$this->getName()
