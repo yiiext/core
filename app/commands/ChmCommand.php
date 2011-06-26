@@ -150,7 +150,7 @@ class ChmCommand extends CConsoleCommand
 			if(preg_match($expCategory,$line,$matches))
 			{
 				$matches[1]=trim($matches[1]);
-				echo " Adding section [".iconv("UTF-8","CP866",$matches[1])."]\n";
+				echo " Adding section [".iconv("UTF-8","CP866//TRANSLIT//IGNORE",$matches[1])."]\n";
 				$lastToc=$chm->addTocItem(array(
 					'name'=>$matches[1],
 				));
@@ -163,7 +163,7 @@ class ChmCommand extends CConsoleCommand
 			{
 				$matches[1]=trim($matches[1]);
 				$matches[2]=trim($matches[2]);
-				echo " Adding item [".iconv("UTF-8","CP866",$matches[1])."]\n";
+				echo " Adding item [".iconv("UTF-8","CP866//TRANSLIT//IGNORE",$matches[1])."]\n";
 				$lastToc->addChild(array(
 					'name'=>$matches[1],
 					'local'=>$matches[2].'.html'
@@ -173,12 +173,12 @@ class ChmCommand extends CConsoleCommand
 					'local'=>$matches[2].'.html'
 				));
 				// transform .txt to .html
-				echo " Adding file [".iconv("UTF-8","CP866",$matches[2])."]\n";
+				echo " Adding file [".iconv("UTF-8","CP866//TRANSLIT//IGNORE",$matches[2])."]\n";
 				$chm->addFile($this->transformFile($sourcePath.'/'.$matches[2].'.txt',$matches[1],$layout));
 			}
 		}
 
-		echo " Saving ".iconv("UTF-8","CP866",$outputPath)."\n";
+		echo " Saving ".iconv("UTF-8","CP866//TRANSLIT//IGNORE",$outputPath)."\n";
 		$chm->save();
 
 		echo " Deleting temporary files\n";
@@ -209,21 +209,21 @@ class ChmCommand extends CConsoleCommand
 		}
 		$filePath=realpath($filePath);
 
-		echo " Transform file [".iconv("UTF-8","CP866",$filePath)."]\n";
+		echo " Transform file [".iconv("UTF-8","CP866//TRANSLIT//IGNORE",$filePath)."]\n";
 		$content=$this->parser->transform($this->encodeEntities(file_get_contents($filePath)));
-		echo " Render HTML [".iconv("UTF-8","CP866",$filePath)."]\n";
+		echo " Render HTML [".iconv("UTF-8","CP866//TRANSLIT//IGNORE",$filePath)."]\n";
 		$content=$this->renderFile($layout,array('content'=>$content,'title'=>$title),true);
 
 		$htmlFileName=$this->tmpPath.'/'.str_replace('.txt','.html',basename($filePath));
-		echo " Save HTML file [".iconv("UTF-8","CP866",$htmlFileName)."]\n";
-		file_put_contents($htmlFileName,iconv("UTF-8","CP1251",$content));
+		echo " Save HTML file [".iconv("UTF-8","CP866//TRANSLIT//IGNORE",$htmlFileName)."]\n";
+		file_put_contents($htmlFileName,iconv("UTF-8","CP1251//TRANSLIT//IGNORE",$content));
 		return $htmlFileName;
 	}
 	public static function deleteTmpFiles($path)
 	{
 		if(is_file($path))
 		{
-			echo " Delete file [".iconv("UTF-8","CP866",$path)."]\n";
+			echo " Delete file [".iconv("UTF-8","CP866//TRANSLIT//IGNORE",$path)."]\n";
 			return unlink($path);
 		}
 
@@ -233,7 +233,7 @@ class ChmCommand extends CConsoleCommand
 			foreach($files as $index=>$filePath)
 				self::deleteTmpFiles($filePath);
 
-			echo " Delete directory [".iconv("UTF-8","CP866",$path)."]\n";
+			echo " Delete directory [".iconv("UTF-8","CP866//TRANSLIT//IGNORE",$path)."]\n";
 			return rmdir($path);
 		}
 	}
