@@ -10,7 +10,7 @@ class NestedSetWithManyRoots extends CActiveRecord
 	{
 		return array(
 			'tree'=>array(
-				'class'=>'ext.yiiext.behaviors.model.trees.ENestedSetBehavior',
+				'class'=>'ext.yiiext.behaviors.model.trees.NestedSetBehavior',
 				'hasManyRoots'=>true,
 			),
 		);
