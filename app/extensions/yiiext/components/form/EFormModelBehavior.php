@@ -21,11 +21,22 @@ class EFormModelBehavior extends CModelBehavior
 	/**
 	 * @var array initial configuration for form.
 	 */
-	public $config;
+	public $config=array();
 	/**
 	 * @var EForm main object
 	 */
 	protected $_form;
+    protected $_coreButtonTypes=array(
+        'htmlButton',       // a normal button generated using CHtml::htmlButton
+        'htmlReset',        // a reset button generated using CHtml::htmlButton
+        'htmlSubmit',       // a submit button generated using CHtml::htmlButton
+        'submit',           // a submit button generated using CHtml::submitButton
+        'button',           // a normal button generated using CHtml::button
+        'image',            // an image button generated using CHtml::imageButton
+        'reset',            // a reset button generated using CHtml::resetButton
+        'link',             // a link button generated using CHtml::linkButton
+    );
+    private $_firstButton;
     public $id;
     public $ajaxValidation=true;
 
@@ -38,33 +49,8 @@ class EFormModelBehavior extends CModelBehavior
 		if($this->_form===null)
 		{
             $o=$this->getOwner();
-            if(empty($this->config)||!is_array($this->config)){
-                $isBaseAr=($o instanceof CActiveRecord && in_array($o->scenario,array('insert','update','search')));
-                $this->config=array(
-                    'buttons'=>array(
-                        'submit'=>array(
-                            'type'=>'submit',
-                            'label'=>Yii::t('yiiext',$isBaseAr ? 'Save' : 'Submit'),
-                            'on'=>$isBaseAr ? 'insert,update' : null,
-                        ),
-                        'reset'=>array(
-                            'type'=>'reset',
-                            'label'=>Yii::t('yiiext','Clear'),
-                            'on'=>$isBaseAr ? 'insert,update' : null,
-                        ),
-                    )
-                );
-                if($isBaseAr)
-                {
-                    $this->config['buttons']['search']=array(
-                        'type'=>'submit',
-                        'label'=>Yii::t('yiiext','Search'),
-                        'on'=>'search'
-                    );
-                }
-            }
+            $this->config=array_merge($this->config,$this->getFormElements());
 			$this->_form=new EForm($this->config,$o,null);
-			$this->_form->setElements($this->getFormElements());
             if(!isset($this->id))
                 $this->id=sprintf('%x',crc32(serialize(array_keys($this->_form->getElements()->toArray())).$o->scenario));
             $this->_form->id=$this->id;
@@ -91,18 +77,72 @@ class EFormModelBehavior extends CModelBehavior
 	public function getFormElements()
 	{
 		$model=$this->getOwner();
-//        if($model->)
 		if(method_exists($model,'getFormElements'))
-			return $model->getFormElements();
+			$description=$model->getFormElements();
 		else
 		{
-			$elements=array();
+			$description=array();
 			foreach($model->getAttributes() as $attribute=>$value)
-				$elements[$attribute]=array(
+				$description[$attribute]=array(
 					'type'=>'text',
 				);
-			return $elements;
 		}
+        $elements=array();
+        $buttons=array();
+        
+        foreach($description as $element=>$config)
+        {
+            if(is_array($config))
+            {
+                if(!isset($config['type']))
+                    $config['type']='text';
+
+                if(preg_match('~^(button|element|input)\.(.+)$~i',$config['type'],$regs))
+                {
+                    $config['type']=$regs[2];
+                    if(!strcasecmp($regs[1],'button'))
+                        $buttons[$element]=$config;
+                    else
+                        $elements[$element]=$config;
+                }elseif(in_array($config['type'],$this->_coreButtonTypes))
+                {
+                    $buttons[$element]=$config;
+                }else
+                    $elements[$element]=$config;
+            }else
+                $elements[$element]=$config;
+        }
+        
+        if(empty($buttons))
+        {
+            $isBaseAr=($model instanceof CActiveRecord && in_array($model->scenario,array('insert','update','search')));
+            $buttons=array(
+                'submit'=>array(
+                    'type'=>'submit',
+                    'label'=>Yii::t('yiiext',$isBaseAr ? 'Save' : 'Submit'),
+                    'on'=>$isBaseAr ? 'insert,update' : null,
+                ),
+                'reset'=>array(
+                    'type'=>'reset',
+                    'label'=>Yii::t('yiiext','Clear'),
+                    'on'=>$isBaseAr ? 'insert,update' : null,
+                ),
+            );
+            if($isBaseAr)
+            {
+                $buttons['search']=array(
+                    'type'=>'submit',
+                    'label'=>Yii::t('yiiext','Search'),
+                    'on'=>'search'
+                );
+            }
+        }
+        reset($buttons);
+        $this->_firstButton=key($buttons);
+        return array(
+            'elements'=>$elements,
+            'buttons'=>$buttons,
+        );
 	}
     /**
      *
@@ -135,9 +175,11 @@ class EFormModelBehavior extends CModelBehavior
      * @param string $button name of clicked button
      * @return boolean validation status
      */
-    public function submitted($button='submit')
+    public function submitted($button=null)
     {
-        return $this->performAjax()&&$this->getForm()->submitted($button);
+        $form=$this->getForm();
+        $button=isset($button) ? $button : $this->_firstButton;
+        return $this->performAjax()&&$form->submitted($button);
     }
     /**
      * Performs Performs check for submission, then process ajax request,
@@ -145,7 +187,7 @@ class EFormModelBehavior extends CModelBehavior
      * @param string $button name of clicked button
      * @return boolean saving status
      */
-    public function saved($button='submit')
+    public function saved($button=null)
     {
         return $this->submitted($button)&&$this->getOwner()->save();
     }
@@ -155,7 +197,7 @@ class EFormModelBehavior extends CModelBehavior
      * @param string $button name of clicked button
      * @return boolean validation status
      */
-    public function validated($button='submit')
+    public function validated($button=null)
     {
         return $this->submitted($button)&&$this->getOwner()->validate();
     }

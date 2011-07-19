@@ -12,3 +12,6 @@
 0.4
 ---
 - Fixed default config support for non AR models. (EFormModelBehavior).
+0.5 
+---
+- Added support for buttons passing in getFormElements
