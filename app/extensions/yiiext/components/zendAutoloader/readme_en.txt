@@ -49,12 +49,12 @@ require_once(dirname($webRoot).'/framework/yii.php');
 $configFile=$webRoot.'/../protected/config/main.php';
 $app = Yii::createWebApplication($configFile);
 
-// можно загружать не только классы Zend, но и любые другие с такой же схемой
-// именования
+// you can load not only Zend classes but also other classes with the same naming
+// convention
 EZendAutoloader::$prefixes = array('Zend', 'Custom');
 
 Yii::import("ext.yiiext.components.zendAutoloader.EZendAutoloader", true);
-Yii::registerAutoloader(array("EZendAutoloader", "loadClass"));
+Yii::registerAutoloader(array("EZendAutoloader", "loadClass"), true);
 
 $app->run();
 ~~~

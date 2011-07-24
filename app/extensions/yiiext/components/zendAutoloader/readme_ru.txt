@@ -54,7 +54,7 @@ Yii::import("ext.yiiext.components.zendAutoloader.EZendAutoloader", true);
 // you are able to load custom code that is using Zend class naming convention
 // with different prefix
 EZendAutoloader::$prefixes = array('Zend', 'Custom');
-Yii::registerAutoloader(array("EZendAutoloader", "loadClass"));
+Yii::registerAutoloader(array("EZendAutoloader", "loadClass"), true);
 
 $app->run();
 ~~~
