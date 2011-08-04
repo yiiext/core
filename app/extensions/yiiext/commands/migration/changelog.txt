@@ -1,0 +1,5 @@
+0.1.0
+---
+- Initial public release (cebe)
+- module support for migrations
+- extended execute() of CDbMigration with parameter $verbose
