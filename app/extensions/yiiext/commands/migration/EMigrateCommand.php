@@ -19,7 +19,7 @@ require_once(dirname(__FILE__) . DIRECTORY_SEPARATOR . 'EDbMigration.php');
  *
  * @link http://www.yiiframework.com/doc/guide/1.1/en/database.migration
  * @author Carsten Brandt <mail@cebe.cc>
- * @version 0.1.0
+ * @version 0.2.0
  */
 class EMigrateCommand extends MigrateCommand
 {
@@ -57,8 +57,6 @@ class EMigrateCommand extends MigrateCommand
 
 	protected $migrationModuleMap = array();
 
-	private $_currentAction;
-
 	/**
 	 * prepare paths before any action
 	 *
@@ -68,8 +66,6 @@ class EMigrateCommand extends MigrateCommand
 	 */
 	public function beforeAction($action, $params)
 	{
-		$this->_currentAction = $action;
-
 		Yii::import($this->migrationPath . '.*');
 		if ($return = parent::beforeAction($action, $params)) {
 
@@ -78,6 +74,10 @@ class EMigrateCommand extends MigrateCommand
 			if ($action == 'create' && !is_null($this->module)) {
 				$this->usageError('create command can not be called with --module parameter!');
 			}
+			if (!is_null($this->module) && !is_string($this->module)) {
+				$this->usageError('parameter --module must be a comma seperated list of modules or a single module name!');
+			}
+
 
 			// add a pseudo-module 'core'
 			$this->modulePaths[$this->applicationModuleName] = $this->migrationPath;
@@ -87,20 +87,27 @@ class EMigrateCommand extends MigrateCommand
 			foreach($this->modulePaths as $module => $pathAlias) {
 				if (in_array($module, $this->disabledModules)) {
 					unset($this->modulePaths[$module]);
+					$disabledModules[] = $module;
 				}
 			}
 			if (!empty($disabledModules)) {
-				echo "The following modules are disabled: " . implode(', ', $disabledModules) . "\n\n";
+				echo "The following modules are disabled: " . implode(', ', $disabledModules) . "\n";
 			}
-print_r($this->module);
+
 			// only add modules that are desired by command
 			$modules = false;
 			if (!is_null($this->module)) {
 				$modules = explode(',', $this->module);
-			}
-			print_r($modules);
 
-			// @todo: error if specified module does not exist
+				// error if specified module does not exist
+				foreach ($modules as $module) {
+					if (!isset($this->modulePaths[$module])) {
+						die("\nError: module '$module' is not available!\n\n");
+					}
+				}
+				echo "Current call with modules: " . implode(', ', $modules) . "\n";
+			}
+			echo "\n";
 
 			// initialize modules
 			foreach($this->modulePaths as $module => $pathAlias) {
@@ -122,7 +129,6 @@ print_r($this->module);
 		return $return;
 	}
 
-
 	public function actionCreate($args)
 	{
 		// if module is given adjust path
@@ -136,75 +142,40 @@ print_r($this->module);
 		parent::actionCreate($args);
 	}
 
-/*	protected function migrateUp($class)
+	public function actionTo($args)
 	{
-		if($class===self::BASE_MIGRATION)
-			return;
-
-		echo "*** applying $class\n";
-		$start=microtime(true);
-		$migration=$this->instantiateMigration($class);
-		$time=microtime(true)-$start;
-		if($migration->up()!==false)
-		{
-			$this->getDbConnection()->createCommand()->insert($this->migrationTable, array(
-				'version'=>$class,
-				'apply_time'=>time(),
-			));
-			echo "*** applied $class (time: ".sprintf("%.3f",$time)."s)\n\n";
-		}
-		else
-		{
-			echo "*** failed to apply $class (time: ".sprintf("%.3f",$time)."s)\n\n";
-			return false;
-		}
+		die('migrate to does not yet work with modules.' . "\n\n");
 	}
 
-	protected function migrateDown($class)
+	public function actionMark($args)
 	{
-		if($class===self::BASE_MIGRATION)
-			return;
-
-		echo "*** reverting $class\n";
-		$start=microtime(true);
-		$migration=$this->instantiateMigration($class);
-		$time=microtime(true)-$start;
-		if($migration->down()!==false)
-		{
-			$db=$this->getDbConnection();
-			$db->createCommand()->delete($this->migrationTable, $db->quoteColumnName('version').'=:version', array(':version'=>$class));
-			echo "*** reverted $class (time: ".sprintf("%.3f",$time)."s)\n\n";
-		}
-		else
-		{
-			echo "*** failed to revert $class (time: ".sprintf("%.3f",$time)."s)\n\n";
-			return false;
-		}
-	}*/
+		die('migrate mark does not yet work with modules.' . "\n\n");
+	}
 
 	protected function instantiateMigration($class)
 	{
-		if ($class instanceof EDbMigration) {
-			return $class;
-		}
 		require_once($class.'.php');
 		$migration=new $class;
 		$migration->setDbConnection($this->getDbConnection());
 		return $migration;
 	}
 
+	// set to not add modules when getHistory is called for getNewMigrations
+	private $_scopeNewMigrations = false;
+
 	protected function getNewMigrations()
 	{
-		$modules = $this->modulePaths;
-
+		$this->_scopeNewMigrations = true;
 		$migrations = array();
-		foreach($modules as $module => $path) {
+		// get new migrations for all new modules
+		foreach($this->modulePaths as $module => $path)
+		{
 			$this->migrationPath = $path;
 			foreach(parent::getNewMigrations() as $migration) {
-				$migrations[$migration] = new $migration();
-				$migrations[$migration]->module = $module;
+				$migrations[$migration] = $module.':'.$migration;
 			}
 		}
+		$this->_scopeNewMigrations = false;
 
 		ksort($migrations);
 		return $migrations;
@@ -212,19 +183,64 @@ print_r($this->module);
 
 	protected function getMigrationHistory($limit)
 	{
-		$history = parent::getMigrationHistory($limit);
-		if ($this->_currentAction != 'history') {
-			// need to remove module information
-			$fixedHistory = array();
-			foreach($history as $migration => $time) {
-				if (($pos = strpos($migration, ': ')) !== false) {
-					$fixedHistory[substr($migration, $pos + 2)] = $time;
-				}
-			}
-			return $fixedHistory;
+		$db=$this->getDbConnection();
+		if($db->schema->getTable($this->migrationTable)===null)
+		{
+			echo 'Creating migration history table "'.$this->migrationTable.'"...';
+			$db->createCommand()->createTable($this->migrationTable, array(
+				'version'=>'string NOT NULL PRIMARY KEY',
+				'apply_time'=>'integer',
+				'module'=>'VARCHAR(32)',
+			));
+			$db->createCommand()->insert($this->migrationTable, array(
+				'version'=>self::BASE_MIGRATION,
+				'apply_time'=>time(),
+				'module'=>'',
+			));
+			echo "done.\n";
 		}
-		return $history;
+
+		if ($this->_scopeNewMigrations) {
+			return parent::getMigrationHistory($limit);
+		}
+
+		return CHtml::listData($db->createCommand()
+			->select("CONCAT(module,':',version) AS versionName, apply_time")
+			->from($this->migrationTable)
+			->order('version DESC')
+			->limit($limit)
+			->queryAll(), 'versionName', 'apply_time');
 	}
+
+	protected function migrateUp($class)
+	{
+		$module = '';
+		// remove module if given
+		if (($pos = strpos($class, ':')) !== false) {
+			$module = substr($class, 0, $pos);
+			$class = substr($class, $pos + 1);
+		}
+		// add module information to migration table
+		if (($ret = parent::migrateUp($class)) !== false) {
+			$this->getDbConnection()->createCommand()->update(
+				$this->migrationTable,
+				array('module'=>$module),
+				'version=:version',
+				array(':version' => $class)
+			);
+		}
+		return $ret;
+	}
+
+	protected function migrateDown($class)
+	{
+		// remove module if given
+		if (($pos = strpos($class, ':')) !== false) {
+			$class = substr($class, $pos + 1);
+		}
+		return parent::migrateDown($class);
+	}
+
 
 	public function getHelp()
 	{
@@ -239,6 +255,8 @@ EXTENDED USAGE EXAMPLES (with modules)
    Creates a new migration named 'create_user_table' in module 'modulename'.
 
   all other commands work exactly as described above.
+
+  commands 'mark' and 'to' are not yet available.
 
 EOD;
 	}
