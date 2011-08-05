@@ -19,7 +19,7 @@ require_once(dirname(__FILE__) . DIRECTORY_SEPARATOR . 'EDbMigration.php');
  *
  * @link http://www.yiiframework.com/doc/guide/1.1/en/database.migration
  * @author Carsten Brandt <mail@cebe.cc>
- * @version 0.2.0
+ * @version 0.2.1
  */
 class EMigrateCommand extends MigrateCommand
 {
@@ -54,6 +54,11 @@ class EMigrateCommand extends MigrateCommand
 	 * @var string the application core is handled as a module named 'core' by default
 	 */
 	public $applicationModuleName = 'core';
+
+	/**
+	 * @var string delimiter for modulename and migration name for display
+	 */
+	public $moduleDelimiter = ': ';
 
 	protected $migrationModuleMap = array();
 
@@ -172,7 +177,7 @@ class EMigrateCommand extends MigrateCommand
 		{
 			$this->migrationPath = $path;
 			foreach(parent::getNewMigrations() as $migration) {
-				$migrations[$migration] = $module.':'.$migration;
+				$migrations[$migration] = $module.$this->moduleDelimiter.$migration;
 			}
 		}
 		$this->_scopeNewMigrations = false;
@@ -205,20 +210,20 @@ class EMigrateCommand extends MigrateCommand
 		}
 
 		return CHtml::listData($db->createCommand()
-			->select("CONCAT(module,':',version) AS versionName, apply_time")
+			->select("CONCAT(module,:delimiter,version) AS versionName, apply_time")
 			->from($this->migrationTable)
 			->order('version DESC')
 			->limit($limit)
-			->queryAll(), 'versionName', 'apply_time');
+			->queryAll(true, array(':delimiter' => $this->moduleDelimiter)), 'versionName', 'apply_time');
 	}
 
 	protected function migrateUp($class)
 	{
 		$module = '';
 		// remove module if given
-		if (($pos = strpos($class, ':')) !== false) {
-			$module = substr($class, 0, $pos);
-			$class = substr($class, $pos + 1);
+		if (($pos = mb_strpos($class, $this->moduleDelimiter)) !== false) {
+			$module = mb_substr($class, 0, $pos);
+			$class = mb_substr($class, $pos + mb_strlen($this->moduleDelimiter));
 		}
 		// add module information to migration table
 		if (($ret = parent::migrateUp($class)) !== false) {
@@ -235,8 +240,8 @@ class EMigrateCommand extends MigrateCommand
 	protected function migrateDown($class)
 	{
 		// remove module if given
-		if (($pos = strpos($class, ':')) !== false) {
-			$class = substr($class, $pos + 1);
+		if (($pos = mb_strpos($class, $this->moduleDelimiter)) !== false) {
+			$class = mb_substr($class, $pos + mb_strlen($this->moduleDelimiter));
 		}
 		return parent::migrateDown($class);
 	}
