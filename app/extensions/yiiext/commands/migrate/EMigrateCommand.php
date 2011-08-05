@@ -19,7 +19,7 @@ require_once(dirname(__FILE__) . DIRECTORY_SEPARATOR . 'EDbMigration.php');
  *
  * @link http://www.yiiframework.com/doc/guide/1.1/en/database.migration
  * @author Carsten Brandt <mail@cebe.cc>
- * @version 0.2.1
+ * @version 0.2.2
  */
 class EMigrateCommand extends MigrateCommand
 {
@@ -110,7 +110,7 @@ class EMigrateCommand extends MigrateCommand
 						die("\nError: module '$module' is not available!\n\n");
 					}
 				}
-				echo "Current call with modules: " . implode(', ', $modules) . "\n";
+				echo "Current call limited to module" . (count($modules)>1 ? "s" : "") . ": " . implode(', ', $modules) . "\n";
 			}
 			echo "\n";
 
@@ -206,15 +206,27 @@ class EMigrateCommand extends MigrateCommand
 		}
 
 		if ($this->_scopeNewMigrations) {
-			return parent::getMigrationHistory($limit);
+			$select = "version, apply_time";
+			$params = array();
+		} else {
+			$select = "CONCAT(module,:delimiter,version) AS versionName, apply_time";
+			$params = array(':delimiter' => $this->moduleDelimiter);
 		}
 
-		return CHtml::listData($db->createCommand()
-			->select("CONCAT(module,:delimiter,version) AS versionName, apply_time")
-			->from($this->migrationTable)
-			->order('version DESC')
-			->limit($limit)
-			->queryAll(true, array(':delimiter' => $this->moduleDelimiter)), 'versionName', 'apply_time');
+		$command = $db->createCommand()
+					  ->select($select)
+					  ->from($this->migrationTable)
+					  ->order('version DESC')
+					  ->limit($limit);
+
+		if (!is_null($this->module)) {
+			$criteria = new CDbCriteria();
+			$criteria->addInCondition('module', explode(',', $this->module));
+			$command->where = $criteria->condition;
+			$params += $criteria->params;
+		}
+
+		return CHtml::listData($command->queryAll(true, $params), 'versionName', 'apply_time');
 	}
 
 	protected function migrateUp($class)

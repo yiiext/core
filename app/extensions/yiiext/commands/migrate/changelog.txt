@@ -1,3 +1,7 @@
+0.2.2 (2011-08-05)
+-----
+- fixed problem with history and down migration when --module parameter is set (cebe)
+
 0.2.1 (2011-08-05)
 -----
 - added $moduleDelimiter property and replaced string function with multibyte versions (cebe)
