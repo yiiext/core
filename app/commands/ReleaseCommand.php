@@ -27,7 +27,7 @@ class ReleaseCommand extends CConsoleCommand {
         if(file_exists($copiedExtRoot)) $this->recursiveDelete($copiedExtRoot);
 
         $copiedExtPath = $copiedExtRoot.'/'.$path;
-        if(!file_exists($copiedExtPath)) mkdir($copiedExtPath, 777, true);
+        if(!file_exists($copiedExtPath)) mkdir($copiedExtPath, 0777, true);
 
         echo "Copying extension files from $extPath to $copiedExtPath.\n";
 
@@ -48,7 +48,7 @@ class ReleaseCommand extends CConsoleCommand {
 		$pathExp = explode('/', $path);
         $zipName = end($pathExp).'_'.$version.'.zip';
         $releasePath = Yii::getPathOfAlias('application.releases');
-        if(!file_exists($releasePath)) mkdir($releasePath, 777, true);
+        if(!file_exists($releasePath)) mkdir($releasePath, 0777, true);
 
         $zipPath = "$releasePath/$zipName";
         if(file_exists($zipPath)) unlink($zipPath);
