@@ -1,5 +1,0 @@
-1.0.1
-[*] New naming conventions.
-
-1.0
-[+] Initial release.

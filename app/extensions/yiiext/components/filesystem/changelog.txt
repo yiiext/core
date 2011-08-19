@@ -1,5 +1,0 @@
-0.2
-[*] Change recursion style in findRecursive().
-
-0.1
-[+] Initial release.

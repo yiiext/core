@@ -1,5 +1,0 @@
-0.1
-[+] activeLinkDisable - для активного пункта меню, тэг "a" будет заменен на "span"
-[*] submenuHtmlOptions - добавлено и для каждого пункта меню
-[*] encodeLabel - добавлено и для каждого пункта меню
-[*] itemOptions - заменено на htmlOptions для стандартизации

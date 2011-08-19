@@ -1,5 +1,0 @@
-0.02
-[*] upgrade jquery cycle plugin to version 2.88.
-
-0.01
-[+] initial release.

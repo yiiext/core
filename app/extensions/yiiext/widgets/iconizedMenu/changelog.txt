@@ -1,7 +1,0 @@
-1.1
----
-- Yandex sprites support, enabled by default (Sam Dark)
-
-1.0
----
-- Initial release (Sam Dark)

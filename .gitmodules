@@ -1,0 +1,114 @@
+[submodule "app/extensions/yiiext/renderers/twig"]
+	path = app/extensions/yiiext/renderers/twig
+	url = https://github.com/yiiext/twig-renderer
+[submodule "app/extensions/yiiext/renderers/smarty"]
+	path = app/extensions/yiiext/renderers/smarty
+	url = https://github.com/yiiext/smarty-renderer
+[submodule "app/extensions/yiiext/modules/webshell"]
+	path = app/extensions/yiiext/modules/webshell
+	url = https://github.com/yiiext/webshell-module
+[submodule "app/extensions/yiiext/behaviors/model/taggable"]
+	path = app/extensions/yiiext/behaviors/model/taggable
+	url = https://github.com/yiiext/taggable-behavior
+[submodule "app/extensions/yiiext/commands/migrate"]
+	path = app/extensions/yiiext/commands/migrate
+	url = https://github.com/yiiext/migrate-command
+[submodule "app/extensions/yiiext/behaviors/model/status"]
+	path = app/extensions/yiiext/behaviors/model/status
+	url = https://github.com/yiiext/status-behavior
+[submodule "app/extensions/yiiext/behaviors/model/ensureNull"]
+	path = app/extensions/yiiext/behaviors/model/ensureNull
+	url = https://github.com/yiiext/ensure-null-behavior
+[submodule "app/extensions/yiiext/behaviors/model/trees"]
+	path = app/extensions/yiiext/behaviors/model/trees
+	url = https://github.com/yiiext/nested-set-behavior
+[submodule "app/extensions/yiiext/behaviors/model/trashBin"]
+	path = app/extensions/yiiext/behaviors/model/trashBin
+	url = https://github.com/yiiext/trash-bin-behavior
+[submodule "app/extensions/yiiext/behaviors/model/eav"]
+	path = app/extensions/yiiext/behaviors/model/eav
+	url = https://github.com/yiiext/eav-behavior
+[submodule "app/extensions/yiiext/zii/widgets/grid/imageColumn"]
+	path = app/extensions/yiiext/zii/widgets/grid/imageColumn
+	url = https://github.com/yiiext/zii-image-column
+[submodule "app/extensions/yiiext/widgets/uploadify"]
+	path = app/extensions/yiiext/widgets/uploadify
+	url = https://github.com/yiiext/uploadify-widget
+[submodule "app/extensions/yiiext/widgets/markitup"]
+	path = app/extensions/yiiext/widgets/markitup
+	url = https://github.com/yiiext/markitup-widget
+[submodule "app/extensions/yiiext/widgets/iconizedMenu"]
+	path = app/extensions/yiiext/widgets/iconizedMenu
+	url = https://github.com/yiiext/iconized-menu-widget
+[submodule "app/extensions/yiiext/widgets/simplemodal"]
+	path = app/extensions/yiiext/widgets/simplemodal
+	url = https://github.com/yiiext/simplemodal-widget
+[submodule "app/extensions/yiiext/widgets/imperaviRedactor"]
+	path = app/extensions/yiiext/widgets/imperaviRedactor
+	url = https://github.com/yiiext/imperavi-redactor-widget
+[submodule "app/extensions/yiiext/widgets/fancybox"]
+	path = app/extensions/yiiext/widgets/fancybox
+	url = https://github.com/yiiext/fancybox-widget
+[submodule "app/extensions/yiiext/widgets/blueprint"]
+	path = app/extensions/yiiext/widgets/blueprint
+	url = https://github.com/yiiext/blueprint-widget
+[submodule "app/extensions/yiiext/filters/activeFormValidation"]
+	path = app/extensions/yiiext/filters/activeFormValidation
+	url = https://github.com/yiiext/active-form-validation-filter
+[submodule "app/extensions/yiiext/filters/forgerySession"]
+	path = app/extensions/yiiext/filters/forgerySession
+	url = https://github.com/yiiext/forgery-session-filter
+[submodule "app/extensions/yiiext/filters/setReturnUrl"]
+	path = app/extensions/yiiext/filters/setReturnUrl
+	url = https://github.com/yiiext/set-return-url-filter
+[submodule "app/extensions/yiiext/components/breadCrumbs"]
+	path = app/extensions/yiiext/components/breadCrumbs
+	url = https://github.com/yiiext/breadcrumbs-component
+[submodule "app/extensions/yiiext/components/chm"]
+	path = app/extensions/yiiext/components/chm
+	url = https://github.com/yiiext/chm-component
+[submodule "app/extensions/yiiext/components/filesystem"]
+	path = app/extensions/yiiext/components/filesystem
+	url = https://github.com/yiiext/filesystem-component
+[submodule "app/extensions/yiiext/components/form"]
+	path = app/extensions/yiiext/components/form
+	url = https://github.com/yiiext/form-component
+[submodule "app/extensions/yiiext/components/imageValidator"]
+	path = app/extensions/yiiext/components/imageValidator
+	url = https://github.com/yiiext/image-validator-component
+[submodule "app/extensions/yiiext/components/phpDoc"]
+	path = app/extensions/yiiext/components/phpDoc
+	url = https://github.com/yiiext/phpdoc-component
+[submodule "app/extensions/yiiext/components/shoppingCart"]
+	path = app/extensions/yiiext/components/shoppingCart
+	url = https://github.com/yiiext/shopping-cart-component
+[submodule "app/extensions/yiiext/components/translit"]
+	path = app/extensions/yiiext/components/translit
+	url = https://github.com/yiiext/translit-filter
+[submodule "app/extensions/yiiext/components/zendAutoloader"]
+	path = app/extensions/yiiext/components/zendAutoloader
+	url = https://github.com/yiiext/zend-autoloader-component
+[submodule "app/extensions/yiiext/actions/fileUpload"]
+	path = app/extensions/yiiext/actions/fileUpload
+	url = https://github.com/yiiext/file-upload-action
+[submodule "app/extensions/yiiext/widgets/menu"]
+	path = app/extensions/yiiext/widgets/menu
+	url = https://github.com/yiiext/menu-widget
+[submodule "app/extensions/yiiext/widgets/lipsum"]
+	path = app/extensions/yiiext/widgets/lipsum
+	url = https://github.com/yiiext/lipsum-widget
+[submodule "app/extensions/yiiext/widgets/elfinder"]
+	path = app/extensions/yiiext/widgets/elfinder
+	url = https://github.com/yiiext/elfinder-widget
+[submodule "app/extensions/yiiext/widgets/cycle"]
+	path = app/extensions/yiiext/widgets/cycle
+	url = https://github.com/yiiext/cycle-widget
+[submodule "app/extensions/yiiext/widgets/ckeditor"]
+	path = app/extensions/yiiext/widgets/ckeditor
+	url = https://github.com/yiiext/ckeditor-widget
+[submodule "app/extensions/yiiext/widgets/carousel"]
+	path = app/extensions/yiiext/widgets/carousel
+	url = https://github.com/yiiext/carousel-widget
+[submodule "app/extensions/yiiext/widgets/swfobject"]
+	path = app/extensions/yiiext/widgets/swfobject
+	url = https://github.com/yiiext/swf-object-widget

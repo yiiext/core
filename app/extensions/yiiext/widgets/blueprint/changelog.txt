@@ -1,8 +1,0 @@
-0.2
----
-[*] Rename scriptUrl property to baseUrl (Veaceslav Medvedev)
-[*] Update blueprint framework to 1.0. (Veaceslav Medvedev)
-
-0.1
----
-[+] Initial public release. (Veaceslav Medvedev)
