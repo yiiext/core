@@ -112,3 +112,6 @@
 [submodule "app/extensions/yiiext/widgets/swfobject"]
 	path = app/extensions/yiiext/widgets/swfobject
 	url = https://github.com/yiiext/swf-object-widget
+[submodule "yii"]
+	path = yii
+	url = https://github.com/yiiext/yii.git
