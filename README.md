@@ -1,17 +1,16 @@
-yiiext - The unofficial Yii Extensions repository
--------------------------------------------------
+# yiiext - unofficial Yii extensions repository
 
-How to work on an Extension
----------------------------
+## How to work on an Extension
 
-## Create local copy of repository
+### Create local copy of repository
 * clone this repository `git clone git@github.com:yiiext/core.git yiiext`
 * `cd yiiext`
 * initialize submodules `git submodule update --init`
 
-## Update local copy
+### Update local copy
 * `git pull`
 * `git submodule update`
+
 
 to be continued...
 
