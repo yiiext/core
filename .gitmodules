@@ -118,3 +118,6 @@
 [submodule "app/extensions/yiiext/components/reversed-pagination"]
 	path = app/extensions/yiiext/components/reversed-pagination
 	url = https://github.com/yiiext/reversed-pagination.git
+[submodule "app/extensions/yiiext/components/shorturl"]
+	path = app/extensions/yiiext/components/shorturl
+	url = https://github.com/yiiext/shorturl-component.git
