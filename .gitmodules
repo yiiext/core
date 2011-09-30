@@ -115,3 +115,6 @@
 [submodule "yii"]
 	path = yii
 	url = https://github.com/yiiext/yii.git
+[submodule "app/extensions/yiiext/components/reversed-pagination"]
+	path = app/extensions/yiiext/components/reversed-pagination
+	url = https://github.com/yiiext/reversed-pagination.git
