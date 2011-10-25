@@ -22,9 +22,10 @@
 <div class="container" id="page">
 
 	<div id="header">
+        <div class="extensions-count"><b>51</b> great Yii extensions!</div>
 		<div id="logo">
             <h1>{CHtml::encode(Yii::app()->name)}</h1>
-            unofficial yii extension repository
+            unofficial Yii extension repository
         </div>
 	</div><!-- header -->
 
