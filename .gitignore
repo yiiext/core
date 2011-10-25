@@ -1,0 +1,12 @@
+# runtime directories
+app/runtime
+
+# generated files
+app/docs
+app/releases
+
+# vendors
+# this has to be a symlink to a Smarty/libs directory
+app/vendors/Smarty
+
+
