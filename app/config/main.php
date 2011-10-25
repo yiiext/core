@@ -5,6 +5,7 @@
 return array(
 	'basePath' => dirname(__FILE__) . DIRECTORY_SEPARATOR . '..',
 	'language' => 'ru',
+    'name' => 'yiiext',
 
 
 	// preloading 'log' component
@@ -22,6 +23,12 @@ return array(
 		'cache' => array(
 			'class' => 'CFileCache',
 		),
+        'viewRenderer'=>array(
+            'class'=>'ext.yiiext.renderers.smarty.ESmartyViewRenderer',
+            'fileExtension' => '.tpl',
+            //'pluginsDir' => 'application.smartyPlugins',
+            //'configDir' => 'application.smartyConfig',
+        ),
 		'log' => array(
 			'class' => 'CLogRouter',
 			'routes' => array(
