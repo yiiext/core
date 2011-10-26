@@ -121,3 +121,6 @@
 [submodule "app/extensions/yiiext/components/shorturl"]
 	path = app/extensions/yiiext/components/shorturl
 	url = https://github.com/yiiext/shorturl-component.git
+[submodule "app/extensions/yiiext/components/github-api"]
+	path = app/extensions/yiiext/components/github-api
+	url = https://github.com/yiiext/github-api
