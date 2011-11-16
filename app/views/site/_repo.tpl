@@ -1,5 +1,6 @@
-<div class="repo">
+<div class="repo{if isset($noReadme) && $noReadme} noreadme{/if}">
     <div class="repo-head">
+        {if !isset($noReadme) || $noReadme==false}
         <div style="text-align: right; float: right;">
             {$readmes = $this->api->getRepoReadmeFilenames($repo->name)}
             {if empty($readmes)}
@@ -13,7 +14,7 @@
 
             {*<b>{count($this->api->getRepoWatchers($repo->name))}</b>*}
         </div>
-
+        {/if}
 
         <h3>{CHtml::link($repo->name|escape, ['site/repo', 'name'=>$repo->name])}</h3>
     </div>

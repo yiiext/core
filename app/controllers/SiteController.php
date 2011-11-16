@@ -32,16 +32,43 @@ class SiteController extends CController
 	{
 		$repo = $this->api->getRepo($name);
 		$this->repoUrl = $repo->html_url;
+
+		// redirect to readme if there is one
+		$readmes = $this->api->getRepoReadmeFilenames($name);
+		ksort($readmes);
+		foreach($readmes as $lang => $readme) {
+			$this->redirect(array('site/repoReadme', 'name'=>$name, 'lang'=>$lang));
+		}
+
 		$this->render('repo', array(
 			'repo' => $repo,
-			'tags' => $this->api->getRepoTags($name),
-			'readmeFiles' => $this->api->getRepoReadmeFilenames($name),
+			'changelog' => $this->getRepoChangelog($name),
+			'readmeFiles' => $readmes,
 		));
+	}
+
+	public function getRepoChangelog($name)
+	{
+		$github = new ESimpleGithub();
+		$changelogs = $this->api->getRepoChangelogFilenames($name);
+		if (isset($changelogs['en'])) {
+			$changelog = $github->getFile('yiiext', $name, 'master', $changelogs['en']);
+		}
+		else {
+			return '';
+		}
+
+		$markdownParser = new CMarkdownParser();
+		$changelog = $markdownParser->transform($changelog);
+
+		return str_replace(array('<h2>', '</h2>'), array('<h3>', '</h3>'),
+			   str_replace(array('<h3>', '</h3>'), array('<h4>', '</h4>'), $changelog));
 	}
 
 	public function actionRepoReadme($name, $lang)
 	{
 		$repo = $this->api->getRepo($name);
+		$this->repoUrl = $repo->html_url;
 
 		$github = new ESimpleGithub();
 		$readmes = $this->api->getRepoReadmeFilenames($name);
@@ -57,9 +84,9 @@ class SiteController extends CController
 
 		$this->render('repo', array(
 			'repo' => $repo,
-			'tags' => $this->api->getRepoTags($name),
 			'readmeFiles' => $this->api->getRepoReadmeFilenames($name),
-			'readme' => $readme
+			'readme' => $readme,
+			'changelog' => $this->getRepoChangelog($name),
 		));
 	}
 

@@ -61,7 +61,7 @@ class YiiextGithubApi extends ESimpleGithub
 		return $this->cachedRequest('/repos/yiiext/' . $name . '/tags');
 	}
 
-	public function getRepoReadmeFilenames($name)
+	protected function getRepoTree($name)
 	{
 		$repo = $this->getRepo($name);
 		// ignore empty repos
@@ -75,14 +75,35 @@ class YiiextGithubApi extends ESimpleGithub
 		$commit = $this->cachedRequest('/repos/yiiext/' . $name . '/commits/' . $master[0]->object->sha);
 		$tree = $this->cachedRequest('/repos/yiiext/' . $name . '/git/trees/' . $commit->commit->tree->sha);
 
+		return $tree->tree;
+	}
+
+	public function getRepoReadmeFilenames($name)
+	{
+		$tree = $this->getRepoTree($name);
+
 		$files = array();
-		foreach($tree->tree as $fileItem) {
+		foreach($tree as $fileItem) {
 			$m = array();
 			if ($fileItem->mode != '120000' && strtolower($fileItem->path) == 'readme.md') {
 				$files['en'] = $fileItem->path;
 			}
 			if (preg_match('/readme_(\w\w)\.(txt|md)/i', $fileItem->path, $m)) {
-				$files[$m[1]] = $fileItem->path;
+				$files[strtolower($m[1])] = $fileItem->path;
+			}
+		}
+		return $files;
+	}
+
+	public function getRepoChangelogFilenames($name)
+	{
+		$tree = $this->getRepoTree($name);
+
+		$files = array();
+		foreach($tree as $fileItem) {
+			$m = array();
+			if (preg_match('/changelog\.(txt|md)/i', $fileItem->path, $m)) {
+				$files['en'] = $fileItem->path;
 			}
 		}
 		return $files;
