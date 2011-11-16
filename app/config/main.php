@@ -19,6 +19,11 @@ return array(
 		'fixture' => array(
 			'class' => 'system.test.CDbFixtureManager',
 		),
+		'urlManager' => array(
+			'urlFormat'=>'path',
+            'showScriptName'=>true,
+			'rules' => include dirname(__FILE__) . '/routes.php',
+		),
 		'db' => require_once('db.php'),
 		'cache' => array(
 			'class' => 'CFileCache',

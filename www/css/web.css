@@ -95,6 +95,46 @@ body
 	text-decoration:none;
 }
 
+#repo {
+    float: left;
+    width: 70%;
+}
+
+#repo-sidebar {
+    float: right;
+    width: 25%;
+}
+
+.repo {
+    border: solid 1px #ccc;
+    margin: 15px 0;
+}
+
+.repo-head {
+    border-bottom: solid 1px #ccc;
+    background: #EFF4FA;
+    padding: 3px;
+}
+
+.repo .contributors {
+    text-align: right;
+}
+
+.repo h3 {
+    margin: 0;
+    padding: 0;
+}
+.repo p {
+    padding: 3px;
+    margin: 0;
+    height: 30px;
+    min-height: 30px;
+}
+
+.repo a.readme {
+    font-weight: bold;
+}
+
 div.flash-error, div.flash-notice, div.flash-success
 {
 	padding:.8em;
