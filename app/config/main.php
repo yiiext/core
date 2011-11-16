@@ -21,7 +21,7 @@ return array(
 		),
 		'urlManager' => array(
 			'urlFormat'=>'path',
-            'showScriptName'=>true,
+            'showScriptName'=>false,
 			'rules' => include dirname(__FILE__) . '/routes.php',
 		),
 		'db' => require_once('db.php'),

@@ -64,7 +64,7 @@ body
 #mainmenu
 {
     border-top: 1px solid #C9E0ED;
-	background: url(bg.gif) #6399D2 repeat-x left top;
+	background: #6399D2;
 }
 
 #mainmenu ul
