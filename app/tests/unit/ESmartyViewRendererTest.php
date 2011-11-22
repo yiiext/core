@@ -13,6 +13,8 @@ class ESmartyViewRendererTest extends CTestCase
 	{
 		$this->smarty = new ESmartyViewRenderer();
 		$this->smarty->init();
+		$this->smarty->clearCompileDir();
+		Yii::app()->setComponent('viewRenderer', $this->smarty);
 	}
 
 	public function matrixProvider()
@@ -34,8 +36,6 @@ class ESmartyViewRendererTest extends CTestCase
 	 */
 	public function testSimpleTemplateRender($return, $template, $data, $content)
 	{
-		Yii::app()->setComponent('viewRenderer', $this->smarty);
-
 		ob_start();
 		$controller = new CController('test');
 		$return = $this->smarty->renderFile($controller, $template, $data, $return);
