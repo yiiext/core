@@ -21,6 +21,7 @@ class ESmartyViewRendererTest extends CTestCase
 	{
 		$simpleTemplate = Yii::getPathOfAlias('application.tests.views') . '/simpleTemplate.tpl';
 		$nestedTemplate = Yii::getPathOfAlias('application.tests.views') . '/nestedTemplate.tpl';
+		$widgetTemplate = Yii::getPathOfAlias('application.tests.views') . '/widgetTemplate.tpl';
 		return array(
 			//    return, template,               values
 			array(true,   $simpleTemplate,  array('var1'=>'value1'), '<b>value1</b>test'."\n"),
@@ -28,6 +29,11 @@ class ESmartyViewRendererTest extends CTestCase
 
 			array(true,   $nestedTemplate,  array('var1'=>'value1', 'template'=>'application.tests.views.nestedTemplate'), "<b>value1</b><b>2</b>2\nvalue1\n"),
 			array(false,  $nestedTemplate,  array('var1'=>'value1', 'template'=>'application.tests.views.nestedTemplate'), "<b>value1</b><b>2</b>2\nvalue1\n"),
+
+			array(true,   $widgetTemplate,  array('var1'=>'value1', 'template'=>'application.tests.views.widgetTemplate', 'level'=>3),
+				"value1-test|widget3-widgetId3|widget2-widgetId2|widget1-widgetId1||widget1+widgetId1\n|widget2+widgetId2\n|widget3+widgetId3\n|value1+test\n"),
+			array(false,  $widgetTemplate,  array('var1'=>'value1', 'template'=>'application.tests.views.widgetTemplate', 'level'=>3),
+				"value1-test|widget3-widgetId3|widget2-widgetId2|widget1-widgetId1||widget1+widgetId1\n|widget2+widgetId2\n|widget3+widgetId3\n|value1+test\n"),
 		);
 	}
 
