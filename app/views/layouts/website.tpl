@@ -5,6 +5,7 @@
 	<meta name="language" content="en" />
 
 	<!-- blueprint CSS framework -->
+	<link rel="stylesheet" type="text/css" href="{Yii::app()->request->baseUrl}/css/main.css" />
 	<link rel="stylesheet" type="text/css" href="{Yii::app()->request->baseUrl}/css/screen.css" media="screen, projection" />
 	<link rel="stylesheet" type="text/css" href="{Yii::app()->request->baseUrl}/css/print.css" media="print" />
 	<!--[if lt IE 8]>
