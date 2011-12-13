@@ -22,7 +22,7 @@ class YiiextGithubApi extends ESimpleGithub
 			if ($status != $expectedStatus) {
 				throw new CHttpException(500, 'Github Request status code is not as expected. ' . $url);
 			}
-			Yii::app()->cache->set($url, $data, 24 * 3600);
+			Yii::app()->cache->set($url, $data, 12 * 3600);
 		}
 		return $data;
 	}
