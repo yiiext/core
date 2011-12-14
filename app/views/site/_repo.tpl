@@ -1,21 +1,6 @@
+{if isset($data)}{$repo=$data}{/if}
 <div class="repo{if isset($noReadme) && $noReadme} noreadme{/if}">
     <div class="repo-head">
-        {if !isset($noReadme) || $noReadme==false}
-        <div style="text-align: right; float: right;">
-            {$readmes = $this->api->getRepoReadmeFilenames($repo->name)}
-            {if empty($readmes)}
-                no readme
-            {else}
-                readme:
-                {foreach $this->api->getRepoReadmeFilenames($repo->name) as $readmeLang => $file}
-                    {CHtml::link($readmeLang|strtolower, ['site/repoReadme', 'name'=>$repo->name, 'lang'=>$readmeLang], ['class'=>'readme'])}
-                {/foreach}
-            {/if}
-
-            {*<b>{count($this->api->getRepoWatchers($repo->name))}</b>*}
-        </div>
-        {/if}
-
         <h3>{CHtml::link($repo->name|escape, ['site/repo', 'name'=>$repo->name])}</h3>
     </div>
     <p>{$repo->description|default:"<i>No description available.</i>"}</p>
@@ -27,4 +12,21 @@
         </a>
     {/foreach}
     </div>
+
+
+    {if !isset($noReadme) || $noReadme==false}
+    <div class="readmelist">
+            {$readmes = $this->api->getRepoReadmeFilenames($repo->name)}
+            {if empty($readmes)}
+                no readme
+            {else}
+                readme:
+                {foreach $this->api->getRepoReadmeFilenames($repo->name) as $readmeLang => $file}
+                    {CHtml::link($readmeLang|strtolower, ['site/repoReadme', 'name'=>$repo->name, 'lang'=>$readmeLang], ['class'=>'readme'])}
+                {/foreach}
+            {/if}
+
+            {*<b>{count($this->api->getRepoWatchers($repo->name))}</b>*}
+    </div>
+    {/if}
 </div>

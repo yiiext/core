@@ -13,7 +13,18 @@ class SiteController extends CController
 	/**
 	 * @var string current repos github url
 	 */
-	public $repoUrl = '';
+    public $repoUrl = '';
+
+    public $categories = array(
+	    'all'=>'/^.*$/',
+	    'renderers'=>'/^.*-renderer$/i',
+		'behaviors'=>'/^.*-behavior$/i',
+		'filters'=>'/^.*-filter$/i',
+	    'widgets'=>'/^.*-widget$/i',
+	    'modules'=>'/^.*-module$/i',
+	    'components'=>'/^.*-component$/i',
+	    'others'=>'!'
+    );
 
 	public function init()
 	{
@@ -21,10 +32,39 @@ class SiteController extends CController
 		$this->api = new YiiextGithubApi();
 	}
 
-    public function actionIndex()
+    public function actionIndex($category='all')
     {
-        $this->render('index', array(
-	        'repos' => $this->api->getRepos(),
+		if (!isset($this->categories[$category])) {
+			throw new CHttpException(404, 'category does not exist.');
+		}
+		Yii::app()->clientScript->enableJavaScript = false;
+		Yii::app()->language = 'en';
+
+		$c = $this->categories;
+		$repos = array_filter($this->api->getRepos(), function($var) use ($category, $c) {
+		if ($c[$category] == '!') {
+			foreach($c as $cat) {
+				if ($cat != '/^.*$/' && $cat != '!' && preg_match($cat, $var->name)) {
+					return false;
+				}
+			}
+			return true;
+		}
+		return preg_match($c[$category], $var->name);
+	});
+
+	$this->render('index', array(
+		'category'=>$category,
+		'repos' => new CArrayDataProvider($repos, array(
+			'id'=>'user',
+			'sort'=>array(
+			    'attributes'=>array(
+			        'name', 'created_at', 'pushed_at', 'watchers'
+				),
+				'defaultOrder'=>'watchers DESC',
+			),
+			'pagination'=>false,
+		)),
         ));
     }
 
