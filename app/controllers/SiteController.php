@@ -17,12 +17,12 @@ class SiteController extends CController
 
     public $categories = array(
 	    'all'=>'/^.*$/',
-	    'renderers'=>'/^.*-renderer$/i',
 		'behaviors'=>'/^.*-behavior$/i',
-		'filters'=>'/^.*-filter$/i',
-	    'widgets'=>'/^.*-widget$/i',
-	    'modules'=>'/^.*-module$/i',
 	    'components'=>'/^.*-component$/i',
+		'filters'=>'/^.*-filter$/i',
+	    'modules'=>'/^.*-module$/i',
+	    'renderers'=>'/^.*-renderer$/i',
+	    'widgets'=>'/^.*-widget$/i',
 	    'others'=>'!'
     );
 
