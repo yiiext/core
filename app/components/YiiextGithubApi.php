@@ -87,6 +87,8 @@ class YiiextGithubApi extends ESimpleGithub
 			$m = array();
 			if ($fileItem->mode != '120000' && strtolower($fileItem->path) == 'readme.md') {
 				$files['en'] = $fileItem->path;
+			} elseif ($fileItem->mode != '120000' && strtolower($fileItem->path) == 'readme') {
+				$files['en'] = $fileItem->path;
 			}
 			if (preg_match('/readme_(\w\w)\.(txt|md)/i', $fileItem->path, $m)) {
 				$files[strtolower($m[1])] = $fileItem->path;

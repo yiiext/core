@@ -122,9 +122,9 @@ class SiteController extends CController
 		$markdownParser = new CMarkdownParser();
 		$readme = $markdownParser->transform(//preg_replace('/\[(php|sql|sh)\]/i', '[\1 showLineNumbers=1]',
 			str_replace(
-				array("~~~php"    , "~~~ php"     , "~~~sh"      , "~~~sql"),
-				array("~~~\n[php]", "~~~\n[php]\n", "~~~\n[sh]\n", "~~~\n[sql]\n"),
-				$readme
+				array("~~~php"    , "~~~ php"     , "~~~sh"      , "~~~sql"      , "~~~html"      , "~~~ html"),
+				array("~~~\n[php]", "~~~\n[php]\n", "~~~\n[sh]\n", "~~~\n[sql]\n", "~~~\n[html]\n", "~~~\n[html]\n"),
+				str_replace('```', '~~~', $readme)
 			//)
 		));
 
