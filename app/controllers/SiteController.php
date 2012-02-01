@@ -22,7 +22,7 @@ class SiteController extends CController
 		'filters'=>'/^.*-filter$/i',
 	    'modules'=>'/^.*-module$/i',
 	    'renderers'=>'/^.*-renderer$/i',
-	    'widgets'=>'/^.*-widget$/i',
+	    'widgets'=>'/^(.*-widget|chart)$/i',
 	    'others'=>'!'
     );
 
