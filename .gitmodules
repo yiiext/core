@@ -124,3 +124,6 @@
 [submodule "app/extensions/yiiext/components/github-api"]
 	path = app/extensions/yiiext/components/github-api
 	url = https://github.com/yiiext/github-api
+[submodule "app/extensions/yiiext/behaviors/model/activerecord-relation"]
+	path = app/extensions/yiiext/behaviors/model/activerecord-relation
+	url = https://github.com/yiiext/activerecord-relation-behavior.git
